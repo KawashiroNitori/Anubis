@@ -2,7 +2,7 @@ import collections
 import datetime
 
 from anubis.util import version
-
+from anubis import constant
 
 # Permissions.
 PERM_NONE = 0
