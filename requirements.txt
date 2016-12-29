@@ -1,7 +1,9 @@
-yaml
+PyYAML
+bson
 tornado
 jinja2
 motor
 aioamqp
 pytz
 colorlog
+aioredis
