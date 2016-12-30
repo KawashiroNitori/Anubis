@@ -4,6 +4,8 @@ import hashlib
 import os
 import json
 
+from bson import BSON
+
 from anubis.util import argmethod
 from anubis import redis
 
@@ -42,7 +44,7 @@ async def add(token_type: int, expire_seconds: int, **kwargs):
         'expire_at': now + datetime.timedelta(seconds=expire_seconds)
     }
     db = await redis.database()
-    await db.set('token_' + id_hash, json.dumps(doc), expire=expire_seconds)
+    await db.set('token_' + id_hash, BSON.encode(doc), expire=expire_seconds)
     return id_hash, doc
 
 
@@ -59,7 +61,7 @@ async def get(token_id: str, token_type: int):
     db = await redis.database()
     doc = await db.get('token_' + token_id)
     if doc:
-        return json.loads(doc)
+        return BSON.decode(doc)
     else:
         return None
 
@@ -86,7 +88,7 @@ async def update(token_id: str, token_type: int, expire_seconds: int, **kwargs):
     doc.update({**kwargs,
                 'update_at': now,
                 'expire_at': now + datetime.timedelta(seconds=expire_seconds)})
-    doc = await db.set('token_' + token_id, json.dumps(doc), expire=expire_seconds)
+    doc = await db.set('token_' + token_id, BSON.encode(doc), expire=expire_seconds)
     return doc
 
 

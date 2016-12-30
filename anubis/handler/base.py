@@ -114,7 +114,7 @@ class HandlerBase(setting.SettingMixin):
         if save:
             token_type = token.TYPE_SAVED_SESSION
             session_expire_seconds = options.options.saved_session_expire_seconds
-        else
+        else:
             token_type = token.TYPE_UNSAVED_SESSION
             session_expire_seconds = options.options.unsaved_session_expire_seconds
         if sid:
@@ -150,7 +150,7 @@ class HandlerBase(setting.SettingMixin):
     async def delete_session(self, *names):
         for name in names:
             if name in self.request.cookies:
-                self.response.set_cookie(name, '',
+                self.dbresponse.set_cookie(name, '',
                                          expires=utils.formatdate(0, usegmt=True),
                                          domain=options.options.cookie_domain,
                                          secure=options.options.cookie_secure,

@@ -176,7 +176,7 @@ USER_SYSTEM = {
     'login_at': datetime.datetime.utcnow(),
     'login_ip': '',
     'gravatar': '',
-    'role': ROLE_GUEST
+    'role': ROLE_GUEST,
     'num_submit': 0,
     'num_accepted': 0
 }
