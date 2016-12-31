@@ -153,14 +153,14 @@ DOMAIN_SYSTEM = {
         ROLE_ADMIN: ADMIN_PERMISSIONS
     },
     'gravatar': '',
-    'name': 'Anubis'
+    'name': 'Default'
 }
 
 DOMAINS = [DOMAIN_SYSTEM]
 
 # Users.
 UID_SYSTEM = 0
-UNAME_SYSTEM = 'Anubis'
+UNAME_SYSTEM = 'System'
 USER_SYSTEM = {
     '_id': UID_SYSTEM,
     'uname': UNAME_SYSTEM,
@@ -180,7 +180,7 @@ USER_SYSTEM = {
     'num_submit': 0,
     'num_accepted': 0
 }
-UID_GUEST = 1
+UID_GUEST = -1
 UNAME_GUEST = 'Guest'
 USER_GUEST = {
     '_id': UID_GUEST,

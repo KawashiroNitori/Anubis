@@ -22,7 +22,7 @@ PROJECTION_ALL = None
 
 
 @argmethod.wrap
-async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str = ''):
+async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', priv: int=builtin.DEFAULT_PRIV):
     # Add a user.
     validator.check_uname(uname)
     # TODO: Filter name by keywords
@@ -34,28 +34,28 @@ async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str = ''):
 
     for user in builtin.USERS:
         if user['_id'] == uid or user['uname_lower'] == uname_lower or user['mail_lower'] == mail_lower:
-            raise error
+            raise error.UserAlreadyExistError(uname)
 
-        salt = pwhash.gen_salt()
-        coll = db.Collection('user')
-        try:
-            await coll.insert({
-                '_id': uid,
-                'uname': uname,
-                'uname_lower': uname_lower,
-                'mail': mail,
-                'mail_lower': mail_lower,
-                'salt': salt,
-                'hash': pwhash.hash_password(password, salt),
-                'reg_at': datetime.datetime.utcnow(),
-                'reg_ip': reg_ip,
-                'priv': builtin.DEFAULT_PRIV,
-                'login_at': datetime.datetime.utcnow(),
-                'login_ip': reg_ip,
-                'gravatar': mail
-            })
-        except errors.DuplicateKeyError:
-            raise error.UserAlreadyExistError(uid, uname, mail) from None
+    salt = pwhash.gen_salt()
+    coll = db.Collection('user')
+    try:
+        await coll.insert_one({
+            '_id': uid,
+            'uname': uname,
+            'uname_lower': uname_lower,
+            'mail': mail,
+            'mail_lower': mail_lower,
+            'salt': salt,
+            'hash': pwhash.hash_password(password, salt),
+            'reg_at': datetime.datetime.utcnow(),
+            'reg_ip': reg_ip,
+            'priv': priv,
+            'login_at': datetime.datetime.utcnow(),
+            'login_ip': reg_ip,
+            'gravatar': mail
+        })
+    except errors.DuplicateKeyError:
+        raise error.UserAlreadyExistError(uid, uname, mail) from None
 
 
 @argmethod.wrap
@@ -63,8 +63,8 @@ async def get_by_uid(uid: int, fields=PROJECTION_VIEW):
     for user in builtin.USERS:
         if user['_id'] == uid:
             return user
-        coll = db.Collection('user')
-        return await coll.find_one({'_id': uid}, fields)
+    coll = db.Collection('user')
+    return await coll.find_one({'_id': uid}, fields)
 
 
 @argmethod.wrap
