@@ -213,3 +213,4 @@ ENV/
 
 /anubis/constant/
 node_modules/
+/anubis/.static_build/
