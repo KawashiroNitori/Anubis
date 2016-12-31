@@ -22,7 +22,7 @@ class Undefined(jinja2.runtime.Undefined):
 class Environment(jinja2.Environment):
 
     def __init__(self):
-        super().__init__(
+        super(Environment, self).__init__(
             loader=jinja2.FileSystemLoader(path.join(path.dirname(__file__), 'ui/templates')),
             extensions=[jinja2.ext.with_],
             auto_reload=options.options.debug,

@@ -10,14 +10,14 @@ class Encoder(json.JSONEncoder):
     key_separator = ':'
 
     def __init__(self):
-        super().__init__(ensure_ascii=False)
+        super(Encoder, self).__init__(ensure_ascii=False)
 
     def default(self, o):
         if type(o) is objectid.ObjectId:
             return str(o)
         if type(o) is datetime.datetime:
             return calendar.timegm(o.utctimetuple()) * 1000
-        return super().default(o)
+        return super(Encoder, self).default(o)
 
 
 class Decoder(json.JSONDecoder):

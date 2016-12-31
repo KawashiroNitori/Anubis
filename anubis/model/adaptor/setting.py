@@ -26,7 +26,7 @@ PREFERENCE_SETTINGS = [
             default='Asia/Shanghai', ui='select', name='Timezone'),
     Setting('setting_display', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE,
             ui='select', name='Problem Tags Visibility',
-            dest='Whether to show tags in the problem list.'),
+            desc='Whether to show tags in the problem list.'),
     Setting('setting_usage', 'send_code', int, range=constant.setting.FUNCTION_RANGE,
             ui='select', name='Send Code after acceptance',
             desc='If enabled, source code will be emailed to you after the submission is accepted.'),
@@ -40,13 +40,13 @@ PREFERENCE_SETTINGS = [
 ACCOUNT_SETTINGS = [
     Setting('setting_info', 'gravatar', str,
             name='Gravatar Email', desc='We user Gravatar to present your avatar icon.'),
-    Setting('setting_info', 'qq', str, name='QQ')
+    Setting('setting_info', 'qq', str, name='QQ'),
     Setting('setting_info', 'gender', int, range=constant.model.USER_GENDER_RANGE,
             ui='select', name='Gender'),
     Setting('setting_privacy', 'show_mail', int, range=constant.setting.PRIVACY_RANGE,
             ui='select', name='Email Visibility'),
     Setting('setting_privacy', 'show_qq', int, range=constant.setting.PRIVACY_RANGE,
-            ui='select', name='QQ Visibility')
+            ui='select', name='QQ Visibility'),
     Setting('setting_privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE,
             ui='select', name='Gender Visibility')
 ]

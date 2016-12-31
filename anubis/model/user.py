@@ -77,6 +77,16 @@ async def get_by_mail(mail: str, fields=PROJECTION_VIEW):
     return await coll.find_one({'mail_lower': mail_lower}, fields)
 
 
+@argmethod.wrap
+async def get_by_uname(uname: str, fields=PROJECTION_VIEW):
+    uname_lower = uname.strip().lower()
+    for user in builtin.USERS:
+        if user['uname_lower'] == uname_lower:
+            return user
+    coll = db.Collection('user')
+    return await coll.find_one({'uname_lower': uname_lower}, fields)
+
+
 def get_multi(*, fields=PROJECTION_VIEW, **kwargs):
     coll = db.Collection('user')
     return coll.find(kwargs, fields)
@@ -101,10 +111,10 @@ async def set_password(uid: int, password: str):
     validator.check_password(password)
     salt = pwhash.gen_salt()
     coll = db.Collection('user')
-    doc = await coll.find_and_modify(query={'_id': uid},
-                                     update={'$set': {'salt': salt,
-                                                      'hash': pwhash.hash_password(password, salt)}},
-                                     new=True)
+    doc = await coll.find_one_and_update(filter={'_id': uid},
+                                         update={'$set': {'salt': salt,
+                                                          'hash': pwhash.hash_password(password, salt)}},
+                                         return_document=True)
     return doc
 
 
@@ -119,10 +129,10 @@ async def change_password(uid: int, password: str):
     validator.check_password(password)
     salt = pwhash.gen_salt()
     coll = db.Collection('user')
-    doc = await coll.find_and_modify(query={'_id': uid},
-                                     update={'$set': {'salt': salt,
-                                                      'hash': pwhash.hash_password(password, salt)}},
-                                     new=True)
+    doc = await coll.find_one_and_update(filter={'_id': uid},
+                                         update={'$set': {'salt': salt,
+                                                          'hash': pwhash.hash_password(password, salt)}},
+                                         return_document=True)
     return doc
 
 
@@ -140,18 +150,18 @@ async def change_password(uid: int, current_password: str, password: str):
     validator.check_password(password)
     salt = pwhash.gen_salt()
     coll = db.Collection('user')
-    doc = await coll.find_and_modify(query={'_id': doc['_id'],
-                                            'salt': doc['salt'],
-                                            'hash': doc['hash']},
-                                     update={'$set': {'salt': salt,
-                                                      'hash': pwhash.hash_password(password, salt)}},
-                                     new=True)
+    doc = await coll.find_one_and_update(filter={'_id': doc['_id'],
+                                                 'salt': doc['salt'],
+                                                 'hash': doc['hash']},
+                                         update={'$set': {'salt': salt,
+                                                          'hash': pwhash.hash_password(password, salt)}},
+                                         return_document=True)
     return doc
 
 
 async def set_by_uid(uid, **kwargs):
     coll = db.Collection('user')
-    doc = await coll.find_and_modify(query={'_id': uid}, update={'$set': kwargs}, new=True)
+    doc = await coll.find_one_and_update(filter={'_id': uid}, update={'$set': kwargs}, return_document=True)
     return doc
 
 
@@ -168,10 +178,10 @@ async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
 
 
 @argmethod.wrap
-async def ensure_indexes():
+async def create_indexes():
     coll = db.Collection('user')
-    await coll.ensure_index('uname_lower', unique=True)
-    await coll.ensure_index('mail_lower', sparse=True)
+    await coll.create_index('uname_lower', unique=True)
+    await coll.create_index('mail_lower', sparse=True)
 
 
 if __name__ == '__main__':

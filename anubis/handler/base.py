@@ -19,9 +19,8 @@ from anubis.model import user
 from anubis.model import domain
 from anubis.model import opcount
 from anubis.model.adaptor import setting
-
+from anubis.service import mailer
 from anubis.util import json
-from anubis.util import locale
 from anubis.util import locale
 from anubis.util import options
 
@@ -150,7 +149,16 @@ class HandlerBase(setting.SettingMixin):
     async def delete_session(self, *names):
         for name in names:
             if name in self.request.cookies:
-                self.dbresponse.set_cookie(name, '',
+                self.response.set_cookie(name, '',
+                                         expires=utils.formatdate(0, usegmt=True),
+                                         domain=options.options.cookie_domain,
+                                         secure=options.options.cookie_secure,
+                                         httponly=True)
+
+    def clear_cookies(self, *names):
+        for name in names:
+            if name in self.request.cookies:
+                self.response.set_cookie(name, '',
                                          expires=utils.formatdate(0, usegmt=True),
                                          domain=options.options.cookie_domain,
                                          secure=options.options.cookie_secure,
@@ -191,7 +199,7 @@ class Handler(web.View, HandlerBase):
         try:
             self.response = web.Response()
             yield from HandlerBase.prepare(self)
-            yield from super().__iter__()
+            yield from super(Handler, self).__iter__()
         except error.UserFacingError as e:
             _logger.warning('User facing error: $s', repr(e))
             self.response.set_status(e.http_status, None)
@@ -223,6 +231,11 @@ class Handler(web.View, HandlerBase):
         self.response.content_type = type
         await self.response.prepare(self.request)
         self.response.write(data)
+
+    async def send_mail(self, mail, title, template_name, **kwargs):
+        content = self.render_html(template_name, url_prefix=options.options.url_prefix,
+                                   **kwargs)
+        await mailer.send_mail(mail, '{0} - Anubis Online Judge'.format(self.translate(title)), content)
 
     @property
     def prefer_json(self):
@@ -282,7 +295,7 @@ class OperationHandler(Handler):
 
 class Connection(sockjs.Session, HandlerBase):
     def __init__(self, request, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Connection, self).__init__(*args, **kwargs)
         self.request = request
         self.response = web.Response()
 
@@ -296,7 +309,7 @@ class Connection(sockjs.Session, HandlerBase):
         pass
 
     def send(self, **kwargs):
-        super().send(json.encode(kwargs))
+        super(Connection, self).send(json.encode(kwargs))
 
 
 @functools.lru_cache()

@@ -4,7 +4,10 @@ tornado
 jinja2
 motor
 aioamqp
+aiosmtplib
 pytz
 colorlog
 aioredis
 misaka
+aiohttp
+sockjs

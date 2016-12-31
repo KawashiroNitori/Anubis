@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from os import path
 
 from aiohttp import web
@@ -8,6 +9,7 @@ from anubis import error
 from anubis.util import options
 from anubis.util import locale
 from anubis.util import json
+from anubis.util import tools
 
 options.define('debug', default=False, help='Enable debug mode.')
 options.define('static', default=True, help='Serve static files.')
@@ -32,17 +34,20 @@ _logger = logging.getLogger(__name__)
 
 class Application(web.Application):
     def __init__(self):
-        super().__init__(debug=options.options.debug)
+        super(Application, self).__init__(debug=options.options.debug)
         globals()[self.__class__.__name__] = lambda: self
-
         translation_path = path.join(path.dirname(__file__), 'locale')
         locale.load_translations(translation_path)
         # TODO: Add small cache.
         # TODO: Add Message Queue Register.
+        self.loop.run_until_complete(asyncio.gather(
+            tools.create_all_indexes()
+        ))
 
+        from anubis.handler import domain
         if options.options.static:
             self.router.add_static(
-                '/static', path.join(path.dirname(__file__), '.static_build'), name='static')
+                '/static/', path.join(path.dirname(__file__), '.static_build'), name='static')
 
 
 def route(url, name):
@@ -50,7 +55,7 @@ def route(url, name):
         handler.NAME = handler.NAME or name
         handler.TITLE = handler.TITLE or name
         Application().router.add_route('*', url, handler, name=name)
-        Application().router.add_route("*", '/d/{domain_id}' + url, handler, name=name + '_with_domain_id')
+        Application().router.add_route('*', '/d/{domain_id}' + url, handler, name=name + '_with_domain_id')
         return handler
     return decorate
 
