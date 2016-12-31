@@ -1,5 +1,5 @@
 import hashlib
-import hoedown
+import misaka
 from os import path
 from urllib import parse
 
@@ -42,23 +42,23 @@ class Environment(jinja2.Environment):
 
 
 MARKDOWN_EXTENSIONS = (
-    hoedown.EXT_TABLES |                # Parse PHP-Markdown style tables.
-    hoedown.EXT_FENCED_CODE |           # Parse fenced code blocks.
-    hoedown.EXT_AUTOLINK |              # Automatically turn safe URLs into links.
-    hoedown.EXT_NO_INTRA_EMPHASIS |     # Disable emphasis_between_words.
-    hoedown.EXT_MATH |                  # Parse TeX $$math$$ syntax.
-    hoedown.EXT_MATH_EXPLICIT           # Instead of guessing by context.
+    misaka.EXT_TABLES |                # Parse PHP-Markdown style tables.
+    misaka.EXT_FENCED_CODE |           # Parse fenced code blocks.
+    misaka.EXT_AUTOLINK |              # Automatically turn safe URLs into links.
+    misaka.EXT_NO_INTRA_EMPHASIS |     # Disable emphasis_between_words.
+    misaka.EXT_MATH |                  # Parse TeX $$math$$ syntax.
+    misaka.EXT_MATH_EXPLICIT           # Instead of guessing by context.
 )
 
 MARKDOWN_RENDER_FLAGS = (
-    hoedown.HTML_ESCAPE |               # Escape all HTML.
-    hoedown.HTML_HARD_WRAP              # Render each linebreak as <br>.
+    misaka.HTML_ESCAPE |               # Escape all HTML.
+    misaka.HTML_HARD_WRAP              # Render each linebreak as <br>.
 )
 
 
 def markdown(text):
     return markupsafe.Markup(
-        hoedown.html(text, extensions=MARKDOWN_EXTENSIONS, render_flags=MARKDOWN_RENDER_FLAGS)
+        misaka.html(text, extensions=MARKDOWN_EXTENSIONS, render_flags=MARKDOWN_RENDER_FLAGS)
     )
 
 
@@ -76,7 +76,7 @@ def paginate(page, num_pages):
     radius = 2
     if page > 1:
         yield 'first', 1
-        yield 'previos', page - 1
+        yield 'previous', page - 1
     if page <= radius:
         first, last = 1, min(1, radius * 2, num_pages)
     elif page >= num_pages - radius:

@@ -7,3 +7,4 @@ aioamqp
 pytz
 colorlog
 aioredis
+misaka

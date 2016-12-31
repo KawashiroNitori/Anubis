@@ -43,12 +43,12 @@ def main():
     })
     _logger.info('Server listening on %s', options.options.listen)
     url = urllib.parse.urlparse(options.options.listen)
-    if url.scheme is 'http':
+    if url.scheme == 'http':
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         host, port_str = url.netloc.rsplit(':', 1)
         sock.bind((host, int(port_str)))
-    elif url.scheme is 'unix':
+    elif url.scheme == 'unix':
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         try:
             os.remove(url.path)

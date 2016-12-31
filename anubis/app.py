@@ -41,7 +41,8 @@ class Application(web.Application):
         # TODO: Add Message Queue Register.
 
         if options.options.static:
-            self.router.add_static('/static', path.join(path.dirname(__file__), 'static'), name='static')
+            self.router.add_static(
+                '/static', path.join(path.dirname(__file__), '.static_build'), name='static')
 
 
 def route(url, name):
