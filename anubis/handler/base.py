@@ -2,7 +2,6 @@ import accept
 import asyncio
 import calendar
 import functools
-import hmac
 import logging
 import markupsafe
 import pytz
@@ -146,14 +145,15 @@ class HandlerBase(setting.SettingMixin):
             self.clear_cookies('sid', 'save')
         return session or {}
 
-    async def delete_session(self, *names):
-        for name in names:
-            if name in self.request.cookies:
-                self.response.set_cookie(name, '',
-                                         expires=utils.formatdate(0, usegmt=True),
-                                         domain=options.options.cookie_domain,
-                                         secure=options.options.cookie_secure,
-                                         httponly=True)
+    async def delete_session(self):
+        sid, save = map(self.request.cookies.get, ['sid', 'save'])
+        if sid:
+            if save:
+                token_type = token.TYPE_SAVED_SESSION
+            else:
+                token_type = token.TYPE_UNSAVED_SESSION
+            await token.delete(sid, token_type)
+        self.clear_cookies('sid', 'save')
 
     def clear_cookies(self, *names):
         for name in names:
@@ -173,10 +173,13 @@ class HandlerBase(setting.SettingMixin):
 
     @property
     def csrf_token(self):
-        if self.session:
-            return _get_csrf_token(self.session['_id'])
+        if not self.session or not self.session['csrf_token']:
+            csrf_token = token.gen_csrf_token()
+            self.session = asyncio.get_event_loop().run_until_complete(
+                self.update_session(csrf_token=csrf_token))
+            return csrf_token
         else:
-            return ''
+            return self.session['csrf_token']
 
     def render_html(self, template_name, **kwargs):
         kwargs['handler'] = self
@@ -211,7 +214,7 @@ class Handler(web.View, HandlerBase):
                             page_name='error', page_title=self.translate('error'),
                             path_components=self.build_path(self.translate('error'), None))
         except Exception as e:
-            _logger.error('Unexpected exception occured when handling %s (IP = %s, UID = %d): %s',
+            _logger.error('Unexpected exception occurred when handling %s (IP = %s, UID = %d): %s',
                           self.url, self.remote_ip, self.user['_id'] or None, repr(e))
             raise
         return self.response
@@ -233,8 +236,7 @@ class Handler(web.View, HandlerBase):
         self.response.write(data)
 
     async def send_mail(self, mail, title, template_name, **kwargs):
-        content = self.render_html(template_name, url_prefix=options.options.url_prefix,
-                                   **kwargs)
+        content = self.render_html(template_name, url_prefix=options.options.url_prefix, **kwargs)
         await mailer.send_mail(mail, '{0} - Anubis Online Judge'.format(self.translate(title)), content)
 
     @property
@@ -313,11 +315,6 @@ class Connection(sockjs.Session, HandlerBase):
 
 
 @functools.lru_cache()
-def _get_csrf_token(session_id_binary):
-    return hmac.new(b'csrf_token', session_id_binary, 'sha256').hexdigest()
-
-
-@functools.lru_cache()
 def _reverse_url(name, *, domain_id, **kwargs):
     if domain_id != builtin.DOMAIN_ID_SYSTEM:
         name += '_with_domain_id'
@@ -370,8 +367,13 @@ def require_priv(priv):
 def require_csrf_token(func):
     @functools.wraps(func)
     def wrapped(self, *args, **kwargs):
-        if self.csrf_token and self.csrf_token != kwargs.pop('csrf_token', ''):
-            raise error.CsrfTokenError
+        user_csrf_token = kwargs.pop('csrf_token', '')
+        csrf_token = self.csrf_token
+
+        del self.session['csrf_token']
+        asyncio.get_event_loop().run_until_complete(token.update(**self.session))
+        if not user_csrf_token or user_csrf_token != csrf_token:
+            raise error.CsrfTokenError()
         return func(self, *args, **kwargs)
     return wrapped
 

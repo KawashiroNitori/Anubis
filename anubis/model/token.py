@@ -67,13 +67,14 @@ async def get(token_id: str, token_type: int):
 
 
 @argmethod.wrap
-async def update(token_id: str, token_type: int, expire_seconds: int, **kwargs):
+async def update(token_id: str, token_type: int, expire_seconds: int, replace: bool=False, **kwargs):
     """Update a token.
 
     Args:
         token_id: token ID.
         token_type: type of the token.
         expire_seconds: expire time, in seconds.
+        replace: if True, replace this key instead of update.
         **kwargs: extra data.
 
     Returns:
@@ -85,9 +86,14 @@ async def update(token_id: str, token_type: int, expire_seconds: int, **kwargs):
     doc = await get(token_id, token_type)
     if not doc:
         return None
-    doc.update({**kwargs,
-                'update_at': now,
-                'expire_at': now + datetime.timedelta(seconds=expire_seconds)})
+    if not replace:
+        doc.update({**kwargs,
+                    'update_at': now,
+                    'expire_at': now + datetime.timedelta(seconds=expire_seconds)})
+    else:
+        doc = {**kwargs,
+               'update_at': now,
+               'expire_at': now + datetime.timedelta(seconds=expire_seconds)}
     doc = await db.set('token_' + token_id, BSON.encode(doc), expire=expire_seconds)
     return doc
 
@@ -104,3 +110,9 @@ async def delete(token_id: str, token_type: int):
     """
     db = await redis.database()
     return await db.delete('token_' + token_id)
+
+
+@argmethod.wrap
+def gen_csrf_token():
+    token_hash = _get_id(os.urandom(32))
+    return binascii.hexlify(token_hash).decode()

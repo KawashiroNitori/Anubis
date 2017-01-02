@@ -5,6 +5,7 @@ jinja2
 motor
 aioamqp
 aiosmtplib
+accept
 pytz
 colorlog
 aioredis

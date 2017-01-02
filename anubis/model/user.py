@@ -107,6 +107,13 @@ async def check_password_by_uid(uid: int, password: str):
 
 
 @argmethod.wrap
+async def check_password_by_uname(uname: str, password: str):
+    doc = await get_by_uname(uname, PROJECTION_ALL)
+    if doc and pwhash.check(password, doc['salt'], doc['hash']):
+        return doc
+
+
+@argmethod.wrap
 async def set_password(uid: int, password: str):
     validator.check_password(password)
     salt = pwhash.gen_salt()

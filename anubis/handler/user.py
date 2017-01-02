@@ -23,7 +23,7 @@ class UserRegisterHandler(base.Handler):
     @base.require_priv(builtin.PRIV_REGISTER_USER)
     @base.limit_rate('user_register', 3600, 60)
     @base.post_argument
-    @base.route_argument
+    @base.require_csrf_token
     @base.sanitize
     async def post(self, *, mail: str, uname: str, password: str, verify_password: str):
         validator.check_mail(mail)
@@ -102,9 +102,10 @@ class UserLoginHandler(base.Handler):
             self.render('user_login.html')
 
     @base.post_argument
+    @base.require_csrf_token
     @base.sanitize
     async def post(self, *, uname: str, password: str, remember_me: bool=False):
-        udoc = await user.check_password_by_uid(uname, password)
+        udoc = await user.check_password_by_uname(uname, password)
         if not udoc:
             raise error.LoginError(uname)
         await asyncio.gather(user.set_by_uid(udoc['_id'],
@@ -128,4 +129,35 @@ class UserLogoutHandler(base.Handler):
         self.json_or_redirect(self.referer_or_main)
 
 
+@app.route('/user/{uid:-?\d+}', 'user_detail')
+class UserDetailHandler(base.Handler):
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, uid: int):
+        udoc = await user.get_by_uid(uid)
+        if not udoc:
+            raise error.UserNotFoundError(uid)
+        dudoc = await asyncio.gather(
+            domain.get_user(self.domain_user, udoc)
+        )
+        self.render('user_detail.html', udoc=udoc, dudoc=dudoc)
 
+
+@app.route('/user/search', 'user_search')
+class UserSearchHandler(base.Handler):
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    @base.get_argument
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, q: str):
+        udocs = await user.get_prefix_list(q, user.PROJECTION_PUBLIC, 20)
+        try:
+            udoc = await user.get_by_uid(int(q), user.PROJECTION_PUBLIC)
+            if udoc:
+                udocs.insert(0, udoc)
+        except ValueError as e:
+            pass
+        for udoc in udocs:
+            if 'gravatar' in udoc:
+                udoc['gravatar_url'] = template.gravatar_url(udoc.pop('gravatar'))
+        self.json(udocs)
