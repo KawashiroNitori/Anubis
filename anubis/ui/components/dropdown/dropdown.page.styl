@@ -1,0 +1,26 @@
+@import '~misc/section.inc.styl'
+
+.dropdown-target
+  display: none
+
+.drop .dropdown-target
+  display: block
+
+.dropdown
+  .menu
+    min-width: rem(150px)
+    box-shadow: 0 2px 7px rgba(#000, 0.3)
+    background: #FFF
+    font-size: rem($font-size-small)
+
+  .menu__link
+    padding: rem(8px 10px)
+
+.dropdown
+  .drop-content
+    transition: transform .1s ease-in-out
+    transform: scale(0.9) translateZ(0)
+
+  &.drop-after-open
+    .drop-content
+      transform: scale(1) translateZ(0)

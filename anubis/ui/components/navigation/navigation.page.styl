@@ -1,0 +1,215 @@
+@import './var.inc.styl'
+
+.nav--placeholder
+  height: $nav-item-height
+
+.nav, .nav--slideout-trigger
+  position: fixed
+  left: 0
+  top: 0
+  width: 100%
+  height: rem($nav-item-height)
+  font-size: rem($font-size-secondary)
+  transition: background .2s
+  transition-timing-function: ease-out-cubic
+  z-index: 500
+
+.nav > .row
+  transition: max-width .5s ease-out-cubic
+
+.nav--slideout-trigger
+  position: absolute
+  display: none
+  background: rgba(#000, 0.5)
+  color: #FFF
+  line-height: rem($nav-item-height)
+
+  .nav__hamburger
+    background: none
+    border: 0
+    border-radius: 0
+    color: #FFF
+    outline: 0
+
+.nav--shadow
+  position: fixed
+  left: 0
+  top: 0
+  width: 100%
+  height: rem($nav-item-height)
+  z-index: 300
+  transition: box-shadow .2s
+  transition-timing-function: ease-out-cubic
+
+.nav__list, .nav__list-item
+  list-style: none
+
+.nav__list--main
+  float: left
+
+.nav__item
+  display: block
+  line-height: rem($nav-item-height - 6)
+  padding: rem(0 20px 3px 20px)
+  border-top: 3px solid transparent
+  color: #FFF
+  transition: border-color .2s, background .2s, color .2s
+  transition-timing-function: ease-out-cubic
+
+  &:visited, &:active
+    color: #FFF
+
+  &.nav--active
+    border-color: lighten($nav-item-active-color, 80%)
+
+  &:hover
+    text-decoration: none
+    border-color: lighten($nav-item-hover-color, 80%)
+    background: rgba(#FFF, 0.3)
+
+.nav__list--secondary
+  float: right
+
+.nav__item--round
+  display: block
+  line-height: rem($nav-item-round-height - 2 * $nav-item-round-border)
+  margin: rem((($nav-item-height - $nav-item-round-height) / 2) 0)
+  padding: rem(0 25px)
+  border-radius: rem($nav-item-round-height / 2)
+  color: #FFF
+  border: $nav-item-round-border solid #FFF
+  transition: background .2s, color .2s, border-color .2s
+  transition-timing-function: ease-out-cubic
+
+  &:visited, &:active
+    color: #FFF
+
+  &:hover
+    text-decoration: none
+    background: #FFF
+    color: #666
+
+.nav__list-item
+  float: left
+
+.nav__list--main .nav__item--round
+  margin-right: rem(5px)
+
+.nav__list--secondary .nav__item--round
+  margin-left: rem(5px)
+
+.nav__logo
+  display: block
+  width: 0
+  opacity: 0
+  height: rem($nav-logo-height)
+  margin: rem((($nav-item-height - $nav-logo-height) / 2) 0)
+  background: url('nav-logo-small_light.png') no-repeat
+  transition: width .3s, opacity .3s
+  transition-timing-function: ease-out-cubic
+  +retina()
+    background: url('nav-logo-small@2x_light.png') no-repeat
+    background-size: $nav-logo-width $nav-logo-height
+
+  &:hover
+    text-decoration: none
+
+.nav.showlogo, .layout--immersive
+  .nav__logo
+    width: rem($nav-logo-width + 10)
+    opacity: 1
+
+.nav.floating
+  background: rgba(#FFF, 0.98)
+
+  .nav__item
+    color: $text-color
+    &.nav--active
+      border-color: $nav-item-active-color
+    &:hover
+      border-color: $nav-item-hover-color
+      background: #F8F8F8
+
+  .nav__item--round
+    border-color: $primary-color
+    color: $primary-color
+
+    &:hover
+      background-color: $primary-color
+      color: #FFF
+
+  .nav__logo
+    background-image: url('nav-logo-small_dark.png')
+    +retina()
+      background-image: url('nav-logo-small@2x_dark.png')
+
+.nav--shadow.floating
+  box-shadow: 0 0 6px rgba(#000, 0.3)
+
+// For Mobile: show a slideout vertical arranged menu
++mobile()
+
+  .nav .columns
+    padding: 0
+
+  .nav--slideout-trigger
+    display: block
+
+  .nav--shadow
+    display: none
+
+  .nav.slideout-menu
+    background: #1D1F20
+
+  .nav__list
+    float: none
+
+  .nav__list-item
+    float: none
+
+  .nav__logo
+    width: auto !important
+    opacity: 1 !important
+    background-position: center center
+    margin: 0
+    height: rem($nav-logo-height + 40px)
+
+  .nav__item,
+  .nav__item--round,
+  .nav__list--secondary .nav__item--round,
+  .nav .dropdown-target.menu .menu__link
+    line-height: rem($nav-item-height - 6)
+    padding: rem(0 20px 3px 20px)
+    border: 0
+    border-left: 3px solid transparent
+    margin: 0
+    border-radius: 0
+    background: none
+    color: #FFF
+
+    &.nav--active
+      border-color: $nav-item-active-color
+
+    &:visited, &:active
+      background: none
+      color: #FFF
+
+    &:hover
+      border-color: $nav-item-hover-color
+      background: rgba(#FFF, 0.10)
+      color: #FFF
+
+  .nav .dropdown-target.menu
+    display: block
+    background: none
+    border: 0
+    box-shadow: none
+
+    .menu__link
+      padding-left: rem(35px)
+
+    .menu__seperator
+      display: none
+
+  .nav__list--secondary
+    border-top: 1px solid #666

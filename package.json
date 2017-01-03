@@ -5,7 +5,13 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "generate:constant": "gulp constant"
+    "generate:constant": "gulp constant",
+    "generate:icon": "gulp iconfont",
+    "generate:locale": "gulp locale",
+    "generate": "gulp",
+    "build": "webpack --progress --color --display-error-details",
+    "build:production": "npm run build -- --env.production -p --optimize-dedupe",
+    "watch": "npm run build -- --env.watch -d --watch"
   },
   "repository": {
     "type": "git",
@@ -104,6 +110,7 @@
     "tether-drop": "^1.4.2",
     "timeago-react": "^1.0.7",
     "timeago.js": "^2.0.4",
+    "trianglify": "^1.0.1",
     "uuid": "^3.0.1"
   },
   "babel": {

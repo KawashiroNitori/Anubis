@@ -1,0 +1,88 @@
+@import 'section.inc.styl'
+@import '../components/form/var.inc.styl'
+
+.immersive-section, .section
+  margin-bottom: rem($section-margin)
+
+  &::before, &::after
+    content: ' '
+    display: table
+
+  &.side
+    font-size: rem($font-size-secondary)
+
+.section
+  background: #FFF
+  box-shadow: rem(0) rem(6px) rem(22px) rgba(#AFC2C9, 0.5)
+  transition: transform .5s, opacity .5s
+  transition-timing-function: ease-out-cubic
+
+.hasjs .section
+  transform: translateY(rem(30px))
+  opacity: 0
+
+  &.visible
+    transform: none
+    opacity: 1
+
+.section__header
+  padding: rem($section-gap-v) rem($section-gap-h) 0.7em
+  position: relative
+
+.section__body
+  padding: 0.7em rem($section-gap-h)
+
+  &:first-child
+    padding-top: rem($section-gap-v)
+
+  &:last-child
+    padding-bottom: rem($section-gap-v)
+
+  &.no-padding
+    padding: 0
+
+.section__footer
+  border-top: 1px solid $table-border-color
+  padding: rem($section-gap-h)
+
+.section__title
+  color: #666
+
+.section__header .section__title
+  line-height: $form-control-height
+
+h1.section__title
+  font-size: 1.4rem
+
+h2.section__title
+  font-size: 1.2rem
+
+h3.section__title
+  font-size: 1rem
+
+.section__tools
+  position: absolute
+  right: rem($section-gap-h)
+  top: rem($section-gap-v)
+  font-size: rem($font-size-secondary)
+
+  .tool-button
+    appearance: none
+    border: 0
+    background: none
+    color: #AAA
+    margin-left: rem(5px)
+    padding: rem(0 5px)
+    line-height: rem(24px)
+    font-size: rem($font-size-small)
+    outline: 0
+
+    &:hover
+      color: #444
+
+.section__list__item
+  padding: rem($section-gap-v $section-gap-h)
+  border-bottom: 1px solid $table-border-color
+
+  &:last-child
+    border-bottom: 0

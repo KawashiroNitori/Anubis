@@ -9,7 +9,7 @@ import 'normalize.css/normalize.css';
 import 'codemirror/lib/codemirror.css';
 
 import {PageLoader} from './misc/PageLoader';
-import delay from './util/delay';
+import delay from './utils/delay';
 
 const pageLoader = new PageLoader();
 
