@@ -6,8 +6,8 @@ import gulp from 'gulp';
 import svgmin from 'gulp-svgmin';
 import iconfont from 'gulp-iconfont';
 import nunjucks from 'gulp-nunjucks';
-import generateConstant from './scripts/build/gulp';
-import generateLocale from './scripts/build/gulp';
+import generateConstant from './scripts/build/constant/gulp';
+import generateLocale from './scripts/build/constant/gulp';
 
 const iconTimestamp = ~~(Date.now() / 1000);
 

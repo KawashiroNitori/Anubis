@@ -1,0 +1,38 @@
+parser: babel-eslint
+plugins:
+  - babel
+  - react
+env:
+  browser: true
+  es6: true
+  jquery: true
+  commonjs: true
+extends:
+  - airbnb
+parserOptions:
+  sourceType: module
+  ecmaVersion: 2016
+  ecmaFeatures:
+    - impliedStrict
+    # - experimentalObjectRestSpread
+    - jsx
+globals:
+  __webpack_public_path__: true
+  __webpack_require__: true
+  UiContext: true
+  UserContext: true
+  Context: true
+  LOCALES: true
+rules:
+  no-unused-vars: warn
+  no-console: off
+  no-underscore-dangle: off
+  func-names: off
+  indent:
+    - error
+    - 4
+    - {SwitchCase: 1}
+  max-len:
+    - error
+    - 80
+  react/prefer-stateless-function: off
