@@ -11,11 +11,25 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="msapplication-TileColor" content="#336699">
+  <meta name="theme-color" content="#336699">
 
-  <link rel="app">
-  <title>Title</title>
+  <link rel="stylesheet" media="all" href="{{ static_url('vendors.css') }}">
+  <link rel="stylesheet" media="all" href="{{ static_url('anubis.css') }}">
+  <title>{{ page_title }} - SUT Online Judge</title>
+  <script>
+    var _htmlNode = document.documentElement;
+    _htmlNode.className = _htmlNode.className.replace(' nojs', ' hasjs');
+    var UiContext = {{ handler.ui_context|json|safe }};
+    var UserContext = {{ handler.user_context|json|safe }};
+  </script>
 </head>
 <body>
-
+  {% block body %}{% endblock %}
+  <!-- TODO: includes jQuery, JSON3, ES5-shim in the shim -->
+  <script src="{{ static_url('shim.js') }}"></script>
+  <script src="{{ static_url('vendors.js') }}"></script>
+  <script src="{{ static_url('locale/{0}.js'.format(handler.view_lang)) }}"></script>
+  <script src="{{ static_url('anubis.js') }}"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@ import 'jquery.transit';
 import 'normalize.css/normalize.css';
 import 'codemirror/lib/codemirror.css';
 
-import {PageLoader} from './misc/PageLoader';
+import { PageLoader } from './misc/PageLoader';
 import delay from './utils/delay';
 
 const pageLoader = new PageLoader();

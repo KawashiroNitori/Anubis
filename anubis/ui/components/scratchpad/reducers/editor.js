@@ -10,23 +10,23 @@ int main()
 `.trim();
 
 export default function reducer(state = {
-  lang: 'cc',
-  code: defaultCode,
+    lang: 'cc',
+    code: defaultCode,
 }, action) {
-  switch (action.type) {
-  case 'SCRATCHPAD_EDITOR_UPDATE_CODE': {
-    return {
-      ...state,
-      code: action.payload,
-    };
-  }
-  case 'SCRATCHPAD_EDITOR_SET_LANG': {
-    return {
-      ...state,
-      lang: action.payload,
-    };
-  }
-  default:
-    return state;
-  }
+    switch (action.type) {
+        case 'SCRATCHPAD_EDITOR_UPDATE_CODE': {
+            return {
+                ...state,
+                code: action.payload,
+            };
+        }
+        case 'SCRATCHPAD_EDITOR_SET_LANG': {
+            return {
+                ...state,
+                lang: action.payload,
+            };
+        }
+        default:
+            return state;
+    }
 }

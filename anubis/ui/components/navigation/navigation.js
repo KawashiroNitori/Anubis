@@ -2,88 +2,88 @@ import _ from 'lodash';
 import responsiveCutoff from '../../responsive.inc.js';
 
 class MultipleStateContainer {
-  constructor(onStateChange, initialState = false) {
-    this.onStateChange = onStateChange;
-    this.states = {};
-    this.currentState = initialState;
-  }
-
-  set(name, value, update = true) {
-    this.states[name] = value;
-    if (update) {
-      this.update();
+    constructor(onStateChange, initialState = false) {
+        this.onStateChange = onStateChange;
+        this.states = {};
+        this.currentState = initialState;
     }
-  }
 
-  get() {
-    return this.states[name];
-  }
-
-  update() {
-    const newState = this.getState();
-    if (newState !== this.currentState) {
-      this.onStateChange(newState);
-      this.currentState = newState;
+    set(name, value, update = true) {
+        this.states[name] = value;
+        if (update) {
+            this.update();
+        }
     }
-  }
 
-  getState() {
-    return _.values(this.states).indexOf(true) > -1;
-  }
+    get() {
+        return this.states[name];
+    }
+
+    update() {
+        const newState = this.getState();
+        if (newState !== this.currentState) {
+            this.onStateChange(newState);
+            this.currentState = newState;
+        }
+    }
+
+    getState() {
+        return _.values(this.states).indexOf(true) > -1;
+    }
 }
 
 class Navigation {
-  constructor($nav, $navShadow) {
-    this.updateExpandWidth = _.throttle(this.updateExpandWidthImmediate.bind(this), 200);
-    this.$nav = $nav;
-    this.$navRow = $nav.children('.row');
-    this.$navShadow = $navShadow;
-    this.floating = new MultipleStateContainer(this.updateFloating.bind(this));
-    this.logoVisible = new MultipleStateContainer(this.updateLogoVisibility.bind(this));
-    this.expanded = new MultipleStateContainer(this.updateExpandState.bind(this));
-  }
-
-  updateFloating(state) {
-    if (state) {
-      this.$nav.addClass('floating');
-      this.$navShadow.addClass('floating');
-    } else {
-      this.$nav.removeClass('floating');
-      this.$navShadow.removeClass('floating');
+    constructor($nav, $navShadow) {
+        this.updateExpandWidth = _.throttle(this.updateExpandWidthImmediate.bind(this), 200);
+        this.$nav = $nav;
+        this.$navRow = $nav.children('.row');
+        this.$navShadow = $navShadow;
+        this.floating = new MultipleStateContainer(this.updateFloating.bind(this));
+        this.logoVisible = new MultipleStateContainer(this.updateLogoVisibility.bind(this));
+        this.expanded = new MultipleStateContainer(this.updateExpandState.bind(this));
     }
-  }
 
-  updateLogoVisibility(state) {
-    if (state) {
-      this.$nav.addClass('showlogo');
-    } else {
-      this.$nav.removeClass('showlogo');
+    updateFloating(state) {
+        if (state) {
+            this.$nav.addClass('floating');
+            this.$navShadow.addClass('floating');
+        } else {
+            this.$nav.removeClass('floating');
+            this.$navShadow.removeClass('floating');
+        }
     }
-  }
 
-  updateExpandWidthImmediate() {
-    this.$navRow.css('max-width', `${window.innerWidth}px`);
-  }
+    updateLogoVisibility(state) {
+        if (state) {
+            this.$nav.addClass('showlogo');
+        } else {
+            this.$nav.removeClass('showlogo');
+        }
+    }
 
-  updateExpandState(state) {
-    if (state) {
-      $(window).on('resize', this.updateExpandWidth);
-      this.updateExpandWidthImmediate();
-    } else {
-      $(window).off('resize', this.updateExpandWidth);
-      this.$navRow.css('max-width', '');
+    updateExpandWidthImmediate() {
+        this.$navRow.css('max-width', `${window.innerWidth}px`);
     }
-  }
 
-  getHeight() {
-    if (this.$nav.length === 0) {
-      return 0;
+    updateExpandState(state) {
+        if (state) {
+            $(window).on('resize', this.updateExpandWidth);
+            this.updateExpandWidthImmediate();
+        } else {
+            $(window).off('resize', this.updateExpandWidth);
+            this.$navRow.css('max-width', '');
+        }
     }
-    if (window.innerWidth < responsiveCutoff.mobile) {
-      return 0;
+
+    getHeight() {
+        if (this.$nav.length === 0) {
+            return 0;
+        }
+        if (window.innerWidth < responsiveCutoff.mobile) {
+            return 0;
+        }
+        return this.$nav.height();
     }
-    return this.$nav.height();
-  }
 }
 
 Navigation.instance = new Navigation($('.nav'), $('.nav--shadow'));

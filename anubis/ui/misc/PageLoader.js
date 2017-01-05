@@ -15,7 +15,7 @@ export class Page {
 }
 
 export class NamedPage extends Page {
-    constructor(name = 'empty', afterLoading = function() {}, beforeLoading = function () {}) {
+    constructor(name = 'empty', afterLoading = function () {}, beforeLoading = function () {}) {
         super(name, false, afterLoading, beforeLoading);
     }
 }
@@ -40,7 +40,7 @@ export class PageLoader {
     getNamedPage(pageName) {
         const pages = this.pageInstances.filter(page => page.name === pageName);
         if (pages.length > 0) {
-            return page[0];
+            return pages[0];
         }
         return new NamedPage();
     }

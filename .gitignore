@@ -216,3 +216,5 @@ node_modules/
 /anubis/.static_build/
 .cache/
 /anubis/ui/misc/.iconfont/
+/anubis/ui/static/locale/
+/anubis/.uibuild/

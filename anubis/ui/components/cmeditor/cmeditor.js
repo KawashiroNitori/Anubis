@@ -3,65 +3,65 @@ import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class CmEditor extends DOMAttachedObject {
 
-  static DOMAttachKey = 'vjCmEditorInstance';
+    static DOMAttachKey = 'anubisCmEditorInstance';
 
-  constructor($dom, options = {}) {
-    super($dom);
-    this.editor = null;
-    this.options = options;
-    this.init();
-  }
-
-  async init() {
-    const { default: VjCmEditor } = await System.import('./vjcmeditor');
-
-    const hasFocus = this.$dom.is(':focus');
-    const srcHeight = this.$dom.outerHeight();
-
-    this.editor = new VjCmEditor({
-      ...this.options,
-      element: this.$dom.get(0),
-    });
-    this.moveToEnd();
-
-    const $editor = $(this.editor.wrapper);
-    $editor.css('height', srcHeight);
-    $editor.addClass('toolbar--visible');
-
-    if (hasFocus) {
-      this.focus();
+    constructor($dom, options = {}) {
+        super($dom);
+        this.editor = null;
+        this.options = options;
+        this.init();
     }
-  }
 
-  isValid() {
-    return (this.editor !== null);
-  }
+    async init() {
+        const { default: WrappedCmEditor } = await System.import('./wrappedCmEditor');
 
-  ensureValid() {
-    if (!this.isValid()) {
-      throw new Error('VjCmEditor is not loaded');
+        const hasFocus = this.$dom.is(':focus');
+        const srcHeight = this.$dom.outerHeight();
+
+        this.editor = new WrappedCmEditor({
+            ...this.options,
+            element: this.$dom.get(0),
+        });
+        this.moveToEnd();
+
+        const $editor = $(this.editor.wrapper);
+        $editor.css('height', srcHeight);
+        $editor.addClass('toolbar--visible');
+
+        if (hasFocus) {
+            this.focus();
+        }
     }
-  }
 
-  value(...argv) {
-    this.ensureValid();
-    const ret = this.editor.value(...argv);
-    if (argv.length > 0) {
-      this.moveToEnd();
+    isValid() {
+        return (this.editor !== null);
     }
-    return ret;
-  }
 
-  focus() {
-    this.ensureValid();
-    this.editor.codemirror.focus();
-  }
+    ensureValid() {
+        if (!this.isValid()) {
+            throw new Error('CmEditor is not loaded');
+        }
+    }
 
-  moveToEnd() {
-    this.ensureValid();
-    const cm = this.editor.codemirror;
-    cm.setCursor(cm.lineCount(), 0);
-  }
+    value(...argv) {
+        this.ensureValid();
+        const ret = this.editor.value(...argv);
+        if (argv.length > 0) {
+            this.moveToEnd();
+        }
+        return ret;
+    }
+
+    focus() {
+        this.ensureValid();
+        this.editor.codemirror.focus();
+    }
+
+    moveToEnd() {
+        this.ensureValid();
+        const cm = this.editor.codemirror;
+        cm.setCursor(cm.lineCount(), 0);
+    }
 
 }
 

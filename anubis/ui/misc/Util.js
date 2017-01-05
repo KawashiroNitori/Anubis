@@ -5,7 +5,7 @@ export async function ajax(options) {
     try {
         const data = await $.ajax({
             dataType: 'json',
-            ...options
+            ...options,
         });
         return data;
     } catch (resp) {
@@ -24,16 +24,13 @@ export function post(url, dataOrForm = {}) {
     if (dataOrForm instanceof jQuery && dataOrForm.is('form')) {
         // $form
         postData = dataOrForm.serialize();
-    }
-    else if (dataOrForm instanceof Node && $(dataOrForm).is('form')) {
+    } else if (dataOrForm instanceof Node && $(dataOrForm).is('form')) {
         // form
         postData = $(dataOrForm).serialize();
-    }
-    else if (typeof dataOrForm === 'string') {
-        //x-url-encoded
+    } else if (typeof dataOrForm === 'string') {
+        // x-url-encoded
         postData = dataOrForm;
-    }
-    else {
+    } else {
         // json
         postData = $.param({
             csrf_token: UiContext.csrf_token,

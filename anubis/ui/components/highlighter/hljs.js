@@ -13,11 +13,11 @@ hljs.registerLanguage('python', langPy);
 
 const hljsApiWrap = {
 
-  highlightBlocks: ($dom) => {
-    for (const block of $dom.find('pre code')) {
-      hljs.highlightBlock(block);
-    }
-  },
+    highlightBlocks: ($dom) => {
+        for (const block of $dom.find('pre code')) {
+            hljs.highlightBlock(block);
+        }
+    },
 
 };
 

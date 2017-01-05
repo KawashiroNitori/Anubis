@@ -6,11 +6,11 @@ import records from './records';
 import problem from './problem';
 
 const reducer = combineReducers({
-  ui,
-  editor,
-  pretest,
-  records,
-  problem,
+    ui,
+    editor,
+    pretest,
+    records,
+    problem,
 });
 
 export default reducer;

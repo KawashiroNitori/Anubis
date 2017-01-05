@@ -1,10 +1,10 @@
 /**
  * Created by Nitori on 2017/1/3.
  */
-let removalChecker = nulll;
+let removalChecker = null;
 const res = [];
 function checkResources() {
-    for (let i = res.length - 1; i >= 0 ; --i) {
+    for (let i = res.length - 1; i >= 0; --i) {
         if (res[i].detached || !document.body.contains(res[i].$dom[0])) {
             if (!res[i].detached) {
                 res[i].detach();

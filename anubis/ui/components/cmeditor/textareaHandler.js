@@ -4,30 +4,30 @@ import CmEditor from './cmeditor';
 
 export default class TextareaHandler extends DOMAttachedObject {
 
-  static DOMAttachKey = 'vjTextareaHandlerInstance';
+    static DOMAttachKey = 'anubisTextareaHandlerInstance';
 
-  getCmEditor() {
-    return CmEditor.get(this.$dom);
-  }
-
-  isCmEditor() {
-    const editor = this.getCmEditor();
-    return (editor !== undefined && editor.isValid());
-  }
-
-  val(...argv) {
-    if (this.isCmEditor()) {
-      return this.getCmEditor().value(...argv);
+    getCmEditor() {
+        return CmEditor.get(this.$dom);
     }
-    return this.$dom.val(...argv);
-  }
 
-  focus() {
-    if (this.isCmEditor()) {
-      this.getCmEditor().focus();
+    isCmEditor() {
+        const editor = this.getCmEditor();
+        return (editor !== undefined && editor.isValid());
     }
-    this.$dom.focus();
-  }
+
+    val(...argv) {
+        if (this.isCmEditor()) {
+            return this.getCmEditor().value(...argv);
+        }
+        return this.$dom.val(...argv);
+    }
+
+    focus() {
+        if (this.isCmEditor()) {
+            this.getCmEditor().focus();
+        }
+        this.$dom.focus();
+    }
 
 }
 

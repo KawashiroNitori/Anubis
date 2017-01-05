@@ -25,6 +25,7 @@ globals:
   LOCALES: true
 rules:
   no-unused-vars: warn
+  camelcase: off
   no-console: off
   no-underscore-dangle: off
   func-names: off
@@ -34,5 +35,5 @@ rules:
     - {SwitchCase: 1}
   max-len:
     - error
-    - 80
+    - 150
   react/prefer-stateless-function: off

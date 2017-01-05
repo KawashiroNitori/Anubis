@@ -6,50 +6,50 @@ import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
 
-  static DOMAttachKey = 'vjStyledTableInstance';
+    static DOMAttachKey = 'anubisStyledTableInstance';
 
-  static attachAll() {
-    for (const table of $('.section__body > .data-table')) {
-      StyledTable.getOrConstruct($(table)).attach();
-    }
-  }
-
-  constructor($dom) {
-    super($dom);
-    this.attached = false;
-  }
-
-  attach() {
-    if (this.attached) {
-      return false;
+    static attachAll() {
+        for (const table of $('.section__body > .data-table')) {
+            StyledTable.getOrConstruct($(table)).attach();
+        }
     }
 
-    this.$container = $('<div>').addClass('section__table-container');
-    this.$container.insertBefore(this.$dom);
+    constructor($dom) {
+        super($dom);
+        this.attached = false;
+    }
 
-    this.$header = $('<table>');
-    this.$header.attr('class', `${this.$dom.attr('class')} section__table-header`);
+    attach() {
+        if (this.attached) {
+            return false;
+        }
 
-    this.$container
-      .append(this.$header)
-      .append(this.$dom);
+        this.$container = $('<div>').addClass('section__table-container');
+        this.$container.insertBefore(this.$dom);
 
-    this.update();
+        this.$header = $('<table>');
+        this.$header.attr('class', `${this.$dom.attr('class')} section__table-header`);
 
-    const stickyOptions = {
-      parent: this.$container,
-      offset_top: Navigation.instance.getHeight(),
-    };
-    this.$header.stick_in_parent(stickyOptions);
+        this.$container
+            .append(this.$header)
+            .append(this.$dom);
 
-    return true;
-  }
+        this.update();
 
-  update() {
-    this.$header.empty();
-    this.$dom.children('colgroup').clone().appendTo(this.$header);
-    this.$dom.children('thead').appendTo(this.$header);
-  }
+        const stickyOptions = {
+            parent: this.$container,
+            offset_top: Navigation.instance.getHeight(),
+        };
+        this.$header.stick_in_parent(stickyOptions);
+
+        return true;
+    }
+
+    update() {
+        this.$header.empty();
+        this.$dom.children('colgroup').clone().appendTo(this.$header);
+        this.$dom.children('thead').appendTo(this.$header);
+    }
 
 }
 

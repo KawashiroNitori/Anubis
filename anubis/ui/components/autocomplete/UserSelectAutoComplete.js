@@ -6,15 +6,15 @@ import tpl from '../../utils/tpl';
 import * as util from '../../misc/Util';
 
 function getText(user) {
-  return user.uname;
+    return user.uname;
 }
 
 function getItems(val) {
-  return util.get('/user/search', { q: val });
+    return util.get('/user/search', {q: val});
 }
 
 function renderItem(user) {
-  return tpl`
+    return tpl`
     <div class="media">
       <div class="media__left medium">
         <img class="small user-profile-avatar" src="${user.gravatar_url}" width="30" height="30">
@@ -29,26 +29,26 @@ function renderItem(user) {
 
 export default class UserSelectAutoComplete extends DOMAttachedObject {
 
-  static DOMAttachKey = 'vjUserSelectAutoCompleteInstance';
+    static DOMAttachKey = 'anubisUserSelectAutoCompleteInstance';
 
-  constructor($dom) {
-    super($dom);
-    this.autocompleteInstance = AutoComplete.getOrConstruct(this.$dom, {
-      classes: 'user-select',
-      items: getItems,
-      render: renderItem,
-      text: getText,
-    });
-  }
+    constructor($dom) {
+        super($dom);
+        this.autocompleteInstance = AutoComplete.getOrConstruct(this.$dom, {
+            classes: 'user-select',
+            items: getItems,
+            render: renderItem,
+            text: getText,
+        });
+    }
 
-  detach() {
-    super.detach();
-    this.autocompleteInstance.detach();
-  }
+    detach() {
+        super.detach();
+        this.autocompleteInstance.detach();
+    }
 
-  value() {
-    return this.autocompleteInstance.value();
-  }
+    value() {
+        return this.autocompleteInstance.value();
+    }
 
 }
 

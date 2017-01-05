@@ -12,65 +12,66 @@ import i18n from '../../utils/i18n';
 import * as util from '../../misc/Util';
 
 const mapDispatchToProps = (dispatch) => ({
-  loadSubmissions() {
-    dispatch({
-      type: 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS',
-      payload: util.get(Context.getSubmissionsUrl),
-    });
-  },
-  handleClickClose() {
-    dispatch({
-      type: 'SCRATCHPAD_UI_SET_VISIBILITY',
-      payload: {
-        uiElement: 'records',
-        visibility: false,
-      },
-    });
-  },
-  handleClickRefresh() {
-    this.loadSubmissions();
-  },
+    loadSubmissions() {
+        dispatch({
+            type: 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS',
+            payload: util.get(Context.getSubmissionsUrl),
+        });
+    },
+    handleClickClose() {
+        dispatch({
+            type: 'SCRATCHPAD_UI_SET_VISIBILITY',
+            payload: {
+                uiElement: 'records',
+                visibility: false,
+            },
+        });
+    },
+    handleClickRefresh() {
+        this.loadSubmissions();
+    },
 });
 
 @connect(null, mapDispatchToProps)
 export default class ScratchpadRecordsContainer extends React.PureComponent {
-  render() {
-    return (
-      <Panel
-        title={<span><Icon name="flag" /> {i18n('Records')}</span>}
-      >
-        <Tabs
-          className="scratchpad__panel-tab flex-col flex-fill"
-          activeKey={"all"}
-          animation="slide-horizontal"
-          renderTabBar={() => <ScrollableInkTabBar
-            extraContent={
-              <span>
+    render() {
+        return (
+            <Panel
+                title={<span><Icon name="flag"/> {i18n('Records')}</span>}
+            >
+                <Tabs
+                    className="scratchpad__panel-tab flex-col flex-fill"
+                    activeKey={"all"}
+                    animation="slide-horizontal"
+                    renderTabBar={() => <ScrollableInkTabBar
+                        extraContent={
+                            <span>
                 <PanelButton
-                  data-tooltip={i18n('Refresh Records')}
-                  data-tooltip-pos="top right"
-                  onClick={() => this.props.handleClickRefresh()}
+                    data-tooltip={i18n('Refresh Records')}
+                    data-tooltip-pos="top right"
+                    onClick={() => this.props.handleClickRefresh()}
                 >
                   {i18n('Refresh')}
                 </PanelButton>
                 <PanelButton
-                  onClick={() => this.props.handleClickClose()}
+                    onClick={() => this.props.handleClickClose()}
                 >
-                  <Icon name="close" />
+                  <Icon name="close"/>
                 </PanelButton>
               </span>
-            }
-          />}
-          renderTabContent={() => <TabContent />}
-        >
-          <TabPane tab={<span>All</span>} key="all">
-            <ScratchpadRecordsTable />
-          </TabPane>
-        </Tabs>
-      </Panel>
-    );
-  }
-  componentDidMount() {
-    this.props.loadSubmissions();
-  }
+                        }
+                    />}
+                    renderTabContent={() => <TabContent />}
+                >
+                    <TabPane tab={<span>All</span>} key="all">
+                        <ScratchpadRecordsTable />
+                    </TabPane>
+                </Tabs>
+            </Panel>
+        );
+    }
+
+    componentDidMount() {
+        this.props.loadSubmissions();
+    }
 }

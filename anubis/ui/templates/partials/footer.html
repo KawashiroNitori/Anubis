@@ -1,0 +1,18 @@
+<div class="footer">
+  <div class="row"><div class="columns">
+    {% if show_topics|default(true) %}
+    <div class="footer_links clearfix">
+      <div class="footer__category">
+        <h1>{{ _('Status') }}</h1>
+        <ul class="footer__category__list">
+          <li class="footer__category__item"><a href="{{ reverse_url('record_main') }}">{{ _('Judging Queue') }}</a></li>
+          <li class="footer__category__item"><a href="#">{{ _('Service Status') }}</a> </li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+    <div class="footer__extra-link clearfix">
+
+    </div>
+  </div></div>
+</div>
