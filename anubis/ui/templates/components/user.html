@@ -7,7 +7,7 @@
 ) %}
 <span class="user-profile-link inlined v-center">
   {% if avatar %}
-    <img class="v-center small user-profile-avatar" src="{{ udoc['gravatar']|gravatar_url }}" width="20" height="20">
+    <img class="v-center small user-profile-avatar" src="{{ udoc['gravatar'] }}" width="20" height="20">
   {% endif %}
     <a class="v-center user-profile-name" href="{{ reverse_url('user_detail', uid=udoc['_id']) }}">
       {{ udoc['_id'] }}

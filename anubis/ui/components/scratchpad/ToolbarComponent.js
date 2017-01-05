@@ -64,7 +64,7 @@ export function ToolbarSplitComponent(props) {
     } = props;
     const cn = classNames(className, 'scratchpad__toolbar__item scratchpad__toolbar__split');
     return (
-        <div {...rest} className={cn}/>
+        <div {...rest} className={cn} />
     );
 }
 

@@ -27,7 +27,6 @@
 <body>
   {% block body %}{% endblock %}
   <!-- TODO: includes jQuery, JSON3, ES5-shim in the shim -->
-  <script src="{{ static_url('shim.js') }}"></script>
   <script src="{{ static_url('vendors.js') }}"></script>
   <script src="{{ static_url('locale/{0}.js'.format(handler.view_lang)) }}"></script>
   <script src="{{ static_url('anubis.js') }}"></script>

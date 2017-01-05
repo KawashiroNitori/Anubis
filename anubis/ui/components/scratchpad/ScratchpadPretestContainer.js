@@ -49,7 +49,7 @@ export default class ScratchpadPretestContainer extends React.PureComponent {
     render() {
         return (
             <Panel
-                title={<span><Icon name="edit"/> {i18n('Pretest')}</span>}
+                title={<span><Icon name="edit" /> {i18n('Pretest')}</span>}
             >
                 <Tabs
                     className="scratchpad__panel-tab flex-col flex-fill"
@@ -74,7 +74,7 @@ export default class ScratchpadPretestContainer extends React.PureComponent {
                 <PanelButton
                     onClick={() => this.props.handleClickClose()}
                 >
-                  <Icon name="close"/>
+                  <Icon name="close" />
                 </PanelButton>
               </span>
                         }
@@ -83,7 +83,7 @@ export default class ScratchpadPretestContainer extends React.PureComponent {
                 >
                     {this.props.tabs.map(tabId => (
                         <TabPane tab={this.props.meta[tabId].title} key={tabId}>
-                            <ScratchpadPretestTabPane id={tabId}/>
+                            <ScratchpadPretestTabPane id={tabId} />
                         </TabPane>
                     ))}
                 </Tabs>

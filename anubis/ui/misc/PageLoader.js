@@ -2,7 +2,7 @@
  * Created by Nitori on 2017/1/3.
  */
 // Load all page stylesheets
-const pageStyleReq = require.context('../', true, /\.page\.js$/i);
+const pageStyleReq = require.context('../', true, /\.page\.styl$/i);
 pageStyleReq.keys().map(key => pageStyleReq(key).default);
 
 export class Page {

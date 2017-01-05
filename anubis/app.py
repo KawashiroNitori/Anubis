@@ -45,9 +45,10 @@ class Application(web.Application):
         ))
 
         from anubis.handler import domain
+        from anubis.handler import user
         if options.options.static:
             self.router.add_static(
-                '/static/', path.join(path.dirname(__file__), '.static_build'), name='static')
+                '/', path.join(path.dirname(__file__), '.static_build'), name='static')
 
 
 def route(url, name):

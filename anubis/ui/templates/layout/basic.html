@@ -5,7 +5,7 @@
 {% include "partials/nav.html" %}
 
 <div class="slideout-panel" id="panel">
-  {% include "partials/nav_hanburger.html" %}
+  {% include "partials/nav_hamburger.html" %}
   <div class="header{% if header_mini %} mini{% endif %}">
     <div class="header-content"><div class="row"><div class="columns">
           <a class="header__logo" href="{{ reverse_url('domain_main', domain_id=anubis.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
@@ -24,5 +24,9 @@
   <div class="main">
     {% block content %}{% endblock %}
   </div>
-  {% include "partials/fo" %}
+  {% include "partials/footer.html" %}
 </div>
+
+{% include "partials/login_dialog.html" %}
+
+{% endblock %}

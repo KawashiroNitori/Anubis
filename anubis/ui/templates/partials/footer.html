@@ -5,14 +5,40 @@
       <div class="footer__category">
         <h1>{{ _('Status') }}</h1>
         <ul class="footer__category__list">
-          <li class="footer__category__item"><a href="{{ reverse_url('record_main') }}">{{ _('Judging Queue') }}</a></li>
+          <li class="footer__category__item"><a href="{# reverse_url('record_main') #}#">{{ _('Judging Queue') }}</a></li>
           <li class="footer__category__item"><a href="#">{{ _('Service Status') }}</a> </li>
         </ul>
       </div>
     </div>
     {% endif %}
     <div class="footer__extra-link clearfix">
-
+      <div class="footer__extra-left">
+        <ol class="clearfix">
+          <li class="footer__extra-link-item"><a href="http://acm.sut.edu.cn">{{ _('Contact Us') }}</a></li>
+          <li class="footer__extra-link-item"><a href="#">{{ _('About') }}</a></li>
+          <li class="footer__extra-link-item"><a href="#">{{ _('Privacy') }}</a></li>
+          <li class="footer__extra-link-item"><a href="#">{{ _('Security') }}</a></li>
+          <li class="footer__extra-link-item" data-dropdown-target="#menu-footer-lang">
+            <span>
+              <span class="icon icon-global"></span>
+              Language
+              <span class="icon icon-expand_less"></span>
+            </span>
+            <ol class="dropdown-target menu" id="menu-footer-lang">
+              {% for code, name in anubis.util.locale.VIEW_LANGS.items() %}
+              <li class="menu__item"><a class="menu__link" href="/lang/{{ code }}">{{ name }}</a></li>
+              {% endfor %}
+            </ol>
+          </li>
+        </ol>
+      </div>
+      <div class="footer__extra-right">
+        <ol class="clearfix">
+          {% for html in anubis.model.builtin.FOOTER_EXTRA_HTML %}
+          <li class="footer__extra-link-item">{{ html|safe }}</li>
+          {% endfor %}
+        </ol>
+      </div>
     </div>
   </div></div>
 </div>

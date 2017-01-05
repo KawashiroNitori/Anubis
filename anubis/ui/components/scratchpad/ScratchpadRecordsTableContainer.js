@@ -17,14 +17,14 @@ export default class ScratchpadRecordsTableContainer extends React.PureComponent
         return (
             <table className={cn}>
                 <colgroup>
-                    <col className="col--detail"/>
-                    <col className="col--memory"/>
-                    <col className="col--time"/>
-                    <col className="col--at"/>
+                    <col className="col--detail" />
+                    <col className="col--memory" />
+                    <col className="col--time" />
+                    <col className="col--at" />
                 </colgroup>
                 <tbody>
                 {this.props.rows.map(rowId => (
-                    <ScratchpadRecordsRow key={rowId} id={rowId}/>
+                    <ScratchpadRecordsRow key={rowId} id={rowId} />
                 ))}
                 </tbody>
             </table>

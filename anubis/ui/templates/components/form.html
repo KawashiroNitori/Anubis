@@ -31,7 +31,7 @@
 {% endmacro %}
 
 {% macro select(options, name='', value='') %}
-<select name="{{ name }}" {{ form_attr('select', **kwargs }}>
+<select name="{{ name }}" {{ form_attr('select', **kwargs) }}>
   {% for k, v in options %}
   <option value="{{ k }}"{% if value == k %} selected{% endif %}>
     {{ _(v) }}
@@ -59,7 +59,7 @@
 {% endmacro %}
 
 {% macro textarea(name='', value='', placeholder='') %}
-<textarea name="{{ name }}" placeholder="{{ placeholder }}" {{ form_attr('textbox', **kwargs }}>
+<textarea name="{{ name }}" placeholder="{{ placeholder }}" {{ form_attr('textbox', **kwargs) }}>
   {{ value }}
 </textarea>
 {% endmacro %}

@@ -9,7 +9,7 @@ export default function IconComponent(props) {
     } = props;
     const cn = classNames(className, `icon icon-${name}`);
     return (
-        <span {...rest} className={cn}/>
+        <span {...rest} className={cn} />
     );
 }
 

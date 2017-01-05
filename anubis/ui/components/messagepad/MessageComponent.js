@@ -16,7 +16,7 @@ export default function MessageComponent(props) {
     return (
         <li {...rest} className={cn}>
             <div className="messagepad__message__avatar">
-                <img src={faceUrl} alt="avatar" width="50" height="50" className="medium user-profile-avatar"/>
+                <img src={faceUrl} alt="avatar" width="50" height="50" className="medium user-profile-avatar" />
             </div>
             <div className="messagepad__message__body">
                 {children}

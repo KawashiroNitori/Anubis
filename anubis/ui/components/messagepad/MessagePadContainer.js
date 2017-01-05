@@ -32,7 +32,7 @@ export default class MessagePadContainer extends React.PureComponent {
                             onClick={() => this.props.onAdd()}
                             className="primary rounded button"
                         >
-                            <Icon name="add"/> {i18n('New')}
+                            <Icon name="add" /> {i18n('New')}
                         </button>
                     </div>
                     <MessagePadDialogueList />

@@ -111,7 +111,7 @@ export default class MessagePadInputContainer extends React.PureComponent {
                     disabled={!this.props.inputValue.trim().length || this.props.isPosting}
                     onClick={() => this.submit()}
                 >
-                    <Icon name="send"/>
+                    <Icon name="send" />
                 </button>
             </div>
         );

@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Hello</title>
-</head>
-<body>
-  <p>Hello world!</p>
-</body>
-</html>
+{% set header_mini = true %}
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="row">
+  <div class="large-9 columns">
+    {% if domain_id == anubis.model.builtin.DOMAIN_ID_SYSTEM %}
+    <p>\[E=mc^2\]</p>
+    {% else %}
+    <h3>Domain {{ domain_id }}'s Main Page</h3>
+    <p>\[e^{i\pi}+1=0\]</p>
+    {% endif %}
+  </div>
+  <div class="large-3 columns">
+  </div>
+</div>
+{% endblock %}

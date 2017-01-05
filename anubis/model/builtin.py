@@ -204,5 +204,9 @@ USER_GUEST = {
 
 USERS = [USER_SYSTEM, USER_GUEST]
 
-FOOTER_EXTRA_HTML = ['Copyright 2010 - 2017 <a href="http://acm.sut.edu.cn">ACM Laboratory DevTeam of SUT</a>',
-                     version.get()]
+FOOTER_EXTRA_HTML = [
+    '© 2010 - {0} <a href="http://acm.sut.edu.cn">ACM Laboratory DevTeam of SUT</a>'.format(
+        datetime.datetime.now().year
+    ),
+    version.get()
+]

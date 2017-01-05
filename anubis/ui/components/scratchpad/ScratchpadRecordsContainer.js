@@ -37,7 +37,7 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
     render() {
         return (
             <Panel
-                title={<span><Icon name="flag"/> {i18n('Records')}</span>}
+                title={<span><Icon name="flag" /> {i18n('Records')}</span>}
             >
                 <Tabs
                     className="scratchpad__panel-tab flex-col flex-fill"
@@ -56,7 +56,7 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
                 <PanelButton
                     onClick={() => this.props.handleClickClose()}
                 >
-                  <Icon name="close"/>
+                  <Icon name="close" />
                 </PanelButton>
               </span>
                         }

@@ -29,7 +29,7 @@ export default class AutoComplete extends DOMAttachedObject {
         };
         this.currentItems = [];
         this.$menu = $(`<ol class="menu ${this.options.classes}"></ol>`);
-        this.$menu.scrollLock({strict: false});
+        this.$menu.scrollLock({ strict: false });
         this.$menu.on('mousedown', this.onMenuClick.bind(this));
         this.$menu.on('mousedown', '.menu__item', this.onItemClick.bind(this));
         this.dropInstance = new Drop({

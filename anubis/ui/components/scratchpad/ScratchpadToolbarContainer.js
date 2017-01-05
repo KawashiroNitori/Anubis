@@ -92,7 +92,7 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
                     data-global-hotkey="f5"
                     data-tooltip={`${i18n('Pretest Your Code')} (F5)`}
                 >
-                    <Icon name="debug"/> {i18n('Run Pretest')} (F5)
+                    <Icon name="debug" /> {i18n('Run Pretest')} (F5)
                 </ToolbarButton>
                 <ToolbarButton
                     disabled={this.props.isPosting}
@@ -101,7 +101,7 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
                     data-global-hotkey="f10"
                     data-tooltip={`${i18n('Submit Your Code')} (F10)`}
                 >
-                    <Icon name="play"/> {i18n('Submit Solution')} (F10)
+                    <Icon name="play" /> {i18n('Submit Solution')} (F10)
                 </ToolbarButton>
                 <ToolbarItem>
                     <select
@@ -122,7 +122,7 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
                     data-global-hotkey="alt+p"
                     data-tooltip={`${i18n('Toggle Pretest Panel')} (Alt+P)`}
                 >
-                    <Icon name="edit"/> {i18n('Pretest')}
+                    <Icon name="edit" /> {i18n('Pretest')}
                 </ToolbarButton>
                 <ToolbarButton
                     activated={this.props.recordsVisible}
@@ -130,7 +130,7 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
                     data-global-hotkey="alt+r"
                     data-tooltip={`${i18n('Toggle Records Panel')} (Alt+R)`}
                 >
-                    <Icon name="flag"/> {i18n('Records')}
+                    <Icon name="flag" /> {i18n('Records')}
                 </ToolbarButton>
             </Toolbar>
         );

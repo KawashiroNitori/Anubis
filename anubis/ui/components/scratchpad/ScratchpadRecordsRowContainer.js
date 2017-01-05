@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import TimeAgo from 'timeago-react';
 import moment from 'moment';
 import _ from 'lodash';
-import {parse as parseMongoId} from '../../utils/mongoId';
+import { parse as parseMongoId } from '../../utils/mongoId';
 
 import i18n from '../../utils/i18n';
 import * as recordEnum from '../../constant/record';
@@ -53,7 +53,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 @connect(mapStateToProps, null, mergeProps)
 export default class ScratchpadRecordsRowContainer extends React.PureComponent {
     render() {
-        const {data} = this.props;
+        const { data } = this.props;
         const submitAt = parseMongoId(data._id).timestamp * 1000;
         return (
             <tr>
@@ -62,7 +62,8 @@ export default class ScratchpadRecordsRowContainer extends React.PureComponent {
                     <span className="icol icol--pretest">
             {isPretest(data)
                 ? <span
-                    className={`flag record-status--background ${recordEnum.STATUS_CODES[data.status]}`}>{i18n('Pretest')}</span>
+                    className={`flag record-status--background ${recordEnum.STATUS_CODES[data.status]}`}
+                >{i18n('Pretest')}</span>
                 : ''
             }
           </span>
@@ -76,7 +77,7 @@ export default class ScratchpadRecordsRowContainer extends React.PureComponent {
                 </td>
                 <td className="col--at">
                     <time data-tooltip={moment(submitAt).format('YYYY-MM-DD HH:mm:ss')}>
-                        <TimeAgo date={submitAt} locale={i18n('timeago_locale')}/>
+                        <TimeAgo date={submitAt} locale={i18n('timeago_locale')} />
                     </time>
                 </td>
             </tr>

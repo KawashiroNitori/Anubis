@@ -173,13 +173,10 @@ class HandlerBase(setting.SettingMixin):
 
     @property
     def csrf_token(self):
-        if not self.session or not self.session['csrf_token']:
-            csrf_token = token.gen_csrf_token()
-            self.session = asyncio.get_event_loop().run_until_complete(
-                self.update_session(csrf_token=csrf_token))
-            return csrf_token
+        if self.session:
+            return _get_csrf_token(self.session['_id'])
         else:
-            return self.session['csrf_token']
+            return ''
 
     def render_html(self, template_name, **kwargs):
         kwargs['handler'] = self
@@ -315,6 +312,11 @@ class Connection(sockjs.Session, HandlerBase):
 
 
 @functools.lru_cache()
+def _get_csrf_token(session_id_binary):
+    return hmac.new(b'csrf_token', session_id_binary, 'sha256').hexdigest()
+
+
+@functools.lru_cache()
 def _reverse_url(name, *, domain_id, **kwargs):
     if domain_id != builtin.DOMAIN_ID_SYSTEM:
         name += '_with_domain_id'
@@ -367,12 +369,7 @@ def require_priv(priv):
 def require_csrf_token(func):
     @functools.wraps(func)
     def wrapped(self, *args, **kwargs):
-        user_csrf_token = kwargs.pop('csrf_token', '')
-        csrf_token = self.csrf_token
-
-        del self.session['csrf_token']
-        asyncio.get_event_loop().run_until_complete(token.update(**self.session))
-        if not user_csrf_token or user_csrf_token != csrf_token:
+        if self.csrf_token and self.csrf_token != kwargs.pop('csrf_token', ''):
             raise error.CsrfTokenError()
         return func(self, *args, **kwargs)
     return wrapped

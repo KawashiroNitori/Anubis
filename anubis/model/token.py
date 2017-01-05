@@ -2,11 +2,11 @@ import binascii
 import datetime
 import hashlib
 import os
-import json
 
 from bson import BSON
 
 from anubis.util import argmethod
+from anubis.util import json
 from anubis import redis
 
 TYPE_REGISTRATION = 1
@@ -44,7 +44,7 @@ async def add(token_type: int, expire_seconds: int, **kwargs):
         'expire_at': now + datetime.timedelta(seconds=expire_seconds)
     }
     db = await redis.database()
-    await db.set('token_' + id_hash, BSON.encode(doc), expire=expire_seconds)
+    await db.set('token_' + id_hash, json.encode(doc), expire=expire_seconds)
     return id_hash, doc
 
 

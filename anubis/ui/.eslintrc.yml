@@ -37,3 +37,5 @@ rules:
     - error
     - 150
   react/prefer-stateless-function: off
+  react/jsx-indent: off
+  react/jsx-indent-props: off

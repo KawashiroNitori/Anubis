@@ -1,6 +1,6 @@
 {% macro nav_item(target_page_name, target_page_prefix) %}
 <li class="nav__list-item">
-  <a href="{{ reverse_url(target_page_name) }}"
+  <a href="{# reverse_url(target_page_name) #}#"
      class="nav__item{% if page_name.startswith(target_page_prefix) %} nav--active{% endif %}">
     {{ _(target_page_name) }}
   </a>

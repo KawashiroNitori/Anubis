@@ -88,12 +88,12 @@ export default class ScratchpadContainer extends React.PureComponent {
                     {
                         props: this.props.ui.pretest,
                         onChange: size => this.handleChangeSize('pretest', size),
-                        element: <ScratchpadPretest key="pretest"/>,
+                        element: <ScratchpadPretest key="pretest" />,
                     },
                     {
                         props: this.props.ui.records,
                         onChange: size => this.handleChangeSize('records', size),
-                        element: <ScratchpadRecords key="records"/>,
+                        element: <ScratchpadRecords key="records" />,
                     },
                 ])}
             </SplitPane>
