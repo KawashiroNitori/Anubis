@@ -39,7 +39,7 @@ PREFERENCE_SETTINGS = [
 
 ACCOUNT_SETTINGS = [
     Setting('setting_info', 'gravatar', str,
-            name='Gravatar Email', desc='We user Gravatar to present your avatar icon.'),
+            name='Gravatar Email', desc='We use Gravatar to present your avatar icon.'),
     Setting('setting_info', 'qq', str, name='QQ'),
     Setting('setting_info', 'gender', int, range=constant.model.USER_GENDER_RANGE,
             ui='select', name='Gender'),

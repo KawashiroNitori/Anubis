@@ -6,12 +6,11 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
 .header
   position: relative
   height: rem($header-bg-height)
-  background: #5eafca url(./header-background.png) no-repeat center top
+  background: no-repeat center top
   transition: height .5s
   transition-timing-function: ease-out-cubic
   overflow: hidden
   +retina()
-    background-image: url(./header-background.png)
     background-size: rem($header-bg-width $header-bg-height)
   +mobile()
     .header-content
@@ -27,6 +26,12 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
   width: 100%
   height: rem($header-layer-height)
   background: rgba(#000, 0.5)
+
+.header__background
+  position: absolute
+  height: 100%
+  width: 100%
+  z-index: -1
 
 .header.mini .header__layer
   display: none
@@ -62,6 +67,7 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
   white-space: nowrap
   overflow: hidden
   text-overflow: ellipsis
+  margin-top: 0.625rem
 
 .header--collapsed
 

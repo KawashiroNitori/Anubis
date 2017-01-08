@@ -146,7 +146,7 @@ class InvalidTokenDigestError(ForbiddenError):
     pass
 
 
-class CurrentPassword(ForbiddenError):
+class CurrentPasswordError(ForbiddenError):
     @property
     def message(self):
         return "Current password doesn't match."

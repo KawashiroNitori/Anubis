@@ -61,7 +61,7 @@ async def get(token_id: str, token_type: int):
     db = await redis.database()
     doc = await db.get('token_' + token_id)
     if doc:
-        return BSON.decode(doc)
+        return json.decode(doc.decode())
     else:
         return None
 
@@ -94,7 +94,7 @@ async def update(token_id: str, token_type: int, expire_seconds: int, replace: b
         doc = {**kwargs,
                'update_at': now,
                'expire_at': now + datetime.timedelta(seconds=expire_seconds)}
-    doc = await db.set('token_' + token_id, BSON.encode(doc), expire=expire_seconds)
+    await db.set('token_' + token_id, json.encode(doc), expire=expire_seconds)
     return doc
 
 

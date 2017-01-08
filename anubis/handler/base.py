@@ -2,6 +2,7 @@ import accept
 import asyncio
 import calendar
 import functools
+import hmac
 import logging
 import markupsafe
 import pytz
@@ -122,7 +123,7 @@ class HandlerBase(setting.SettingMixin):
                                              'update_ip': self.remote_ip,
                                              'update_ua': self.request.headers.get('User-Agent')
                                          })
-        if kwargs and not session:
+        if not session:
             sid, session = await token.add(token_type, session_expire_seconds,
                                            **{
                                                **kwargs,
@@ -223,7 +224,7 @@ class Handler(web.View, HandlerBase):
     def json(self, obj):
         self.response.content_type = 'application/json'
         self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
-        self.response.text = json.decode(obj)
+        self.response.text = json.encode(obj)
 
     async def binary(self, data, type='application/octet-stream'):
         self.response = web.StreamResponse()
@@ -313,7 +314,7 @@ class Connection(sockjs.Session, HandlerBase):
 
 @functools.lru_cache()
 def _get_csrf_token(session_id_binary):
-    return hmac.new(b'csrf_token', session_id_binary, 'sha256').hexdigest()
+    return hmac.new(b'csrf_token', session_id_binary.encode(), 'sha256').hexdigest()
 
 
 @functools.lru_cache()

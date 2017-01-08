@@ -7,18 +7,19 @@
 <div class="slideout-panel" id="panel">
   {% include "partials/nav_hamburger.html" %}
   <div class="header{% if header_mini %} mini{% endif %}">
+    <canvas class="header__background"></canvas>
     <div class="header-content"><div class="row"><div class="columns">
-          <a class="header__logo" href="{{ reverse_url('domain_main', domain_id=anubis.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
+      <a class="header__logo" href="{{ reverse_url('domain_main', domain_id=anubis.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
     </div></div></div>
     <div class="header__layer"><div class="row"><div class="columns">
       {% if not header_mini %}
-      <div class="location-path">
+      <!--<div class="location-path">
         {% for c in path_components %}
          / {% if c[1] %} <a href="{{ c[1] }}">{{ c[0] }}</a>{% endif %}
         {%- endfor %}
-      </div>
+      </div>-->
       <h1 class="location-current" data-emoji-enabled>{{ path_components[-1][0] }}</h1>
-    {% endif %}
+      {% endif %}
     </div></div></div>
   </div>
   <div class="main">

@@ -38,7 +38,7 @@ class Environment(jinja2.Environment):
 
         self.filters['markdown'] = markdown
         self.filters['json'] = json.encode
-        self.filters['gravatar'] = gravatar_url
+        self.filters['gravatar_url'] = gravatar_url
 
 
 MARKDOWN_EXTENSIONS = (

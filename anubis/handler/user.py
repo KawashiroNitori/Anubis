@@ -102,6 +102,7 @@ class UserLoginHandler(base.Handler):
             self.render('user_login.html')
 
     @base.post_argument
+    @base.require_csrf_token
     @base.sanitize
     async def post(self, *, uname: str, password: str, remember_me: bool=False):
         udoc = await user.check_password_by_uname(uname, password)

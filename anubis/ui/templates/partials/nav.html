@@ -44,7 +44,7 @@
                 </a>
               </li>
               <li class="menu__item">
-                <a href="{{ reverse_url('home_messages') }}" class="menu__link">
+                <a href="{# reverse_url('home_messages') #}#" class="menu__link">
                   {{ _('Messages') }}
                 </a>
               </li>
@@ -53,7 +53,7 @@
                 <a href="{{ reverse_url('home_account') }}" class="menu__link">{{ _('home_account') }}</a>
               </li>
               <li class="menu__item">
-                <a href="{{ reverse_url('home_preference') }}" class="menu__link">{{ _('home_perference') }}</a>
+                <a href="{{ reverse_url('home_preference') }}" class="menu__link">{{ _('home_preference') }}</a>
               </li>
               <li class="menu__item">
                 <a href="{{ reverse_url('home_security') }}" class="menu__link">{{ _('home_security') }}</a>
@@ -64,7 +64,7 @@
               </li>
               <li class="menu__seperator"></li>
               <li class="menu__item">
-                <a href="{{ reverse_url('user_logout') }}" class="menu__link">{{ _('Logout') }}</a>
+                <a href="{{ reverse_url('user_logout') }}" class="menu__link" name="nav_logout">{{ _('Logout') }}</a>
               </li>
             </ol>
           </li>

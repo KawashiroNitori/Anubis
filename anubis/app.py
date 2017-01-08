@@ -46,6 +46,8 @@ class Application(web.Application):
 
         from anubis.handler import domain
         from anubis.handler import user
+        from anubis.handler import i18n
+        from anubis.handler import home
         if options.options.static:
             self.router.add_static(
                 '/', path.join(path.dirname(__file__), '.static_build'), name='static')

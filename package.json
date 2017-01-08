@@ -109,6 +109,7 @@
     "tether-drop": "^1.4.2",
     "timeago-react": "^1.0.3",
     "timeago.js": "^1.1.0",
+    "trianglify": "^1.0.1",
     "uuid": "^2.0.2"
   },
   "babel": {
