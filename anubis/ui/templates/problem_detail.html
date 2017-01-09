@@ -1,0 +1,38 @@
+{% extends "layout/basic.html" %}
+{% import "components/problem.html" as problem with context %}
+{% block content %}
+<script>
+  var Context = {{ {
+    'problemId': pdoc['_id'],
+    'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['_id'])|string(),
+    'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['_id'])|string(),
+    'postSubmissionUrl': reverse_url('problem_submit', pid=pdoc['_id'])|string(),
+  }|json|safe }};
+</script>
+<div class="row">
+  <div class="medium-9 columns">
+    <div class="section">
+      <div class="problem-content">
+        <div class="section__header non-scratchpad--hide">
+          <h1>{{ pdoc['title'] }}</h1>
+        </div>
+        <div class="section__body typo">
+          {% if not pdoc['data'] %}
+          <blockquote class="warn">
+            <p>{{ _('No dataset present.') }}</p>
+          </blockquote>
+          {% endif %}
+          {{ pdoc['content']|markdown }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="medium-3 columns">
+    {{ problem.render_sidebar(pdoc, udoc) }}
+  </div>
+</div>
+<div class="scratchpad-container" style="display:none">
+  <div style="display:none" class="loader-container"><div class="loader"></div></div>
+  <div id="scratchpad" style="opacity:0"></div>
+</div>
+{% endblock %}

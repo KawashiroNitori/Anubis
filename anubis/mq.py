@@ -6,6 +6,8 @@ from anubis.util import options
 
 options.define('mq_host', default='localhost', help='Message queue hostname or IP address.')
 options.define('mq_vhost', default='/anubis', help='Message queue virtual host.')
+options.define('mq_user', default='guest', help='Message queue username.')
+options.define('mq_password', default='', help='Message queue password')
 
 _protocol_future = None
 _channel_futures = {}
@@ -43,7 +45,7 @@ async def channel(key=None):
         future = asyncio.Future()
         _channel_futures[key] = future
     try:
-        t_channel = await  (await _connect()).channel()
+        t_channel = await (await _connect()).channel()
         if key:
             future.set_result(t_channel)
             asyncio.get_event_loop().create_task(_wait_channel(t_channel, key))

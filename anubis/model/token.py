@@ -88,10 +88,12 @@ async def update(token_id: str, token_type: int, expire_seconds: int, replace: b
         return None
     if not replace:
         doc.update({**kwargs,
+                    'token_type': token_type,
                     'update_at': now,
                     'expire_at': now + datetime.timedelta(seconds=expire_seconds)})
     else:
         doc = {**kwargs,
+               'token_type': token_type,
                'update_at': now,
                'expire_at': now + datetime.timedelta(seconds=expire_seconds)}
     await db.set('token_' + token_id, json.encode(doc), expire=expire_seconds)

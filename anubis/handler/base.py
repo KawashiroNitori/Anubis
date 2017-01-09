@@ -108,7 +108,7 @@ class HandlerBase(setting.SettingMixin):
             The session document.
         """
         (sid, save), session = map(self.request.cookies.get, ['sid', 'save']), None
-        if not sid:
+        if not sid or new_saved:
             save = new_saved
         if save:
             token_type = token.TYPE_SAVED_SESSION
@@ -202,7 +202,7 @@ class Handler(web.View, HandlerBase):
             yield from HandlerBase.prepare(self)
             yield from super(Handler, self).__iter__()
         except error.UserFacingError as e:
-            _logger.warning('User facing error: $s', repr(e))
+            _logger.warning('User facing error: %s', repr(e))
             self.response.set_status(e.http_status, None)
             if self.prefer_json:
                 self.response.content_type = 'application/json'

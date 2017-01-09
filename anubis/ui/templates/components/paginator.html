@@ -9,9 +9,9 @@
     {% elif type == 'ellipsis' %}
       <span class="pager__item ellipsis">...</span>
     {% elif type == 'page' %}
-      <a class="page__item page link" href="?page={{ page0 }}">{{ page0 }}</a>
+      <a class="pager__item page link" href="?page={{ page0 }}">{{ page0 }}</a>
     {% elif type == 'current' %}
-      <span class="page__item current">{{ page0 }}</span>
+      <span class="pager__item current">{{ page0 }}</span>
     {% elif type == 'next' %}
       <a class="pager__item next link" href="?page={{ page0 }}">{{ _('pager_next') }}</a>
     {% elif type == 'last' %}

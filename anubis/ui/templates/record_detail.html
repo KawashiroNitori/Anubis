@@ -1,0 +1,144 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="row">
+  <div class="medium-9 columns">
+    {% if show_status %}
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">
+          <span class="icon record-status--icon {{ anubis.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
+          <span class="record-status--text" {{ anubis.constant.record.STATUS_CODES[rdoc['status']] }}>
+            {{ anubis.constant.record.STATUS_TEXTS[rdoc['status']] }}
+          </span>
+        </h1>
+      </div>
+      <div class="section__body">
+        <pre class="compiler-text">{{ rdoc['compiler_texts']|join('\n') }}</pre>
+      </div>
+      {% if rdoc['judge_texts'] %}
+      <div class="section__body">
+        <pre class="judge-text">{{ rdoc['judge_texts']|join('\n') }}</pre>
+      </div>
+      {% endif %}
+      {% if rdoc['cases'] %}
+      <div class="section__body no-padding">
+        <table class="data-table record_detail__table">
+          <colgroup>
+            <col class="col--case">
+            <col class="col--status">
+            <col class="col--time">
+            <col class="col--memory">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="col--case record-status--border">#</th>
+              <th class="col--status">{{ _('Status') }}</th>
+              <th class="col--time">{{ _('Time Cost') }}</th>
+              <th class="col--memory">{{ _('Memory Cost') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rcdoc in rdoc['cases'] %}
+            <tr>
+              <td class="col--case record-status--border {{ anubis.constant.record.STATUS_CODES[rcdoc['status']] }}">
+                #{{ loop.index }}
+              </td>
+              <td class="col--status">
+                <span class="icon record-status--icon {{ anubis.constant.record.STATUS_CODES[rcdoc['status']] }}"></span>
+                <span class="record-status--text {{ anubis.constant.record.STATUS_CODES[rcdoc['status']] }}">
+                  {{ anubis.constant.record.STATUS_TEXTS[rcdoc['status']] }}
+                </span>
+                <span>{{ rcdoc['judge_text'] }}</span>
+              </td>
+              <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
+              <td class="col--memory">{{ rcdoc['memory_kb'] / 1000 }}MiB</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% if rdoc['code'] %}
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Code') }}</h1>
+      </div>
+      <div class="section__body">
+        <pre><code class="language-{{ rdoc['lang'] }}">{{ rdoc['code'] }}</code></pre>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <div class="medium-3 columns">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Information') }}</h1>
+      </div>
+      {% if handler.has_perm(anubis.model.builtin.PERM_REJUDGE) %}
+      <div class="section__body no-padding">
+        <ol class="menu">
+          <li class="menu__item">
+            <form method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <button type="submit" class="menu__link">
+                <span class="icon icon-refresh"></span>
+                {{ _('Rejudge') }}
+              </button>
+            </form>
+          </li>
+        </ol>
+      </div>
+      {% endif %}
+      <div class="section__body typo">
+        <dl class="large horizontal">
+          <dt>{{ _('Submit By') }}</dt>
+          <dd>{{ user.render_inline(udoc, dudoc, modbadge=false) }}</dd>
+          <dt>{{ _('Type') }}</dt>
+          <dd>{{ _(anubis.constant.record.TYPE_TEXTS[rdoc['type']]) }}</dd>
+          <dt>{{ _('Problem') }}</dt>
+          <dd>
+            <a href="{{ reverse_url('problem_detail', pid=pdoc['_id']) }}">{{ pdoc['title'] }}</a>
+          </dd>
+          {% if rdoc['type'] == anubis.constant.record.TYPE_PRETEST and (handler.own(rdoc, priv=anubis.model.builtin.PRIV_READ_PRETEST_DATA_SELF, field='uid') or handler.has_priv(anubis.model.builtin.PRIV_READ_PRETEST_DATA)) %}
+          <dt>{{ _('Pretest Data') }}</dt>
+          <dd><a href="{{ reverse_url('record_pretest_data', rid=rdoc['_id']) }}">
+            <span class="icon icon-download"></span>
+            {{ _('Download') }}
+          </a></dd>
+          {% elif rdoc['type'] == anubis.constant.record.TYPE_SUBMISSION and pdoc and (handler.own(pdoc, anubis.model.builtin.PERM_READ_PROBLEM_DATA_SELF) or handler.has_perm(anubis.model.builtin.PERM_READ_PROBLEM_DATA) or handler.has_priv(anubis.model.builtin.PRIV_READ_PROBLEM_DATA)) %}
+          <dt>{{ _('Problem Data') }}</dt>
+          <dd><a href="{{ reverse_url('problem_data', pid=pdoc['_id']) }}">
+            <span class="icon icon-download"></span>
+            {{ _('Download') }}
+          </a></dd>
+          {% endif %}
+          <dt>{{ _('Language') }}</dt>
+          <dd>{{ anubis.constant.language.LANG_TEXTS[rdoc['lang']] }}</dd>
+          <dt>{{ _('Submit At') }}</dt>
+          <dd>{{ datetime_span(rdoc['_id'].generation_time) }}</dd>
+          {% if show_status %}
+          {% if rdoc['judge_at'] %}
+          <dt>{{ _('Judged At') }}</dt>
+          <dd>{{ datetime_span(rdoc['judge_at']) }}</dd>
+          {% endif %}
+          <dt>{{ _('Total Time') }}</dt>
+          <dd>{{ rdoc['time_ms'] }}</dd>
+          <dt>{{ _('Peak Memory') }}</dt>
+          <dd>{{ rdoc['memory_kb'] / 1000 }}MiB</dd>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Statistics') }}</h1>
+      </div>
+      <div class="section__body typo">
+        <p>{{ _('Under test') }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

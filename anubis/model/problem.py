@@ -35,6 +35,8 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
            'judge_mode': judge_mode,
            'data': data,
            'hidden': hidden,
+           'num_submit': 0,
+           'num_accept': 0,
            **kwargs}
     return await coll.insert(doc)
 
@@ -158,6 +160,12 @@ async def update_status(domain_id: str, pid: int, uid: int, rid: objectid.Object
     except errors.DuplicateKeyError:
         return None
 
+
+@argmethod.wrap
+async def create_indexes():
+    coll = db.Collection('problem')
+    await coll.create_index([('domain_id', 1),
+                             ('_id', 1)], unique=True)
 
 if __name__ == '__main__':
     argmethod.invoke_by_args()

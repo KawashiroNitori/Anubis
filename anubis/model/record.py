@@ -106,7 +106,7 @@ def get_user_in_problem_multi(uid: int, domain_id: str, pid: int, get_hidden: bo
              'domain_id': domain_id, 'pid': pid, 'uid': uid}
     if type is not None:
         query['type'] = type
-        return coll.find(query, projection=projection)
+    return coll.find(query, projection=projection)
 
 
 async def get_dict(rids, *, projection=None):

@@ -80,7 +80,7 @@ class ProblemSubmitHandler(base.Handler):
             # TODO: needs to be in sync with contest_detail_problem_submit
             rdocs = await record.get_user_in_problem_multi(
                 uid, self.domain_id, pdoc['_id']
-            ).sort([('_id', 1)]).to_list(10)
+            ).sort([('_id', -1)]).to_list(10)
         path_components = self.build_path(
             (self.translate('problem_main'), self.reverse_url('problem_main')),
             (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['_id'])),

@@ -49,7 +49,6 @@ def check_domain_id(s):
         raise error.ValidationError('domain_id')
 
 
-
 def is_id(s):
     return bool(re.fullmatch(r'[^\\/\s\u3000]([^\\/\n\r]*[^\\/\s\u3000])?', s))
 
@@ -74,7 +73,7 @@ def check_role(s):
 
 
 def is_title(s):
-    return bool(re.fullmatch(r'.{1.}', s))
+    return bool(re.fullmatch(r'.{1,}', s))
 
 
 def check_title(s):
@@ -83,7 +82,7 @@ def check_title(s):
 
 
 def is_name(s):
-    return bool(re.fullmatch(r'.{1.}', s))
+    return bool(re.fullmatch(r'.{1,}', s))
 
 
 def check_name(s):
@@ -110,9 +109,9 @@ def check_description(s):
 
 
 def is_lang(s):
-    return i in constant.language.LANG_TEXTS
+    return s in constant.language.LANG_TEXTS
 
 
-def check_lang(i):
+def check_lang(s):
     if not is_lang(s):
         raise error.ValidationError('lang')

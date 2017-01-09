@@ -10,6 +10,7 @@ from anubis.util import options
 from anubis.util import locale
 from anubis.util import json
 from anubis.util import tools
+from anubis.service import bus
 
 options.define('debug', default=False, help='Enable debug mode.')
 options.define('static', default=True, help='Serve static files.')
@@ -41,13 +42,16 @@ class Application(web.Application):
         # TODO: Add small cache.
         # TODO: Add Message Queue Register.
         self.loop.run_until_complete(asyncio.gather(
-            tools.create_all_indexes()
+            tools.create_all_indexes(),
+            bus.init()
         ))
 
         from anubis.handler import domain
         from anubis.handler import user
         from anubis.handler import i18n
         from anubis.handler import home
+        from anubis.handler import problem
+        from anubis.handler import record
         if options.options.static:
             self.router.add_static(
                 '/', path.join(path.dirname(__file__), '.static_build'), name='static')

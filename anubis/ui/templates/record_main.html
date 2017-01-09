@@ -1,0 +1,48 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="row">
+  <div class="medium-9 columns">
+    <div class="section">
+      <div class="section__body no-padding">
+        {% if not rdocs %}
+        {{ nothing.render('Oh, there is no task in the queue!') }}
+        {% else %}
+        <table class="data-table record_main__table">
+          <colgroup>
+            <col class="col--status">
+            <col class="col--problem">
+            <col class="col--submit-by">
+            <col class="col--submit-at">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="col--status record-status--border">{{ _('Status') }}</th>
+              <th class="col--problem">{{ _('Problem') }}</th>
+              <th class="col--submit-by">{{ _('Submit By') }}</th>
+              <th class="col--submit-at">{{ _('Submit At') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rdoc in rdocs %}
+            {% with udoc = udict[rdoc['uid']], pdoc = pdict[(rdoc['domain_id'], rdoc['pid'])] %}
+            {% include 'record_main_tr.html' %}
+            {% endwith %}
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="medium-3 columns">
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Statistics') }}</h1>
+      </div>
+      <div class="section__body">
+        <p>Under test...</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
