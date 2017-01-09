@@ -99,7 +99,7 @@ async def get_dict_status(domain_id, uid, pids, *, projection=None):
     result = dict()
     async for psdoc in get_multi_status(domain_id=domain_id,
                                         uid=uid,
-                                        _id={'$in': list(set(pids))},
+                                        pid={'$in': list(set(pids))},
                                         projection=projection):
         result[psdoc['pid']] = psdoc
     return result
@@ -152,8 +152,7 @@ async def update_status(domain_id: str, pid: int, uid: int, rid: objectid.Object
         return await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                       'pid': pid,
                                                       'uid': uid,
-                                                      'status': {
-                                                          '$not': {'$eq': constant.record.STATUS_ACCEPTED}}},
+                                                      'status': {'$ne': constant.record.STATUS_ACCEPTED}},
                                               update={'$set': {'status': status, 'rid': rid}},
                                               return_document=True,
                                               upsert=True)

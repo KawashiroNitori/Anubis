@@ -38,8 +38,25 @@
           <td class="col--icon">
             <img src="{{ ddoc['gravatar']|gravatar_url }}" width="32" height="32">
           </td>
+          <td class="col--name">
+            {{ ddoc['name'] }} ({{ ddoc['_id'] }})
+          </td>
+          <td class="col--role">
+            {% if ddoc['owner_uid'] == handler.user['_id'] %}
+            ({{ _('Owner') }})
+            {% else %}
+            {{ uddict.get(ddoc['_id'], {})['role']|default(anubis.model.builtin.ROLE_DEFAULT) }}
+            {% endif %}
+          </td>
+          <td class="col--action">
+            <a class="typo-a" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">
+              {{ _('Visit') }}
+            </a>
+          </td>
         </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+{% endblock %}

@@ -1,21 +1,21 @@
 /**
- * Created by Nitori on 2017/1/5.
+ * Created by Nitori on 2017/1/9.
  */
 import trianglify from 'trianglify';
-import { AutoloadPage } from '../../misc/PageLoader';
+import { AutoloadPage } from '../misc/PageLoader';
 
-const headerPage = new AutoloadPage(null, () => {
-    const $header = $('.header__background');
+const immersivePage = new AutoloadPage(null, () => {
+    const $header = $('.panel__background');
     if ($header.length === 0) {
         return;
     }
     const background = trianglify({
         width: $header.width(),
         height: $header.height(),
-        x_colors: 'random',
+        x_colors: ['#5f2c82', '#49a09d'],
     });
     background.canvas($header.get(0));
     // $header.css('background-image', `url("${background}")`);
 });
 
-export default headerPage;
+export default immersivePage;

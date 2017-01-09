@@ -401,7 +401,7 @@ def limit_rate(op, period_secs, max_operations):
     def decorate(func):
         @functools.wraps(func)
         async def wrapped(self, **kwargs):
-            await opcount.inc(op, opcount.PREFIX_IP + self.remote_ip, period_secs, max_operations)
+            await opcount.inc(op, opcount.PREFIX_IP + str(self.remote_ip), period_secs, max_operations)
             return await func(self, **kwargs)
         return wrapped
     return decorate

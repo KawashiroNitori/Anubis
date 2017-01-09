@@ -24,11 +24,15 @@ class RecordMainHandler(base.Handler):
         rdocs = await record.get_all_multi(
             get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)
         ).sort([('_id', -1)]).to_list(50)
-        # TODO: projection
-        udict, pdict = await asyncio.gather(
-            user.get_dict(rdoc['uid'] for rdoc in rdocs),
-            problem.get_dict((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs)
-        )
+        if rdocs:
+            # TODO: projection
+            udict, pdict = await asyncio.gather(
+                user.get_dict(rdoc['uid'] for rdoc in rdocs),
+                problem.get_dict((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs)
+            )
+        else:
+            udict = {}
+            pdict = {}
         self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict)
 
 

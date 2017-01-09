@@ -94,6 +94,4 @@ public class Main {
 }
 ```
 
-# Source
 
-**Vijos Original**

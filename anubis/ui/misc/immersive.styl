@@ -1,10 +1,16 @@
 .layout--immersive
   #panel
-    background: #80b2d5 url('immersive-background.jpg') no-repeat
+    background: no-repeat
     background-size: 1920px 1080px
     background-size: cover
     +retina()
-      background-image: url('immersive-background@2x.jpg')
+      //background-image: url('immersive-background@2x.jpg')
+
+.panel__background
+  position: absolute
+  width: 100%
+  height: 100%
+  z-index: -1
 
 .immersive--content
   color: $immersive-text-color

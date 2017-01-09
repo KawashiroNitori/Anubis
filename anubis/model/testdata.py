@@ -18,8 +18,7 @@ async def add(domain_id: str, data: list, owner_uid: int, type: int, pid: int, *
         'pid': pid,
         **kwargs
     }
-    doc = await coll.insert(doc)
-    return doc['_id']
+    return await coll.insert(doc)
 
 
 @argmethod.wrap
