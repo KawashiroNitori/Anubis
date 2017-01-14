@@ -59,8 +59,8 @@
         {{ _('View Problem') }}
       </a></li>
       {% endif %}
-      {% endif %}
       <li class="menu__seperator"></li>
+      {% endif %}
       {% if handler.has_perm(anubis.model.builtin.PERM_SUBMIT_PROBLEM) %}
       {% if not tdoc %}
       <li class="menu__item scratchpad--hide">
@@ -79,7 +79,7 @@
       {% endif %}
       {% endif %}
       <li class="menu__item">
-        <a class="menu__link{% if page_name == 'problem_statistics' %} active{% endif %}" href="{{ reverse_url('problem_statistics', pid=pdoc['_id']) }}">
+        <a class="menu__link{% if page_name == 'problem_statistics' %} active{% endif %}" href="{# reverse_url('problem_statistics', pid=pdoc['_id']) #}#">
           <span class="icon icon-statistics"></span>
         {{ _('Submission Statistics') }}
         </a>

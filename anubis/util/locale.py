@@ -21,8 +21,8 @@ def load_translations(translation_path):
             name = yaml_file.readline()[1:].strip()
             _locales[code] = yaml.load(yaml_file)
             langs.append((code, name))
-        global VIEW_LANGS
-        VIEW_LANGS = collections.OrderedDict(langs)
+    global VIEW_LANGS
+    VIEW_LANGS = collections.OrderedDict(langs)
 
 
 @functools.lru_cache()

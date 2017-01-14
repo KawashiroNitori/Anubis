@@ -6,6 +6,8 @@ contest_status: Contest Status
 discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
+home_account: Account
+home_preference: Preference
 home_messages: Messages
 home_security: Security
 judge_playground: Judge Playground
@@ -26,6 +28,8 @@ setting_function: Function
 setting_info: Personal Info
 setting_preference: Preference
 setting_privacy: Privacy
+setting_display: Display
+setting_usage: Usage
 training_main: Training
 user_detail: User Detail
 user_login: Login
