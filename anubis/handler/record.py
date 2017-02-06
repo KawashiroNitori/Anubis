@@ -38,6 +38,7 @@ class RecordMainHandler(base.Handler):
 
 @app.connection_route('/records-conn', 'record_main-conn')
 class RecordMainConnection(base.Connection):
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
     async def on_open(self):
         await super(RecordMainConnection, self).on_open()
         bus.subscribe(self.on_record_change, ['record_change'])

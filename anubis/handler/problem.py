@@ -255,7 +255,7 @@ class ProblemSettingsHandler(base.Handler):
     @base.post_argument
     @base.require_csrf_token
     @base.sanitize
-    async def post(self, *, pid: int, file: lambda _:_):
+    async def post(self, *, pid: int, file: lambda _: _):
         pdoc = await problem.get(self.domain_id, pid)
         if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
             and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):

@@ -96,7 +96,7 @@ async def get_dict(uids, *, fields=PROJECTION_VIEW):
     result = dict()
     async for doc in get_multi(_id={'$in': list(set(uids))}, fields=fields):
         result[doc['_id']] = doc
-        return result
+    return result
 
 
 @argmethod.wrap

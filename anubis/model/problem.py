@@ -72,12 +72,12 @@ def get_multi(*, projection=None, **kwargs):
     return coll.find(kwargs, projection=projection)
 
 
-async def get_dict(pids, *, projection=None):
-    pquery = {'$or': [{'domain_id': e[0], '_id': e[1]} for e in set(pids)]}
+async def get_dict(domain_id, pids, *, projection=None):
     result = dict()
-    async for pdoc in get_multi(**pquery, projection=projection).hint([('domain_id', 1),
-                                                                       ('_id', 1)]):
-        result[(pdoc['domain_id'], pdoc['_id'])] = pdoc
+    async for pdoc in get_multi(domain_id=domain_id,
+                                _id={'$in': list(set(pids))},
+                                projection=projection):
+        result[pdoc['_id']] = pdoc
     return result
 
 

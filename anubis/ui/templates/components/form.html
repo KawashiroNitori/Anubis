@@ -59,9 +59,8 @@
 {% endmacro %}
 
 {% macro textarea(name='', value='', placeholder='') %}
-<textarea name="{{ name }}" placeholder="{{ placeholder }}" {{ form_attr('textbox', **kwargs) }}>
-  {{ value }}
-</textarea>
+<textarea name="{{ name }}" placeholder="{{ placeholder }}" {{ form_attr('textbox', **kwargs) }}
+>{{ value }}</textarea>
 {% endmacro %}
 
 {% macro form_textarea(columns=8) %}

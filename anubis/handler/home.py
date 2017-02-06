@@ -32,8 +32,9 @@ class HomeSecurityHandler(base.OperationHandler):
     async def get(self):
         # TODO: need pagination
         session = {
+            'update_ip': self.session['update_ip'],
             'update_ua': useragent.parse(self.session['update_ua']),
-            'update_geoip': geoip.ip2geo(self.session['update_ip']),
+            'update_geoip': geoip.ip2geo(self.session['update_ip'], self.get_setting('view_lang')),
             'update_at': self.session['update_at'],
             'token_type': self.session['token_type'],
             'token_digest': hmac.new(b'token_digest', str(self.session['_id']).encode(), 'sha256').hexdigest(),

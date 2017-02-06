@@ -9,7 +9,7 @@ else:
     _reader = None
 
 _LOCALE_MAP = {
-    'zh_CN': 'zh-CN'
+    'zh_CN': 'zh-CN',
 }
 
 
