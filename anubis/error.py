@@ -87,7 +87,7 @@ class LoginError(ForbiddenError):
 class DocumentNotFoundError(NotFoundError):
     @property
     def message(self):
-        return 'Document {2} not found.'
+        return 'Document {1} not found.'
 
 
 class ProblemDataNotFoundError(NotFoundError):
@@ -228,6 +228,12 @@ class ProblemNotFoundError(NotFoundError):
     @property
     def message(self):
         return 'Problem {1} not found.'
+
+
+class ContestProblemNotFoundError(NotFoundError):
+    @property
+    def message(self):
+        return 'Problem {0} not found.'
 
 
 class TrainingRequirementNotSatisfiedError(ForbiddenError):

@@ -7,6 +7,7 @@
     'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['_id'])|string(),
     'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['_id'])|string(),
     'postSubmissionUrl': reverse_url('problem_submit', pid=pdoc['_id'])|string(),
+    'code_lang': handler.get_setting('code_lang'),
   }|json|safe }};
 </script>
 <div class="row">

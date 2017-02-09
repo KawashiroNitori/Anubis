@@ -74,6 +74,14 @@ async def rejudge(record_id: objectid.ObjectId):
 
 
 @argmethod.wrap
+async def rejudge_all():
+    coll = db.Collection('record')
+    records = await coll.find().to_list(None)
+    for record in records:
+        await rejudge(record['_id'])
+
+
+@argmethod.wrap
 def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, projection=None):
     coll = db.Collection('record')
     query = {'hidden': False if not get_hidden else {'$gte': False}}

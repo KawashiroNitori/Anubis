@@ -55,6 +55,7 @@ class HandlerBase(setting.SettingMixin):
         self.timezone = pytz.timezone(self.get_setting('timezone'))
         self.translate = locale.get_translate(self.view_lang)
         self.datetime_span = functools.partial(_datetime_span, timezone=self.timezone)
+        self.datetime_stamp = _datetime_stamp
         self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
         self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                             domain_name=self.domain['name'])
@@ -343,6 +344,13 @@ def _datetime_span(dt, timezone):
             dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M:%S')
         )
     )
+
+
+@functools.lru_cache()
+def _datetime_stamp(dt):
+    if not dt.tzinfo:
+        dt = dt.replace(tzinfo=pytz.utc)
+    return calendar.timegm(dt.utctimetuple())
 
 
 # Decorators

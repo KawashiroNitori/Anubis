@@ -42,7 +42,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
 
 
 @argmethod.wrap
-async def get(domain_id: str, pid: int, uid: int = None):
+async def get(domain_id: str, pid: int, uid: int=None):
     coll = db.Collection('problem')
     pdoc = await coll.find_one({'domain_id': domain_id,
                                 '_id': pid})

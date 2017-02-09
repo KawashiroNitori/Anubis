@@ -2,6 +2,7 @@ import collections
 import datetime
 import itertools
 
+import functools
 from bson import objectid
 from pymongo import errors
 from pymongo import ReturnDocument
@@ -23,7 +24,7 @@ RULE_TEXTS = {
     RULE_ACM: 'ACM-ICPC',
 }
 
-Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
+Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort', 'rank_func'])
 
 
 def _oi_stat(tdoc, journal):
@@ -53,15 +54,23 @@ def _acm_stat(tdoc, journal):
 
 RULES = {
     RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
-                   _acm_stat, [('accept', -1), ('time', 1)]),
+                   _acm_stat, [('accept', -1), ('time', 1)], functools.partial(enumerate,
+                                                                               start=1)),
 }
 
 
+def convert_to_pid(pids, pid_letter):
+    try:
+        return pids[ord(pid_letter) - ord('A')]
+    except IndexError:
+        raise error.ContestProblemNotFoundError(pid_letter)
+
+
 @argmethod.wrap
-async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: int, type: int,
+async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: int,
               begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
-              pids={}, **kwargs):
+              pids=[], **kwargs):
     validator.check_title(title)
     validator.check_content(content)
     if rule not in RULES:
@@ -78,7 +87,6 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
         'content': content,
         'owner_uid': owner_uid,
         'rule': rule,
-        'type': type,
         'begin_at': begin_at,
         'end_at': end_at,
         'pids': pids,
@@ -163,7 +171,7 @@ async def get_and_list_status(domain_id: str, tid: int, projection=None):
 async def update_status(domain_id: str, tid: int, uid: int, rid: objectid.ObjectId,
                         pid: int, accept: bool):
     tdoc = await get(domain_id, tid)
-    if pid not in tdoc['pids'].values():
+    if pid not in tdoc['pids']:
         raise error.ValidationError('pid')
 
     coll = db.Collection('contest.status')
