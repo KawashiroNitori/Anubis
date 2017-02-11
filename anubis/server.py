@@ -11,7 +11,7 @@ import signal
 from anubis.util import options
 from anubis import app
 
-options.define('listen', default='http://0.0.0.0:8888', help='Server listening address.')
+options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
 options.define('prefork', default=0, help='Number of prefork workers')
 options.define('log_format',
                default=('%(log_color)s[%(levelname).1s '
