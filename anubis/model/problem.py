@@ -68,6 +68,11 @@ async def edit(domain_id: str, pid: int, **kwargs):
     return pdoc
 
 
+@argmethod.wrap
+async def count(domain_id: str, **kwargs):
+    return await get_multi(domain_id=domain_id, **kwargs).count()
+
+
 def get_multi(*, projection=None, **kwargs):
     coll = db.Collection('problem')
     return coll.find(kwargs, projection=projection)
@@ -180,6 +185,15 @@ async def create_indexes():
     coll = db.Collection('problem')
     await coll.create_index([('domain_id', 1),
                              ('_id', 1)], unique=True)
+    await coll.create_index([('domain_id', 1),
+                             ('owner_uid', 1),
+                             ('_id', -1)])
+
+    status_coll = db.Collection('problem.status')
+    await status_coll.create_index([('domain_id', 1),
+                                    ('uid', 1),
+                                    ('_id', 1)], unique=True)
+
 
 if __name__ == '__main__':
     argmethod.invoke_by_args()
