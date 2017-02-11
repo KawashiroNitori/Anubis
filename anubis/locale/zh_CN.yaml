@@ -1,11 +1,11 @@
 #简体中文
 ---
 (None): (无)
-Partic.: 参加人数
 API: API
+about: 关于
 About: 关于
 Accepted: 已通过
-Accepted Rate: 通过率
+Accepted Ratio: 通过率
 Active Sessions: 活动会话
 Arguments: 参数
 Attend Contest: 参加比赛
@@ -16,10 +16,12 @@ Begin Date: 开始日期
 Begin Time: 开始时间
 Belongs to: 属于
 Bio: 个人简介
+Bio Visibility: 个人简介可见性
 Blog: 博客
 Boom!: 炸了！
 Browser: 浏览器
-By signing up an account, you can submit code and join discussions.: 注册一个账户，您就可以提交代码并参与讨论。
+? By signing up an account, you can submit code and join discussions.
+: 注册一个账户，您就可以提交代码、参与讨论。
 CLOSE: 关闭
 Cancel: 取消
 Ok: 确定
@@ -53,7 +55,7 @@ Disabled: 关闭
 Discussion Nodes: 讨论节点
 Discussions: 讨论
 Don't have an account?: 还没有账户？
-Pretest Data: 对拍数据
+Pretest Data: 自测数据
 Problem Data: 题目数据
 Download: 下载
 Duration (hours): 持续时间 (小时)
@@ -91,7 +93,7 @@ Logout: 登出
 Logout All Sessions: 注销所有会话
 Logout This Session: 注销该会话
 Lost Password: 忘记密码
-Memory Cost: 内存使用
+Memory Cost: 内存占用
 Messages: 站内消息
 My Profile: 我的资料
 New Email: 新电子邮件
@@ -107,7 +109,7 @@ Operating System: 操作系统
 Password: 密码
 Password reset mail has been sent to your email.: 密码重置邮件已发送到您的电子邮箱。
 Peak Memory: 峰值内存
-Pretest?: 对拍?
+Pretest?: 自测?
 Privacy: 隐私
 Problem: 题目
 Problem Set: 题库
@@ -121,6 +123,8 @@ Public: 公开
 Published at: 发表于
 QQ Group: QQ 群
 QQ Visibility: QQ 可见性
+WeChat: 微信
+WeChat Visibility: 微信可见性
 Quit Scratchpad: 退出在线编程模式
 Recent Activities: 最近活动
 Registered at: 注册于
@@ -136,6 +140,7 @@ Save All Changes: 保存所有修改
 Saved session: 已保存的会话
 Score: 分数
 Secret: 保密
+Secret (visible to admins): 保密（对管理员可见）
 Security: 安全
 Select a node to create discussion.: 选择一个节点来发表讨论。
 Send: 发送
@@ -152,7 +157,7 @@ Sign up mail has been sent to your email.: 注册邮件已经发送到您的电�
 Solutions: 题解
 'Solved {0} problems, RP: {1} (No. {2})': '解决了 {0} 道题目，RP: {1} (No. {2})'
 Sorry: 对不起
-Sorry, there is no problem in the problem set: 题库中目前没有题目
+Sorry, there is no problem in the problem set: 题库中没有题目
 Solutions Liked: 题解被赞
 Statistics: 统计
 Status: 状态
@@ -166,14 +171,14 @@ Submission Statistics: 递交统计
 Submission: 递交
 Submissions: 递交
 Submit: 递交
+'# Submissions': '递交数'
+'# My Submissions': '我的递交数'
 Login to Submit: 请登录后递交
 No Permission to Submit: 您没有权限递交
 Submit At: 递交时间
 Submit By: 递交者
 Submit Time: 递交时间
 Support: 支持
-Swx Good!: Swx 好棒！
-Swx Template!: Swx 模板！
 Technical Information: 技术信息
 Temporary session: 临时会话
 This email was sent by {0} automatically, and please do not reply directly.: 这封邮件由 {0} 自动发送，请勿直接回复。
@@ -237,9 +242,9 @@ problem_settings: 题目设置
 record_detail: 记录详情
 record_main: 评测队列
 reply: 回复
-setting_usage: 使用
+setting_usage: 使用偏好
 setting_info: 个人信息
-setting_display: 显示
+setting_display: 显示偏好
 setting_privacy: 隐私
 title: 标题
 training_main: 训练
@@ -252,7 +257,7 @@ user_register: 注册
 '{0} solutions': '{0} 条题解'
 '{0} views': '{0} 次查看'
 New: 创建
-Pretest: 对拍
+Pretest: 自测
 Add: 添加
 Remove: 移除
 Add new data: 添加新数据
@@ -263,11 +268,11 @@ Records: 评测记录
 Refresh Records: 刷新评测记录
 Refresh: 刷新
 Report: 举报
-Run Pretest: 运行对拍
-Pretest Your Code: 使用对拍数据测试
+Run Pretest: 运行自测
+Pretest Your Code: 使用自定义数据测试
 Submit Solution: 递交评测
 Submit Your Code: 递交代码进行正式评测
-Toggle Pretest Panel: 切换对拍面板
+Toggle Pretest Panel: 切换自测面板
 Toggle Records Panel: 切换评测记录面板
 Recent {0} Records: 最近 {0} 条记录
 You have not submitted any solutions for this problem: 您在该题下没有递交过任何解答
@@ -293,10 +298,10 @@ Properties: 属性
 Access Control: 访问控制
 domain_main: 首页
 domain_manage: 管理域
-domain_edit: 编辑域信息
-domain_role: 管理角色
-domain_user: 管理用户
-domain_permission: 管理权限
+domain_manage_edit: 编辑域信息
+domain_manage_role: 管理角色
+domain_manage_user: 管理用户
+domain_manage_permission: 管理权限
 Update Permission: 更新权限
 Roles: 角色
 Your role: 您的角色
@@ -311,14 +316,14 @@ Field {0} validation failed.: 字段 {0} 验证失败。
 Unknown field {0}.: 未知字段 {0}。
 Passwords don't match.: 验证密码不匹配。
 User {0} already exists.: 用户 {0} 已存在。
-Invalid user {0} or password.: 用户 {0} 不存在或密码错误。
+Invalid password for user {0}.: 用户 {0} 的密码错误。
 Document {2} not found.: 文档 {2} 不存在。
 Data of Problem {0} not found.: 题目 {0} 的数据缺失。
 You're not logged in.: 您没有登录。
 You don't have the required privilege.: 您没有相应的特权。
 You don't have the required permission ({0}) in this domain.: 您在该域中无相应权限 ({0})。
 You've already voted.: 您已经投过票。
-User not found.: 用户不存在。
+User {0} not found.: 用户 {0} 不存在。
 Current password doesn't match.: 当前密码输入错误。
 Discussion category {1} already exists.: 讨论分类 {1} 已经存在。
 Discussion category {1} not found.: 讨论分类 {1} 不存在。
@@ -376,17 +381,18 @@ Role: 角色
 Select a role: 选择一个角色
 Add User: 添加用户
 Add User to Domain: 添加用户到域
-Delete Selected User: 删除所选用户
+Remove Selected User from Domain: 将所选用户移出域
 Set Roles for Selected User: 设置所选用户的角色
 Create Role: 创建角色
 Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
-'Built-in: Effective for visitors that not logged in': '内置: 对未登录的游客有效'
-'Built-in: Effective for registered users that not a member of the domain': '内置: 对域外注册用户有效'
-User defined role: 用户定义的角色
+'Built-in: Valid for visitors': '内置: 对未登录的游客有效'
+'Built-in: Valid for registered users who are not members of the domain': '内置: 对域外注册用户有效'
+User-defined role: 用户定义的角色
 Users: 用户
 Delete Selected Roles: 删除所选角色
 Owner: 所有者
 Permission: 权限
+Permissions: 权限
 
 View this domain: 查看此域
 Edit permissions of a role: 修改角色权限
@@ -433,11 +439,14 @@ View contest status: 查看比赛状态
 View hidden contest status: 查看隐藏的比赛状态
 Create contests: 创建比赛
 Attend contests: 参加比赛
-View training: 查看训练
+View training plans: 查看训练计划
 Have ALL PERMISSIONS in this domain: 在此域中拥有全部权限
 Select User: 选择用户
 Submitted: 已递交
 timeago_locale: zh_CN
+Live: 正在进行
+Ready: 即将开始
+Done: 已结束
 About Markdown: 关于 Markdown
 Inline codes: 行内代码
 Code blocks: 代码区块
@@ -455,4 +464,103 @@ We will check code similarity after this contest.: 我们会在赛后检查代�
 Dataset: 测试数据
 'Current dataset: {0}': '当前测试数据: {0}'
 Upload: 上传
-No dataset present.: 暂无测试数据。
+No dataset at present.: 暂无测试数据。
+All: 全部
+All {0} Contests: 所有 {0} 比赛
+Show: 显示
+There are no contests...: 没有比赛…
+View Contest: 查看比赛
+Cancel Score: 取消成绩
+score canceled: 成绩取消
+You have permissions to create problems for this domain.: 您有权限为此域创建题目。
+Sort by: 排序
+'↓ # Enrollees': '↓ 参与人数'
+'↓ # Likes': '↓ 赞数'
+'↓ # Stars': '↓ 收藏数'
+'↓ # Comments': '↓ 评论数'
+'↓ Create Time': '↓ 创建时间'
+'↓ Update Time': '↓ 更新时间'
+Enrolled: 已参加
+Create Training Plan: 创建训练计划
+New Training Plan: 新训练计划
+View Owned Training Plans: 查看自己的训练计划
+You can create your own training plans and share with others.: 您可以创建您自己的训练计划并且与他人分享。
+Set Role: 设置角色
+Set Roles for selected users: 为所选用户设置角色
+Please select at least one user to perform this operation.: 请选择至少一个用户来进行操作。
+Confirm removing the selected users from this domain?: 您确定将所选用户从此域中移除吗？
+Their account will not be deleted and they will be with the default role when visiting this domain.: 他们的账号不会被删除，并且之后将以 default 角色访问此域。
+Selected users have been removed from the domain.: 所选用户已从此域中移除。
+Role has been updated to {0} for selected users.: 所选用户角色已更新为 {0}。
+Role has been updated to {0}.: 角色已更新为 {0}。
+Confirm deleting the selected roles?: 您确定删除所选角色吗？
+Users with those roles will be removed from the domain.: 拥有这些角色的用户将从此域中移除。
+Selected roles have been deleted.: 所选角色已删除。
+Please select at least one role to perform this operation.: 请选择至少一个角色来进行操作。
+Domain {0} is bulit-in and cannot be modified.: 域 {0} 为内置，不可修改。
+perm_general: 一般
+perm_problem: 题库
+perm_record: 记录
+perm_problem_solution: 题解
+perm_discussion: 讨论
+perm_contest: 比赛
+perm_training: 训练
+discussion_edit: 编辑讨论
+At least 4 characters: 至少 4 个字符
+Contact: 联系
+'{0} sections': '{0} 小节'
+'{0} problems': '{0} 道题'
+All Training Plans: 所有训练计划
+Section: 章节
+Complete: 完成
+Progress: 进度
+In Progress: 进行中
+Open: 开放
+Invalid: 无效
+expand: 展开
+collapse: 收缩
+'Note: Problem title may not be hidden.': 注意：题目标题可能不会被隐藏。
+Partic.: 参赛人数
+Create training plans: 创建训练计划
+Edit training plans: 修改训练计划
+Edit own training plans: 修改自己的训练计划
+Click here to chat with me: 点击这里与我聊天
+Terms of Service: 服务条款
+wiki_help: 帮助
+Discussion: 讨论
+Manager: 管理
+Ops: 运维
+Feedback: 反馈
+'Discussion: Terms Of Service': 讨论区服务条款
+no_translation_warn: ''
+Domain: 域
+Compilers' Version and Parameters: 编译器版本及参数
+Limitations: 限制
+IO: 输入输出
+Judge Status: 评测状态
+Compile Error: 编译错误
+Training: 训练
+Contest: 比赛
+RP Algorithm: RP 算法
+Difficulty Algorithm: 难度算法
+Dataset Format: 测试数据集格式
+Forgot Password and/or Username: 忘记密码和/或用户名
+Reset Password or Find Username: 重置密码或找回用户名
+'{0} discussions': '{0} 条讨论'
+In following contests: 在下列比赛中
+View Owned Problems: 查看自己的题目
+Completed: 已完成
+Enrollees: 参加人数
+Monthly Popular: 月度最受欢迎
+Enroll Training: 参加训练
+Plan: 计划
+training_edit: 编辑训练
+Not Enrolled: 未参加
+Upvote: 好评
+Downvote: 差评
+View hidden problems: 查看隐藏的题目
+Sorry, there is no training plan.: 目前没有训练计划。
+Created By: 创建人
+Judged By: 评测机
+Categories: 分类
+Tags: 标签

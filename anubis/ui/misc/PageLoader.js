@@ -1,7 +1,4 @@
-/**
- * Created by Nitori on 2017/1/3.
- */
-// Load all page stylesheets
+// load all page stylesheets
 const pageStyleReq = require.context('../', true, /\.page\.styl$/i);
 pageStyleReq.keys().map(key => pageStyleReq(key).default);
 
@@ -15,13 +12,17 @@ export class Page {
 }
 
 export class NamedPage extends Page {
-    constructor(name = 'empty', afterLoading = function () {}, beforeLoading = function () {}) {
+    constructor(name = 'empty', afterLoading = function () {
+    }, beforeLoading = function () {
+    }) {
         super(name, false, afterLoading, beforeLoading);
     }
 }
 
 export class AutoloadPage extends Page {
-    constructor(afterLoading = function () {}, beforeLoading = function () {}) {
+    constructor(afterLoading = function () {
+    }, beforeLoading = function () {
+    }) {
         super('(autoload)', true, afterLoading, beforeLoading);
     }
 }

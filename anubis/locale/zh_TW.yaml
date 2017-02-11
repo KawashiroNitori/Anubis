@@ -4,7 +4,7 @@
 API: API
 About: 關於
 Accepted: 已通過
-Accepted Rate: 通過率
+Accepted Ratio: 通過率
 Active Sessions: 活動會話
 Arguments: 參數
 Attend Contest: 參加比賽
@@ -15,10 +15,12 @@ Begin Date: 開始日期
 Begin Time: 開始時間
 Belongs to: 屬於
 Bio: 個人簡介
+Bio Visibility: 個人簡介可見性
 Blog: 部落格
 Boom!: 炸了！
 Browser: 瀏覽器
-By signing up an account, you can submit code and join discussions.: 註冊一個賬戶，您就可以提交程式碼并參與討論。
+? By signing up an account, you can submit code and join discussions.
+: 註冊一個賬戶，您就可以提交程式碼、參與討論。
 CLOSE: 關閉
 Cancel: 取消
 Ok: 確定
@@ -52,7 +54,9 @@ Disabled: 關閉
 Discussion Nodes: 討論節點
 Discussions: 討論
 Don't have an account?: 還沒有賬戶？
-Download Dataset: 下載測試資料
+Pretest Data: 自測資料
+Problem Data: 題目資料
+Download: 下載
 Duration (hours): 持續時間 (小時)
 Edit: 編輯
 Edit Problem: 編輯題目
@@ -88,7 +92,7 @@ Logout: 登出
 Logout All Sessions: 登出所有會話
 Logout This Session: 登出該會話
 Lost Password: 忘記密碼
-Memory Cost: 記憶體使用
+Memory Cost: 記憶體佔用
 Messages: 站內訊息
 My Profile: 我的資料
 New Email: 新電子郵件
@@ -103,8 +107,8 @@ Open Source: 開源
 Operating System: 作業系統
 Password: 密碼
 Password reset mail has been sent to your email.: 密碼重置郵件已傳送到您的電子郵箱。
-Peak Memory: 記憶體使用峰值
-Pretest?: 對拍?
+Peak Memory: 峰值記憶體
+Pretest?: 自測?
 Privacy: 隱私
 Problem: 題目
 Problem Set: 題庫
@@ -118,6 +122,8 @@ Public: 公開
 Published at: 發表於
 QQ Group: QQ 群
 QQ Visibility: QQ 可見性
+WeChat: 微信
+WeChat Visibility: 微信可見性
 Quit Scratchpad: 退出線上程式設計模式
 Recent Activities: 最近活動
 Registered at: 註冊於
@@ -133,6 +139,7 @@ Save All Changes: 儲存所有修改
 Saved session: 已儲存的會話
 Score: 分數
 Secret: 保密
+Secret (visible to admins): 保密（對管理員可見）
 Security: 安全
 Select a node to create discussion.: 選擇一個節點來發表討論。
 Send: 傳送
@@ -149,7 +156,7 @@ Sign up mail has been sent to your email.: 註冊郵件已經發送到您的電�
 Solutions: 題解
 'Solved {0} problems, RP: {1} (No. {2})': '解決了 {0} 道題目，RP: {1} (No. {2})'
 Sorry: 對不起
-Sorry, there is no problem in the problem set: 題庫中目前沒有題目
+Sorry, there is no problem in the problem set: 題庫中沒有題目
 Solutions Liked: 題解被贊
 Statistics: 統計
 Status: 狀態
@@ -163,14 +170,14 @@ Submission Statistics: 遞交統計
 Submission: 遞交
 Submissions: 遞交
 Submit: 遞交
+'# Submissions': '遞交數'
+'# My Submissions': '我的遞交數'
 Login to Submit: 請登入後遞交
 No Permission to Submit: 您沒有許可權遞交
 Submit At: 遞交時間
 Submit By: 遞交者
 Submit Time: 遞交時間
 Support: 支援
-Swx Good!: Swx 好棒！
-Swx Template!: Swx 模板！
 Technical Information: 技術資訊
 Temporary session: 臨時會話
 This email was sent by {0} automatically, and please do not reply directly.: 這封郵件由 {0} 自動傳送，請勿直接回復。
@@ -187,7 +194,7 @@ Uploaded By: 上傳者
 Upload Problem: 上傳題目
 User: 使用者
 Username: 使用者名
-Using your Vijos universal account: 使用您的賬戶
+Using your account: 使用您的賬戶
 View Problem: 檢視題目
 View or create discussion: 檢視與發表討論
 View or submit solution: 檢視與發表題解
@@ -230,12 +237,13 @@ problem_edit: 編輯題目
 problem_main: 題庫
 problem_solution: 題解
 problem_submit: 遞交程式碼
+problem_settings: 題目設定
 record_detail: 記錄詳情
 record_main: 評測佇列
 reply: 回覆
-setting_usage: 使用
+setting_usage: 使用偏好
 setting_info: 個人資訊
-setting_display: 顯示
+setting_display: 顯示偏好
 setting_privacy: 隱私
 title: 標題
 training_main: 訓練
@@ -248,7 +256,7 @@ user_register: 註冊
 '{0} solutions': '{0} 條題解'
 '{0} views': '{0} 次檢視'
 New: 創建
-Pretest: 對拍
+Pretest: 自測
 Add: 新增
 Remove: 移除
 Add new data: 新增新資料
@@ -259,11 +267,11 @@ Records: 評測記錄
 Refresh Records: 重新整理評測記錄
 Refresh: 重新整理
 Report: 舉報
-Run Pretest: 運行對拍
-Pretest Your Code: 使用對拍資料測試
+Run Pretest: 運行自測
+Pretest Your Code: 使用自定義資料測試
 Submit Solution: 遞交評測
 Submit Your Code: 遞交程式碼進行正式評測
-Toggle Pretest Panel: 切換對拍面板
+Toggle Pretest Panel: 切換自測面板
 Toggle Records Panel: 切換評測記錄面板
 Recent {0} Records: 最近 {0} 條記錄
 You have not submitted any solutions for this problem: 您在該題下沒有遞交過任何解答
@@ -289,16 +297,15 @@ Properties: 屬性
 Access Control: 訪問控制
 domain_main: 首頁
 domain_manage: 管理域
-domain_edit: 編輯域資訊
-domain_role: 管理角色
-domain_user: 管理使用者
-domain_permission: 管理許可權
+domain_manage_edit: 編輯域資訊
+domain_manage_role: 管理角色
+domain_manage_user: 管理使用者
+domain_manage_permission: 管理許可權
 Update Permission: 更新許可權
 Roles: 角色
 Your role: 您的角色
 Your permission: 您的許可權
 Edit Domain: 編輯域
-Description: 說明
 You don't own any domain and don't have privilege to create domain.: 您不擁有任何域也沒有創建域的特權。
 
 An error has occurred.: 發生了一個錯誤。
@@ -315,7 +322,7 @@ You're not logged in.: 您沒有登入。
 You don't have the required privilege.: 您沒有相應的特權。
 You don't have the required permission ({0}) in this domain.: 您在該域中無相應許可權 ({0})。
 You've already voted.: 您已經投過票。
-User not found.: 使用者不存在。
+User {0} not found.: 使用者 {0} 不存在。
 Current password doesn't match.: 當前密碼輸入錯誤。
 Discussion category {1} already exists.: 討論分類 {1} 已經存在。
 Discussion category {1} not found.: 討論分類 {1} 不存在。
@@ -339,6 +346,24 @@ Not wrapped with space: 兩側不含空格
 Not started with a number: 不以數字開頭
 Without slashes or backslashes: 不含斜槓和反斜槓
 Username / UID: 使用者名或 UID
+Last Submit At: 最後遞交於
+Start at: 開始於
+Duration: 持續時間
+hour(s): 小時
+Not Attended: 未參加
+Live...: 正在進行…
+Ready (☆▽☆): 馬上開始 (☆▽☆)
+View Details: 檢視詳情
+All Contests: 所有比賽
+No Submissions: 沒有遞交
+Do not discuss solutions otherwise you will be regarded as cheating and then lose qualifications.: 請勿討論解法，否則以作弊論處並且將失去參賽資格。
+Please attend contest to see the problems.: 請參加比賽來檢視題目。
+This contest is not live.: 比賽沒有開始。
+contest_detail_problem_submit: 遞交比賽程式碼
+Host: 主持人
+Rank: 排名
+Solve: 解決
+Time: 時間
 required: 必填
 Name: 名稱
 Will be used as the domain icon.: 將被用作域圖示。
@@ -355,17 +380,18 @@ Role: 角色
 Select a role: 選擇一個角色
 Add User: 新增使用者
 Add User to Domain: 新增使用者到域
-Delete Selected User: 刪除所選使用者
+Remove Selected User from Domain: 將所選使用者移出域
 Set Roles for Selected User: 設定所選使用者的角色
 Create Role: 創建角色
 Role name can only contains numbers, letters and underscores.: 角色名稱只能包含數字、字母和下劃線。
-'Built-in: Effective for visitors that not logged in': '內建: 對未登入的遊客有效'
-'Built-in: Effective for registered users that not a member of the domain': '內建: 對域外註冊使用者有效'
-User defined role: 使用者定義的角色
+'Built-in: Valid for visitors': '內建: 對未登入的遊客有效'
+'Built-in: Valid for registered users who are not members of the domain': '內建: 對域外註冊使用者有效'
+User-defined role: 使用者定義的角色
 Users: 使用者
 Delete Selected Roles: 刪除所選角色
 Owner: 所有者
 Permission: 許可權
+Permissions: 許可權
 
 View this domain: 檢視此域
 Edit permissions of a role: 修改角色許可權
@@ -414,4 +440,74 @@ Create contests: 創建比賽
 Attend contests: 參加比賽
 View training: 檢視訓練
 Have ALL PERMISSIONS in this domain: 在此域中擁有全部許可權
+Select User: 選擇使用者
+Submitted: 已遞交
 timeago_locale: zh_CN
+Live: 正在進行
+Ready: 即將開始
+Done: 已結束
+About Markdown: 關於 Markdown
+Inline codes: 行內程式碼
+Code blocks: 程式碼區塊
+Inline formulas: 行內公式
+Formula blocks: 公式區塊
+Links: 連結
+Text: 文字
+Images: 圖片
+Description: 說明
+Learn More: 瞭解更多
+CommonMark Syntax: CommonMark 語法
+LaTeX Expressions: LaTeX 表示式
+Hidden: 隱藏
+We will check code similarity after this contest.: 我們會在賽後檢查程式碼相似度。
+Dataset: 測試資料
+'Current dataset: {0}': '當前測試資料: {0}'
+Upload: 上傳
+No dataset at present.: 暫無測試資料。
+All: 全部
+All {0} Contests: 所有 {0} 比賽
+Show: 顯示
+There are no contests...: 沒有比賽…
+View Contest: 檢視比賽
+Cancel Score: 取消成績
+score canceled: 成績取消
+You have permissions to create problems for this domain.: 您有許可權為此域創建題目。
+Sort by: 排序
+'↓ # Enrollees': '↓ 參與人數'
+'↓ # Likes': '↓ 贊數'
+'↓ # Stars': '↓ 收藏數'
+'↓ # Comments': '↓ 評論數'
+'↓ Create Time': '↓ 創建時間'
+'↓ Update Time': '↓ 更新時間'
+Enrolled: 已參加
+Create Training Plan: 創建訓練計劃
+New Training Plan: 新訓練計劃
+View Owned Training Plans: 檢視自己的訓練計劃
+You can create your own training plans and share with others.: 您可以創建您自己的訓練計劃並且與他人分享。
+no_translation_warn: <blockquote class="warn">這部分內容正在翻譯。</blockquote>
+Set Role: 設定角色
+Set Roles for selected users: 為所選使用者設定角色
+Please select at least one user to perform this operation.: 請選擇至少一個使用者來進行操作。
+Confirm removing the selected users from this domain?: 您確定將所選使用者從此域中移除嗎？
+Their account will not be deleted and they will be with the default role when visiting this domain.: 他們的賬號不會被刪除，並且之後將以 default 角色訪問此域。
+Selected users have been removed from the domain.: 所選使用者已從此域中移除。
+Role has been updated to {0} for selected users.: 所選使用者角色已更新為 {0}。
+Role has been updated to {0}.: 角色已更新為 {0}。
+Confirm deleting the selected roles?: 您確定刪除所選角色嗎？
+Users with those roles will be removed from the domain.: 擁有這些角色的使用者將從此域中移除。
+Selected roles have been deleted.: 所選角色已刪除。
+Please select at least one role to perform this operation.: 請選擇至少一個角色來進行操作。
+Domain {0} is bulit-in and cannot be modified.: 域 {0} 為內建，不可修改。
+perm_general: 一般
+perm_problem: 題庫
+perm_record: 記錄
+perm_problem_solution: 題解
+perm_discussion: 討論
+perm_contest: 比賽
+perm_training: 訓練
+discussion_edit: 編輯討論
+At least 4 characters: 至少 4 個字元
+Contact: 聯絡
+Click here to chat with me: 點選這裡與我聊天
+Partic.: 參賽人數
+'{0} discussions': '{0} 條討論'

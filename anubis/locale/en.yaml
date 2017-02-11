@@ -6,10 +6,11 @@ contest_status: Contest Status
 discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
-home_account: Account
+home_account: Account Settings
 home_preference: Preference
 home_messages: Messages
 home_security: Security
+home_domain: My Domains
 judge_playground: Judge Playground
 main: Home
 pager_first: « First
@@ -28,8 +29,6 @@ setting_function: Function
 setting_info: Personal Info
 setting_preference: Preference
 setting_privacy: Privacy
-setting_display: Display
-setting_usage: Usage
 training_main: Training
 user_detail: User Detail
 user_login: Login
@@ -39,8 +38,18 @@ user_register: Register
 home_domain_create: Create Domain
 domain_main: Main
 domain_manage: Domain Manage
-domain_edit: Domain Edit
-domain_role: Domain Role
-domain_user: Domain User
-domain_permission: Domain Permission
+domain_manage_edit: Domain Edit
+domain_manage_role: Domain Role
+domain_manage_user: Domain User
+domain_manage_permission: Domain Permission
 timeago_locale: en
+perm_general: General
+perm_problem: Problems
+perm_record: Records
+perm_problem_solution: Problem Solutions
+perm_discussion: Discussions
+perm_contest: Contests
+perm_training: Trainings
+discussion_edit: Discussion Edit
+wiki_help: Help
+no_translation_warn: <blockquote class="warn">This part of content is under translation.</blockquote>

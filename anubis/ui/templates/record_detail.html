@@ -87,7 +87,17 @@
                 {{ _('Rejudge') }}
               </button>
             </form>
-          </li>
+          </li>{#
+          <li class="menu__item">
+            <form method="post" action="{{ reverse_url('judge_score', rid=rdoc['_id']) }}">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <input type="hidden" name="score" value="0">
+              <input type="hidden" name="message" value="{{ _('score canceled') }}">
+              <button type="submit" class="menu__link">
+                <span class="icon icon-close"></span> {{ _('Cancel Score') }}
+              </button>
+            </form>
+          </li> #}
         </ol>
       </div>
       {% endif %}
@@ -124,7 +134,7 @@
           <dd>{{ datetime_span(rdoc['judge_at']) }}</dd>
           {% endif %}
           <dt>{{ _('Total Time') }}</dt>
-          <dd>{{ rdoc['time_ms'] }}</dd>
+          <dd>{{ rdoc['time_ms'] }}ms</dd>
           <dt>{{ _('Peak Memory') }}</dt>
           <dd>{{ rdoc['memory_kb'] / 1000 }}MiB</dd>
           {% endif %}

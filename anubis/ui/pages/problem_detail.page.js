@@ -29,7 +29,12 @@ class ProblemPageExtender {
         this.$content.transition({ opacity: 0 }, { duration: 100 });
         await delay(100);
 
-        this.$scratchpadContainer
+        Navigation.instance.floating.set('scratchpad', true);
+        Navigation.instance.logoVisible.set('scratchpad', true);
+        Navigation.instance.expanded.set('scratchpad', true);
+        $('body').addClass('header--collapsed mode--scratchpad');
+
+        await this.$scratchpadContainer
             .css({
                 left: bound.left,
                 top: bound.top,
@@ -45,14 +50,8 @@ class ProblemPageExtender {
             }, {
                 duration: 500,
                 easing: 'easeOutCubic',
-            });
-
-        Navigation.instance.floating.set('scratchpad', true);
-        Navigation.instance.logoVisible.set('scratchpad', true);
-        Navigation.instance.expanded.set('scratchpad', true);
-
-        $('body').addClass('header--collapsed mode--scratchpad');
-        await delay(500);
+            })
+            .promise();
 
         $('.main > .row').hide();
         $('.footer').hide();
@@ -79,7 +78,13 @@ class ProblemPageExtender {
             .get(0)
             .getBoundingClientRect();
 
-        this.$scratchpadContainer
+        Navigation.instance.floating.set('scratchpad', false);
+        Navigation.instance.logoVisible.set('scratchpad', false);
+        Navigation.instance.expanded.set('scratchpad', false);
+
+        $('body').removeClass('header--collapsed mode--scratchpad');
+
+        await this.$scratchpadContainer
             .transition({
                 left: bound.left,
                 top: bound.top,
@@ -88,14 +93,8 @@ class ProblemPageExtender {
             }, {
                 duration: 500,
                 easing: 'easeOutCubic',
-            });
-
-        Navigation.instance.floating.set('scratchpad', false);
-        Navigation.instance.logoVisible.set('scratchpad', false);
-        Navigation.instance.expanded.set('scratchpad', false);
-
-        $('body').removeClass('header--collapsed mode--scratchpad');
-        await delay(500);
+            })
+            .promise();
 
         this.$scratchpadContainer.hide();
         this.$content.transition({ opacity: 1 }, { duration: 100 });
@@ -120,23 +119,25 @@ const page = new NamedPage('problem_detail', () => {
     const extender = new ProblemPageExtender();
 
     async function scratchpadFadeIn() {
-        $('#scratchpad').transition({
-            opacity: 1,
-        }, {
-            duration: 200,
-            easing: 'easeOutCubic',
-        });
-        await delay(200);
+        await $('#scratchpad')
+            .transition({
+                opacity: 1,
+            }, {
+                duration: 200,
+                easing: 'easeOutCubic',
+            })
+            .promise();
     }
 
     async function scratchpadFadeOut() {
-        $('#scratchpad').transition({
-            opacity: 0,
-        }, {
-            duration: 200,
-            easing: 'easeOutCubic',
-        });
-        await delay(200);
+        await $('#scratchpad')
+            .transition({
+                opacity: 0,
+            }, {
+                duration: 200,
+                easing: 'easeOutCubic',
+            })
+            .promise();
     }
 
     function updateFloatingSidebar() {
@@ -178,7 +179,7 @@ const page = new NamedPage('problem_detail', () => {
         const { default: ScratchpadReducer } = await System.import('../components/scratchpad/reducers');
         const { React, render, Provider, store } = await loadReactRedux(ScratchpadReducer);
 
-        const sock = new SockJs('/records-conn');
+        const sock = new SockJs(`/p/${Context.problemId}/pretest-conn`);
         sock.onmessage = (message) => {
             const msg = JSON.parse(message.data);
             store.dispatch({

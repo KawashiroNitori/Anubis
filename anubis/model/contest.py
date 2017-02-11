@@ -59,11 +59,18 @@ RULES = {
 }
 
 
-def convert_to_pid(pids, pid_letter):
+def convert_to_pid(pids: list, pid_letter: str):
     try:
         return pids[ord(pid_letter) - ord('A')]
     except IndexError:
         raise error.ContestProblemNotFoundError(pid_letter)
+
+
+def convert_to_letter(pids: list, pid: int):
+    try:
+        return chr(pids.index(pid) + ord('A'))
+    except ValueError:
+        raise error.ContestProblemNotFoundError(pid)
 
 
 @argmethod.wrap
@@ -78,7 +85,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
     if begin_at >= end_at:
         raise error.ValidationError('begin_at', 'end_at')
     # TODO: should we check problem existance here?
-    tid = system.inc_contest_counter()
+    tid = await system.inc_contest_counter()
     coll = db.Collection('contest')
     doc = {
         '_id': tid,
@@ -93,7 +100,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
         'attend': 0,
         **kwargs,
     }
-    await coll.insert(doc)
+    await coll.insert_one(doc)
     return tid
 
 
@@ -122,7 +129,7 @@ async def attend(domain_id: str, tid: int, uid: int):
         await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'tid': tid,
                                                'uid': uid,
-                                               'attend': {'$ea': 0}},
+                                               'attend': {'$eq': 0}},
                                        update={'$set': {'attend': 1}},
                                        upsert=True,
                                        return_document=ReturnDocument.AFTER)

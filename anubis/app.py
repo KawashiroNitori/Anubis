@@ -54,6 +54,7 @@ class Application(web.Application):
         from anubis.handler import home
         from anubis.handler import problem
         from anubis.handler import record
+        from anubis.handler import contest
         if options.options.static:
             self.router.add_static(
                 '/', path.join(path.dirname(__file__), '.static_build'), name='static')

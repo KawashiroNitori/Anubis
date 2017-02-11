@@ -335,13 +335,14 @@ def _build_path(*args, domain_id, domain_name):
 
 
 @functools.lru_cache()
-def _datetime_span(dt, timezone):
+def _datetime_span(dt, relative=True, format='%Y-%m-%d %H:%M:%S', timezone=pytz.utc):
     if not dt.tzinfo:
         dt = dt.replace(tzinfo=pytz.utc)
     return markupsafe.Markup(
-        '<span class="time" data-timestamp="{0}">{1}</span>'.format(
+        '<span class="time{0}" data-timestamp="{1}">{2}</span>'.format(
+            ' relative' if relative else '',
             calendar.timegm(dt.utctimetuple()),
-            dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M:%S')
+            dt.astimezone(timezone).strftime(format)
         )
     )
 

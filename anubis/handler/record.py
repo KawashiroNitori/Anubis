@@ -28,7 +28,7 @@ class RecordMainHandler(base.Handler):
             # TODO: projection
             udict, pdict = await asyncio.gather(
                 user.get_dict(rdoc['uid'] for rdoc in rdocs),
-                problem.get_dict((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs)
+                problem.get_dict_multi_domain((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs)
             )
         else:
             udict = {}

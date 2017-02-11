@@ -40,7 +40,11 @@ async def inc_contest_counter():
         Integer value after increment.
     """
     coll = db.Collection('system')
-    doc = await coll.find_one_and_update(filter={'_id': 'contest'})
+    doc = await coll.find_one_and_update(filter={'_id': 'contest_counter'},
+                                         update={'$inc': {'value': 1}},
+                                         upsert=True,
+                                         return_document=True)
+    return doc['value']
 
 
 @argmethod.wrap

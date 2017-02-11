@@ -1,6 +1,7 @@
 import asyncio
 import functools
 import hashlib
+import datetime
 from bson import objectid
 
 from anubis import app
@@ -13,8 +14,10 @@ from anubis.model import domain
 from anubis.model import fs
 from anubis.model import testdata
 from anubis.model import record
+from anubis.model import contest
 from anubis.util import pagination
 from anubis.util import json
+from anubis.service import bus
 
 
 @app.route('/p', 'problem_main')
@@ -125,6 +128,31 @@ class ProblemPretestHandler(base.Handler):
         rid = await record.add(self.domain_id, pdoc['_id'], constant.record.TYPE_PRETEST,
                                self.user['_id'], lang, code, did)
         self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
+
+
+@app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
+class ProblemPretestConnection(base.Connection):
+    async def on_open(self):
+        await super(ProblemPretestConnection, self).on_open()
+        self.pid = self.request.match_info['pid']
+        bus.subscribe(self.on_record_change, ['record_change'])
+
+    async def on_record_change(self, e):
+        rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
+        if rdoc['uid'] != self.user['_id'] or rdoc['domain_id'] != self.domain_id or rdoc['pid'] != self.pid:
+            return
+        if rdoc['tid']:
+            now = datetime.datetime.utcnow()
+            tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+            if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+                and (self.domain_id != tdoc['domain_id']
+                     or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+                return
+        # TODO: join form event to improve performance?
+        self.send(rdoc=rdoc)
+
+    async def on_close(self):
+        bus.unsubscribe(self.on_record_change)
 
 
 @app.route('/p/{pid}/data', 'problem_data')

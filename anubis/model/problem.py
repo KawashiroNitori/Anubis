@@ -1,4 +1,5 @@
 import datetime
+import itertools
 
 from bson import objectid
 from pymongo import errors
@@ -78,6 +79,20 @@ async def get_dict(domain_id, pids, *, projection=None):
                                 _id={'$in': list(set(pids))},
                                 projection=projection):
         result[pdoc['_id']] = pdoc
+    return result
+
+
+async def get_dict_multi_domain(pdom_and_ids, *, projection=None):
+    query = {'$or': []}
+    key_func = lambda e: e[0]
+    for domain_id, ptuples in itertools.groupby(sorted(set(pdom_and_ids), key=key_func),
+                                                key=key_func):
+        query['$or'].append({'domain_id': domain_id, '_id': {'$in': [e[1] for e in ptuples]}})
+    result = dict()
+    if not query['$or']:
+        return result
+    async for pdoc in get_multi(**query, projection=projection):
+        result[(pdoc['domain_id'], pdoc['_id'])] = pdoc
     return result
 
 

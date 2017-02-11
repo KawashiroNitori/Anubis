@@ -48,7 +48,7 @@ class ContestStatusMixin(object):
         elif self.is_ready(tdoc):
             return 'Ready (☆▽☆)'
         elif self.is_live(tdoc):
-            return 'Running...'
+            return 'Live...'
         else:
             return 'Done'
 
@@ -91,6 +91,8 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
             contest.get_status(self.domain_id, tdoc['_id'], self.user['_id']),
             problem.get_dict(self.domain_id, tdoc['pids'])
         )
+        for index, pid in enumerate(tdoc['pids']):
+            pdict[pid]['letter'] = chr(ord('A') + index)
         psdict = dict()
         rdict = dict()
         if tsdoc:
@@ -171,6 +173,7 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
         pdoc = await problem.get(self.domain_id, pid, uid)
         if not pdoc:
             raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['_id'])
+        pdoc['letter'] = letter
         if not self.is_done(tdoc):
             tsdoc = await contest.get_status(self.domain_id, tdoc['_id'], self.user['_id'])
             if not tsdoc or tsdoc.get('attend') != 1:
@@ -204,6 +207,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
         pdoc = await problem.get(self.domain_id, pid, uid)
         if not pdoc:
             raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['_id'])
+        pdoc['letter'] = letter
         tsdoc, udoc = await asyncio.gather(
             contest.get_status(self.domain_id, tdoc['_id'], self.user['_id']),
             user.get_by_uid(tdoc['owner_uid'])
@@ -219,7 +223,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
             path_components = self.build_path(
                 (self.translate('contest_main'), self.reverse_url('contest_main')),
                 (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
-                (pdoc['title'], self.reverse_url('contest_detail_problem', tid=tid, pid=pid)),
+                (pdoc['title'], self.reverse_url('contest_detail_problem', tid=tid, letter=pdoc['letter'])),
                 (self.translate('contest_detail_problem_submit'), None)
             )
             self.render('problem_submit.html', tdoc=tdoc, pdoc=pdoc, rdocs=rdocs,
@@ -272,6 +276,8 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
             user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
             problem.get_dict(self.domain_id, tdoc['pids'])
         )
+        for index, pid in enumerate(tdoc['pids']):
+            pdict[pid]['letter'] = chr(ord('A') + index)
         ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
         path_components = self.build_path(
             (self.translate('contest_main'), self.reverse_url('contest_main')),

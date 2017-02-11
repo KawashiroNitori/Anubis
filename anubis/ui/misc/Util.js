@@ -1,10 +1,7 @@
-/**
- * Created by Nitori on 2017/1/3.
- */
-export async function ajax(options) {
+export async function ajax(options, dataType = 'json') {
     try {
         const data = await $.ajax({
-            dataType: 'json',
+            dataType,
             ...options,
         });
         return data;
@@ -13,13 +10,13 @@ export async function ajax(options) {
             throw new Error('Connection failed');
         }
         if (resp.responseJSON) {
-            throw new Error(resp.responseJSON.err);
+            throw resp.responseJSON.error;
         }
         throw new Error(resp.statusText);
     }
 }
 
-export function post(url, dataOrForm = {}) {
+export function post(url, dataOrForm = {}, dataType = 'json') {
     let postData;
     if (dataOrForm instanceof jQuery && dataOrForm.is('form')) {
         // $form
@@ -28,10 +25,10 @@ export function post(url, dataOrForm = {}) {
         // form
         postData = $(dataOrForm).serialize();
     } else if (typeof dataOrForm === 'string') {
-        // x-url-encoded
+        // foo=bar&box=boz
         postData = dataOrForm;
     } else {
-        // json
+        // {foo: 'bar'}
         postData = $.param({
             csrf_token: UiContext.csrf_token,
             ...dataOrForm,
@@ -41,13 +38,13 @@ export function post(url, dataOrForm = {}) {
         url,
         method: 'post',
         data: postData,
-    });
+    }, dataType);
 }
 
-export function get(url, qs = {}) {
-    return $.ajax({
+export function get(url, qs = {}, dataType = 'json') {
+    return ajax({
         url,
         data: qs,
         method: 'get',
-    });
+    }, dataType);
 }

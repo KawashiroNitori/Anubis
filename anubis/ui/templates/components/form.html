@@ -2,41 +2,60 @@
 {% set label = kwargs.pop('label') %}
 {% set columns = kwargs.pop('columns') %}
 {% set required = kwargs.pop('required', false) %}
-<div class="row"><div class="medium-{{ columns }} columns">
-  <label>
-    {{ _(label) }}
-  {% if required %}
-    ({{ _('required') }})
-  {% endif %}
+{% set hotkeys = kwargs.pop('hotkeys', none) %}
+{% set row = kwargs.pop('row', true) %}
+{% if row %}
+<div class="row">
+{% endif %}
+  <div
+    class="{% if columns %}medium-{{ columns }} {% endif %}columns"
+    {% if hotkeys %}data-hotkey="{{ hotkeys }}"{% endif %}
+  >
+    <label>
+      {{ _(label) }}
+    {% if required %}
+      ({{ _('required') }})
+    {% endif %}
 {% endmacro %}
 
 {% macro form_end() %}
-{% set help_text = kwargs.pop('help_text', None) %}
-  </label>
-{% if help_text %}
-  <p class="help-text">{{ _(help_text) }}</p>
+{% set help_text = kwargs.pop('help_text', none) %}
+{% set row = kwargs.pop('row', true) %}
+    </label>
+  {% if help_text %}
+    <p class="help-text">{{ _(help_text) }}</p>
+  {% endif %}
+  </div>
+{% if row %}
+</div>
 {% endif %}
-</div></div>
 {% endmacro %}
 
 {% macro form_attr(form_class) %}
-{% set extra_class = kwargs.pop('extra_class', None) %}
+{% set extra_class = kwargs.pop('extra_class', none) %}
 {% set disabled = kwargs.pop('disabled', false) %}
 {% set required = kwargs.pop('required', false) %}
 {% set autofocus = kwargs.pop('autofocus', false) %}
+{% set date = kwargs.pop('date', false) %}
+{% set time = kwargs.pop('time', false) %}
   class="{{ form_class }}{% if extra_class %} {{ extra_class }}{% endif %}"
   {% if disabled %}disabled{% endif %}
   {% if required %}required{% endif %}
   {% if autofocus %}autofocus data-autofocus{% endif %}
+  {% if date %}data-pick-date{% endif %}
+  {% if time %}data-pick-time{% endif %}
 {% endmacro %}
 
 {% macro select(options, name='', value='') %}
-<select name="{{ name }}" {{ form_attr('select', **kwargs) }}>
-  {% for k, v in options %}
+<select
+  name="{{ name }}"
+  {{ form_attr('select', **kwargs) }}
+>
+{% for k, v in options %}
   <option value="{{ k }}"{% if value == k %} selected{% endif %}>
     {{ _(v) }}
   </option>
-  {% endfor %}
+{% endfor %}
 </select>
 {% endmacro %}
 
@@ -47,7 +66,11 @@
 {% endmacro %}
 
 {% macro text(name='', value='', placeholder='', type='text') %}
-<input type="{{ type }}" name="{{ name }}" value="{{ value }}" placeholder="{{ placeholder }}"
+<input
+  type="{{ type }}"
+  name="{{ name }}"
+  value="{{ value }}"
+  placeholder="{{ placeholder }}"
   {{ form_attr('textbox', **kwargs) }}
 >
 {% endmacro %}
@@ -59,7 +82,12 @@
 {% endmacro %}
 
 {% macro textarea(name='', value='', placeholder='') %}
-<textarea name="{{ name }}" placeholder="{{ placeholder }}" {{ form_attr('textbox', **kwargs) }}
+{% set markdown = kwargs.pop('markdown', false) %}
+<textarea
+  name="{{ name }}"
+  placeholder="{{ placeholder }}"
+  {% if markdown %}data-markdown{% endif %}
+  {{ form_attr('textbox', **kwargs) }}
 >{{ value }}</textarea>
 {% endmacro %}
 
@@ -67,4 +95,16 @@
 {{ form_begin(columns=columns, **kwargs) }}
 {{ textarea(columns=columns, **kwargs) }}
 {{ form_end(columns=columns, **kwargs) }}
+{% endmacro %}
+
+{% macro checkbox(label, name='', value=false) %}
+<label class="checkbox">
+  <input type="checkbox" name="{{ name }}"{% if value %} checked{% endif %}>{{ _(label) }}
+</label>
+{% endmacro %}
+
+{% macro form_checkbox(columns=5) %}
+<div class="row"><div class="medium-{{ columns }} columns">
+  {{ checkbox(**kwargs) }}
+</div></div>
 {% endmacro %}
