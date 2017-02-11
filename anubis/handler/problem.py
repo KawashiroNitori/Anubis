@@ -132,15 +132,21 @@ class ProblemPretestHandler(base.Handler):
 
 @app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
 class ProblemPretestConnection(base.Connection):
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
     async def on_open(self):
         await super(ProblemPretestConnection, self).on_open()
-        self.pid = self.request.match_info['pid']
+        try:
+            num_pid = int(self.request.match_info['pid'])
+        except ValueError:
+            num_pid = self.request.match_info['pid']
+        self.pid = num_pid
         bus.subscribe(self.on_record_change, ['record_change'])
 
     async def on_record_change(self, e):
         rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
         if rdoc['uid'] != self.user['_id'] or rdoc['domain_id'] != self.domain_id or rdoc['pid'] != self.pid:
             return
+        # check permission fro visibility: contest
         if rdoc['tid']:
             now = datetime.datetime.utcnow()
             tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
