@@ -130,7 +130,7 @@ class ProblemPretestHandler(base.Handler):
         self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
+@app.connection_route('/p/{pid:\d{4,}}/pretest-conn', 'problem_pretest-conn')
 class ProblemPretestConnection(base.Connection):
     @base.require_priv(builtin.PRIV_USER_PROFILE)
     async def on_open(self):
