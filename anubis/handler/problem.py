@@ -45,6 +45,17 @@ class ProblemMainHandler(base.OperationHandler):
             psdict = None
         self.render('problem_main.html', page=page, ppcount=ppcount, pdocs=pdocs, psdict=psdict)
 
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    @base.require_csrf_token
+    @base.sanitize
+    async def star_unstar(self, *, pid: int, star: bool):
+        pdoc = await problem.get(self.domain_id, pid)
+        pdoc = await problem.set_star(self.domain_id, pdoc['_id'], self.user['_id'], star)
+        self.json_or_redirect(self.url, star=pdoc['star'])
+
+    post_star = functools.partialmethod(star_unstar, star=True)
+    post_unstar = functools.partialmethod(star_unstar, star=False)
+
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
 class ProblemDetailHandler(base.Handler):

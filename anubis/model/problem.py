@@ -110,6 +110,17 @@ async def get_status(domain_id: str, pid: int, uid: int, projection=None):
                                projection=projection)
 
 
+async def set_status(domain_id, pid, uid, **kwargs):
+    coll = db.Collection('problem.status')
+    doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                                 'pid': pid,
+                                                 'uid': uid},
+                                         update={'$set': kwargs},
+                                         upsert=True,
+                                         return_document=True)
+    return doc
+
+
 def get_multi_status(*, projection=None, **kwargs):
     coll = db.Collection('problem.status')
     return coll.find(kwargs, projection=projection)
@@ -138,6 +149,11 @@ async def get_data_md5(domain_id: str, pid: int):
     if not pdoc['data']:
         raise error.ProblemDataNotFoundError(domain_id, pid)
     return await fs.get_md5(pdoc['data'])
+
+
+@argmethod.wrap
+async def set_star(domain_id: str, pid: int, uid: int, star: bool):
+    return await set_status(domain_id, pid, uid, star=star)
 
 
 @argmethod.wrap
