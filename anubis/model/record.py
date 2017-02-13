@@ -173,6 +173,9 @@ async def create_indexes():
     await coll.create_index([('hidden', 1),
                              ('_id', -1)])
     await coll.create_index([('hidden', 1),
+                             ('uid', 1),
+                             ('_id', -1)])
+    await coll.create_index([('hidden', 1),
                              ('domain_id', 1),
                              ('pid', 1),
                              ('uid', 1),
@@ -181,6 +184,11 @@ async def create_indexes():
     await coll.create_index([('domain_id', 1),
                              ('pid', 1),
                              ('uid', 1),
+                             ('type', 1),
+                             ('_id', 1)])
+    await coll.create_index([('domain_id', 1),
+                             ('pid', 1),
+                             ('type', 1),
                              ('_id', 1)])
     # TODO: Add more indexes.
 

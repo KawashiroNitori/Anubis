@@ -67,7 +67,6 @@ async def get_nodes_and_vnode(domain_id, node_or_dtuple):
         # TODO: projection
         coll = db.Collection(node_or_dtuple[0])
         vnode = await coll.find({'domain_id': domain_id,
-                                 'type': node_or_dtuple[0],
                                  '_id': node_or_dtuple[1]})
     else:
         vnode = None
@@ -311,6 +310,38 @@ async def get_status(domain_id: str, did: objectid.ObjectId, uid: int):
     return await coll.find_one({'domain_id': domain_id,
                                 '_id': did,
                                 'uid': uid})
+
+
+@argmethod.wrap
+async def create_indexes():
+    coll = db.Collection('discussion')
+    await coll.create_index([('domain_id', 1),
+                             ('_id', 1)], unique=True)
+    await coll.create_index([('domain_id', 1),
+                             ('owner_uid', 1),
+                             ('_id', 1)])
+    await coll.create_index([('domain_id', 1),
+                             ('parent_type', 1),
+                             ('parent_id', 1),
+                             ('update_at', -1),
+                             ('_id', -1)], sparse=True)
+    node_coll = db.Collection('discussion.node')
+    await node_coll.create_index([('domain_id', 1)])
+    await node_coll.create_index([('domain_id', 1),
+                                  ('name', 1)], unique=True)
+    status_coll = db.Collection('discussion.status')
+    await status_coll.create_index([('domain_id', 1),
+                                    ('_id', 1)], unique=True)
+    reply_coll = db.Collection('discussion.reply')
+    await reply_coll.create_index([('domain_id', 1),
+                                   ('_id', 1)], unique=True)
+    await reply_coll.create_index([('domain_id', 1),
+                                   ('owner_uid', 1),
+                                   ('_id', 1)])
+    await reply_coll.create_index([('domain_id', 1),
+                                   ('parent_type', 1),
+                                   ('parent_id', 1)], sparse=True)
+
 
 
 if __name__ == '__main__':

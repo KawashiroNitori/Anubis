@@ -181,6 +181,27 @@ async def inc(domain_id: str, pid: int, key: str, value: int):
                                           return_document=True)
 
 
+async def rev_init_status(domain_id, pid, uid):
+    coll = db.Collection('problem.status')
+    return await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                                  '_id': pid,
+                                                  'uid': uid},
+                                          update={'$inc': {'rev': 1}},
+                                          upsert=True,
+                                          return_document=True)
+
+
+async def rev_set_status(domain_id, pid, uid, rev, **kwargs):
+    coll = db.Collection('problem.status')
+    return await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                                  '_id': pid,
+                                                  'uid': uid,
+                                                  'rev': rev},
+                                          update={'$set': kwargs,
+                                                  '$inc': {'rev': 1}},
+                                          return_document=True)
+
+
 @argmethod.wrap
 async def update_status(domain_id: str, pid: int, uid: int, rid: objectid.ObjectId, status: int):
     coll = db.Collection('problem.status')

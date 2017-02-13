@@ -136,7 +136,8 @@ async def attend(domain_id: str, tid: int, uid: int):
     except errors.DuplicateKeyError:
         raise error.ContestAlreadyAttendedError(domain_id, tid, uid) from None
     coll = db.Collection('contest')
-    return await coll.find_one_and_update(filter={'_id': tid},
+    return await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                                  '_id': tid},
                                           update={'$inc': {'attend': 1}},
                                           return_document=ReturnDocument.AFTER)
 
@@ -209,6 +210,26 @@ async def update_status(domain_id: str, tid: int, uid: int, rid: objectid.Object
                                            update={'$set': {'journal': journal, **stats}, '$inc': {'rev': 1}},
                                            return_document=ReturnDocument.AFTER)
     return tsdoc
+
+
+@argmethod.wrap
+async def create_indexes():
+    coll = db.Collection('contest')
+    await coll.create_index([('domain_id', 1),
+                             ('_id', 1)], unique=True)
+    await coll.create_index([('domain_id', 1),
+                             ('pids', 1)], sparse=True)
+    await coll.create_index([('domain_id', 1),
+                             ('rule', 1),
+                             ('_id', -1)], sparse=True)
+    status_coll = db.Collection('contest.status')
+    await status_coll.create_index([('domain_id', 1),
+                                    ('uid', 1),
+                                    ('tid', 1)], unique=True)
+    await status_coll.create_index([('domain_id', 1),
+                                    ('tid', 1),
+                                    ('accept', -1),
+                                    ('time', 1)], sparse=True)
 
 
 if __name__ == '__main__':
