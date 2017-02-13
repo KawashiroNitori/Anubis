@@ -4,8 +4,8 @@
   var Context = {{ {
     'problemId': pdoc['_id'],
     'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['_id'])|string(),
-    'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['_id'])|string(),
-    'postSubmissionUrl': reverse_url('problem_submit', pid=pdoc['_id'])|string(),
+    'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['_id'])|string() if not tdoc else reverse_url('contest_detail_problem_submit', tid=tdoc['_id'], letter=pdoc['letter'])|string(),
+    'getSubmissionsUrl': reverse_url('problem_submit', pid=pdoc['_id'])|string() if not tdoc else reverse_url('contest_detail_problem_submit', tid=tdoc['_id'], letter=pdoc['letter'])|string(),
     'code_lang': handler.get_setting('code_lang'),
   }|json|safe }};
 </script>

@@ -1,3 +1,4 @@
+{% import "components/record.html" as record with context %}
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
@@ -51,7 +52,7 @@
                 <span>{{ rcdoc['judge_text'] }}</span>
               </td>
               <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
-              <td class="col--memory">{{ rcdoc['memory_kb'] / 1000 }}MiB</td>
+              <td class="col--memory">{{ record.render_memory_usage(rcdoc['memory_kb']) }}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -136,7 +137,7 @@
           <dt>{{ _('Total Time') }}</dt>
           <dd>{{ rdoc['time_ms'] }}ms</dd>
           <dt>{{ _('Peak Memory') }}</dt>
-          <dd>{{ rdoc['memory_kb'] / 1000 }}MiB</dd>
+          <dd>{{ record.render_memory_usage(rcdoc['memory_kb']) }}</dd>
           {% endif %}
         </dl>
       </div>

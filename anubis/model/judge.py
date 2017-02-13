@@ -11,6 +11,7 @@ from anubis.model import domain
 from anubis.model import opcount
 from anubis.model import queue
 from anubis.model import record
+from anubis.model import user
 from anubis.model import contest
 from anubis.model import problem
 from anubis.service import bus
@@ -43,17 +44,64 @@ async def _post_judge(rdoc):
 
 @app.route('/judge/playground', 'judge_playground')
 class JudgePlaygroundHandler(base.Handler):
-    @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD
-                       | builtin.PRIV_READ_PRETEST_DATA | builtin.PRIV_READ_PROBLEM_DATA)
+    @base.require_priv(builtin.JUDGE_PRIV)
     async def get(self):
         self.render('judge_playground.html')
 
 
-@app.route('/judge/noop', 'judge_noop')
-class JudgeNoopHandler(base.Handler):
+@app.route('/judge/heartbeat', 'judge_heartbeat')
+class JudgeHeartbeatHandler(base.Handler):
     @base.require_priv(builtin.JUDGE_PRIV)
     async def get(self):
+        user.update(self.user['_id'], status='Idle')
         self.json({})
 
 
-@app.route('/judge/datalist')
+@app.route('/judge/{rid:[\da-f]{24}}', 'judge_main')
+class JudgeMainHandler(base.OperationHandler):
+    @base.require_priv(builtin.JUDGE_PRIV)
+    @base.route_argument
+    @base.post_argument
+    @base.sanitize
+    async def post_begin(self, rid, status: int):
+        rdoc = await record.begin_judge(rid, self.user['_id'], status)
+        if rdoc:
+            await bus.publish('record_change', rid)
+        self.json(rdoc)
+
+    @base.require_priv(builtin.JUDGE_PRIV)
+    @base.route_argument
+    @base.post_argument
+    @base.sanitize
+    async def post_next(self, rid, **kwargs):
+        update = {}
+        if 'status' in kwargs:
+            update.setdefault('$set', {})['status'] = int(kwargs['status'])
+        if 'compiler_text' in kwargs:
+            update.setdefault('$push', {})['compiler_texts'] = str(kwargs['compiler_text'])
+        if 'judge_text' in kwargs:
+            update.setdefault('$push', {})['judge_texts'] = str(kwargs['judge_text'])
+        if 'case' in kwargs:
+            update.setdefault('$push', {})['cases'] = {
+                'status': int(kwargs['case']['status']),
+                'time_ms': int(kwargs['case']['time_ms']),
+                'memory_kb': int(kwargs['case']['memory_kb']),
+                'judge_text': str(kwargs['case']['judge_text']),
+            }
+        if 'progress' in kwargs:
+            update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
+        rdoc = await record.next_judge(rid, self.user['_id'], **update)
+        await bus.publish('record_change', rid)
+        self.json(rdoc)
+
+    @base.require_priv(builtin.JUDGE_PRIV)
+    @base.route_argument
+    @base.post_argument
+    @base.sanitize
+    async def post_end(self, rid, **kwargs):
+        rdoc = await record.end_judge(rid, self.user['_id'],
+                                      int(kwargs['status']),
+                                      int(kwargs['time_ms']),
+                                      int(kwargs['memory_kb']))
+        await _post_judge(rdoc)
+        self.json(rdoc)

@@ -126,12 +126,11 @@ async def get_dict(rids, *, projection=None):
 
 
 @argmethod.wrap
-async def begin_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: str, status: int):
+async def begin_judge(record_id: objectid.ObjectId, judge_uid: int, status: int):
     coll = db.Collection('record')
     doc = await coll.find_one_and_update(filter={'_id': record_id},
                                          update={'$set': {'status': status,
                                                           'judge_uid': judge_uid,
-                                                          'judge_token': judge_token,
                                                           'judge_at': datetime.datetime.utcnow(),
                                                           'compiler_texts': [],
                                                           'judge_texts': [],
@@ -141,28 +140,25 @@ async def begin_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token:
     return doc
 
 
-async def next_judge(record_id, judge_uid, judge_token, **kwargs):
+async def next_judge(record_id, judge_uid,  **kwargs):
     coll = db.Collection('record')
     doc = await coll.find_one_and_update(filter={'_id': record_id,
-                                                 'judge_uid': judge_uid,
-                                                 'judge_token': judge_token},
+                                                 'judge_uid': judge_uid},
                                          update=kwargs,
                                          return_document=True)
     return doc
 
 
 @argmethod.wrap
-async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: str,
+async def end_judge(record_id: objectid.ObjectId, judge_uid: int,
                     status: int, time_ms: int, memory_kb: int):
     coll = db.Collection('record')
     doc = await coll.find_one_and_update(filter={'_id': record_id,
-                                                 'judge_uid': judge_uid,
-                                                 'judge_token': judge_token},
+                                                 'judge_uid': judge_uid},
                                          update={'$set': {'status': status,
                                                           'time_ms': time_ms,
                                                           'memory_kb': memory_kb},
-                                                 '$unset': {'judge_token': '',
-                                                            'progress': ''}},
+                                                 '$unset': {'progress': ''}},
                                          return_document=True)
     return doc
 

@@ -58,6 +58,13 @@ async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', pr
         raise error.UserAlreadyExistError(uid, uname, mail) from None
 
 
+async def update(uid: int, **kwargs):
+    coll = db.Collection('user')
+    return await coll.find_one_and_update(filter={'_id': uid},
+                                          update={'$set': kwargs},
+                                          return_document=True)
+
+
 @argmethod.wrap
 async def get_by_uid(uid: int, fields=PROJECTION_VIEW):
     for user in builtin.USERS:
