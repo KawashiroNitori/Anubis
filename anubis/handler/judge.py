@@ -36,7 +36,7 @@ async def _post_judge(rdoc):
             if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
                                            rdoc['_id'], rdoc['status']):
                 post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))
-                post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'],num_accept=1))
+                post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'], num_accept=1))
         else:
             await job.record.user_in_problem(rdoc['uid'], rdoc['domain_id'], rdoc['pid'])
     await asyncio.gather(*post_coros)
@@ -53,8 +53,7 @@ class JudgePlaygroundHandler(base.Handler):
 class JudgeHeartbeatHandler(base.Handler):
     @base.require_priv(builtin.JUDGE_PRIV)
     async def get(self):
-        user.update(self.user['_id'], status='Idle')
-        self.json({})
+        self.json({'status': self.user['status']})
 
 
 @app.route('/judge/{rid:[\da-f]{24}}', 'judge_main')
@@ -67,6 +66,8 @@ class JudgeMainHandler(base.OperationHandler):
         rdoc = await record.begin_judge(rid, self.user['_id'], status)
         if rdoc:
             await bus.publish('record_change', rid)
+        await user.update(self.user['_id'], status={'code': constant.record.STATUS_FETCHED,
+                                                    'rid': rid})
         self.json(rdoc)
 
     @base.require_priv(builtin.JUDGE_PRIV)
@@ -92,6 +93,9 @@ class JudgeMainHandler(base.OperationHandler):
             update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
         rdoc = await record.next_judge(rid, self.user['_id'], **update)
         await bus.publish('record_change', rid)
+        if 'status' in kwargs:
+            await user.update(self.user['_id'], status={'code': kwargs['status'],
+                                                        'rid': rid})
         self.json(rdoc)
 
     @base.require_priv(builtin.JUDGE_PRIV)
@@ -104,4 +108,5 @@ class JudgeMainHandler(base.OperationHandler):
                                       int(kwargs['time_ms']),
                                       int(kwargs['memory_kb']))
         await _post_judge(rdoc)
+        await user.update(self.user['_id'], status={'code': constant.record.STATUS_WAITING})
         self.json(rdoc)

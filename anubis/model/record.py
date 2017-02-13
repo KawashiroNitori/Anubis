@@ -52,24 +52,22 @@ async def get(record_id: objectid.ObjectId, projection=PROJECTION_ALL):
 
 
 @argmethod.wrap
-async def rejudge(record_id: objectid.ObjectId):
+async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
     coll = db.Collection('record')
     doc = await coll.find_one_and_update(filter={'_id': record_id},
                                          update={'$unset': {'judge_uid': '',
-                                                            'judge_token': '',
                                                             'judge_at': '',
                                                             'compiler_texts':'',
                                                             'judge_texts': '',
                                                             'cases': ''},
                                                  '$set': {'status': constant.record.STATUS_WAITING,
                                                           'time_ms': 0,
-                                                          'memory_kb': 0}},
+                                                          'memory_kb': 0,
+                                                          'rejudged': True}},
                                          return_document=False)
-    post_coros = [queue.publish('judge', rid=doc['_id']),
-                  bus.publish('record_change', doc['_id'])]
-    if doc['status'] == constant.record.STATUS_ACCEPTED:
-        post_coros.append(problem.inc(doc['domain_id'], doc['pid'], 'num_accept', -1))
-        post_coros.append(domain.inc_user(doc['domain_id'], doc['uid'], num_accept=-1))
+    post_coros = [bus.publish('record_change', doc['_id'])]
+    if enqueue:
+        post_coros.append(queue.publish('judge', rid=doc['_id']))
     await asyncio.gather(*post_coros)
 
 
