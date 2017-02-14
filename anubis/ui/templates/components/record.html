@@ -14,5 +14,5 @@
 </td>
 {% endmacro %}
 {% macro render_memory_usage(memory_kb) %}
-{% if memory_kb < 2048 %}{{ memory_kb }}KiB{% else %}{{ memory_kb / 1024 }}MiB{% endif %}
+{% if memory_kb < 2048 %}{{ memory_kb }}KiB{% else %}{{ (memory_kb / 1024)|round(2) }}MiB{% endif %}
 {% endmacro %}
