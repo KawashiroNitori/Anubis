@@ -43,9 +43,8 @@ async def _on_message(channel, body, envelope, properties):
     if key == 'begin':
         rid = body['rid']
         judge_uid = body['judge_uid']
-        judge_token = body['judge_token']
         status = body['status']
-        rdoc = await record.begin_judge(rid, judge_uid, judge_token, status)
+        rdoc = await record.begin_judge(rid, judge_uid, status)
         if rdoc:
             await bus.publish('record_change', rid)
 
@@ -67,12 +66,12 @@ async def _on_message(channel, body, envelope, properties):
             }
         if 'progress' in body:
             update.setdefault('$set', {})['progress'] = float(body['progress'])
-        await record.next_judge(rid, body['judge_uid'], body['judge_token'], **update)
+        await record.next_judge(rid, body['judge_uid'], **update)
         await bus.publish('record_change', rid)
 
     elif key == 'end':
         rid = body['rid']
-        rdoc = await record.end_judge(rid, body['judge_uid'], body['judge_token'],
+        rdoc = await record.end_judge(rid, body['judge_uid'],
                                       int(body['status']),
                                       int(body['time_ms']),
                                       int(body['memory_kb']))
