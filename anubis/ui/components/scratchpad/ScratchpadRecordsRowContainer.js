@@ -59,15 +59,15 @@ export default class ScratchpadRecordsRowContainer extends React.PureComponent {
             <tr>
                 <td className={`col--detail record-status--border ${recordEnum.STATUS_CODES[data.status]}`}>
                     <span className={`icon record-status--icon ${recordEnum.STATUS_CODES[data.status]}`}></span>
-                    <span className="icol icol--pretest">
-            {isPretest(data)
-                ? <span
-                    className={`flag record-status--background ${recordEnum.STATUS_CODES[data.status]}`}
-                >{i18n('Pretest')}</span>
-                : ''
-            }
-          </span>
                     {getRecordDetail(data)}
+                    <span className="icol icol--pretest">
+                        {isPretest(data)
+                            ? <span
+                                className={`flag record-status--background ${recordEnum.STATUS_CODES[data.status]}`}
+                            >{i18n('Pretest')}</span>
+                            : ''
+                        }
+                    </span>
                 </td>
                 <td className="col--memory">
                     {shouldShowDetail(data) ? `${Math.ceil(data.memory_kb / 1000)} MB` : '-'}
