@@ -16,7 +16,7 @@ const isPretest = (data) =>
 data.type === recordEnum.TYPE_PRETEST;
 
 const getRecordDetail = (data) => {
-    if (!shouldShowDetail(data)) {
+    if (!shouldShowDetail(data) || !isPretest(data)) {
         return (
             <span className={`record-status--text ${recordEnum.STATUS_CODES[data.status]}`}>
         {recordEnum.STATUS_TEXTS[data.status]}
@@ -73,7 +73,7 @@ export default class ScratchpadRecordsRowContainer extends React.PureComponent {
                     {shouldShowDetail(data) ? `${Math.ceil(data.memory_kb / 1000)} MB` : '-'}
                 </td>
                 <td className="col--time">
-                    {shouldShowDetail(data) ? `${(data.time_ms / 1000).toFixed(1)}s` : '-'}
+                    {shouldShowDetail(data) ? `${data.time_ms}ms` : '-'}
                 </td>
                 <td className="col--at">
                     <time data-tooltip={moment(submitAt).format('YYYY-MM-DD HH:mm:ss')}>

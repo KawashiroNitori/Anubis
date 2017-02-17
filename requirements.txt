@@ -1,6 +1,5 @@
 PyYAML
 bson
-tornado
 jinja2
 motor
 aioamqp
@@ -12,3 +11,7 @@ aioredis
 misaka
 aiohttp
 sockjs
+GitPython
+geoip2
+hoedown
+httpagentparser
