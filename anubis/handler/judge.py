@@ -53,7 +53,7 @@ class JudgePlaygroundHandler(base.Handler):
 class JudgeHeartbeatHandler(base.Handler):
     @base.require_priv(builtin.JUDGE_PRIV)
     async def get(self):
-        self.json({'status': self.user['status']})
+        self.json({'status': self.user.get('status', constant.record.STATUS_WAITING)})
 
 
 @app.route('/judge/{rid:[\da-f]{24}}', 'judge_main')
