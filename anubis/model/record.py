@@ -139,7 +139,8 @@ async def begin_judge(record_id: objectid.ObjectId, judge_uid: int, status: int)
     return doc
 
 
-async def next_judge(record_id, judge_uid,  **kwargs):
+@argmethod.wrap
+async def next_judge(record_id: objectid.ObjectId, judge_uid: int, **kwargs):
     coll = db.Collection('record')
     doc = await coll.find_one_and_update(filter={'_id': record_id,
                                                  'judge_uid': judge_uid},

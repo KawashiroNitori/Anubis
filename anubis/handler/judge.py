@@ -56,25 +56,21 @@ class JudgeHeartbeatHandler(base.Handler):
         self.json({'status': self.user.get('status', constant.record.STATUS_WAITING)})
 
 
-@app.route('/judge/{rid:[\da-f]{24}}', 'judge_main')
+@app.route('/judge/main', 'judge_main')
 class JudgeMainHandler(base.OperationHandler):
     @base.require_priv(builtin.JUDGE_PRIV)
-    @base.route_argument
-    @base.post_argument
     @base.sanitize
-    async def post_begin(self, rid, status: int):
+    async def post_begin(self, *, rid: objectid.ObjectId, status: int):
         rdoc = await record.begin_judge(rid, self.user['_id'], status)
         if rdoc:
-            await bus.publish('record_change', rid)
+            await bus.publish('record_change', str(rid))
         await user.update(self.user['_id'], status={'code': constant.record.STATUS_FETCHED,
                                                     'rid': rid})
         self.json(rdoc)
 
     @base.require_priv(builtin.JUDGE_PRIV)
-    @base.route_argument
-    @base.post_argument
-    @base.sanitize
-    async def post_next(self, rid, **kwargs):
+    async def post_next(self, *, rid: objectid.ObjectId, **kwargs):
+        rid = objectid.ObjectId(rid)
         update = {}
         if 'status' in kwargs:
             update.setdefault('$set', {})['status'] = int(kwargs['status'])
@@ -87,26 +83,21 @@ class JudgeMainHandler(base.OperationHandler):
                 'status': int(kwargs['case_status']),
                 'time_ms': int(kwargs['case_time_ms']),
                 'memory_kb': int(kwargs['case_memory_kb']),
-                'judge_text': str(kwargs['case_judge_text']),
+                'judge_text': str(kwargs.get('case_judge_text', '')),
             }
         if 'progress' in kwargs:
             update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
-        rdoc = await record.next_judge(rid, self.user['_id'], **update)
-        await bus.publish('record_change', rid)
+        rdoc = await record.next_judge(record_id=rid, judge_uid=self.user['_id'], **update)
+        await bus.publish('record_change', str(rid))
         if 'status' in kwargs:
             await user.update(self.user['_id'], status={'code': kwargs['status'],
                                                         'rid': rid})
         self.json(rdoc)
 
     @base.require_priv(builtin.JUDGE_PRIV)
-    @base.route_argument
-    @base.post_argument
     @base.sanitize
-    async def post_end(self, rid, **kwargs):
-        rdoc = await record.end_judge(rid, self.user['_id'],
-                                      int(kwargs['status']),
-                                      int(kwargs['time_ms']),
-                                      int(kwargs['memory_kb']))
+    async def post_end(self, *, rid: objectid.ObjectId, status: int, time_ms: int, memory_kb: int):
+        rdoc = await record.end_judge(rid, self.user['_id'], status, time_ms, memory_kb)
         await _post_judge(rdoc)
         await user.update(self.user['_id'], status={'code': constant.record.STATUS_WAITING})
         self.json(rdoc)
