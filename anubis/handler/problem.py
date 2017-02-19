@@ -254,7 +254,7 @@ class ProblemEditHandler(base.Handler):
     @base.sanitize
     async def post(self, *, pid: int, title: str, content: str, hidden: bool=False,
                    time_ms: int=1000, memory_kb: int=65536,
-                   judge_mode: int=problem.MODE_COMPARE_CHAR_IGNORE_BLANK,
+                   judge_mode: int=constant.record.MODE_COMPARE_IGNORE_BLANK,
                    data: objectid.ObjectId=None):
         await problem.edit(self.domain_id, pid, title=title, content=content, hidden=hidden,
                            time_ms=time_ms, memory_kb=memory_kb, judge_mode=judge_mode,
