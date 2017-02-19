@@ -190,7 +190,7 @@ async def inc(domain_id: str, pid: int, key: str, value: int):
 async def rev_init_status(domain_id, pid, uid):
     coll = db.Collection('problem.status')
     return await coll.find_one_and_update(filter={'domain_id': domain_id,
-                                                  '_id': pid,
+                                                  'pid': pid,
                                                   'uid': uid},
                                           update={'$inc': {'rev': 1}},
                                           upsert=True,
@@ -200,7 +200,7 @@ async def rev_init_status(domain_id, pid, uid):
 async def rev_set_status(domain_id, pid, uid, rev, **kwargs):
     coll = db.Collection('problem.status')
     return await coll.find_one_and_update(filter={'domain_id': domain_id,
-                                                  '_id': pid,
+                                                  'pid': pid,
                                                   'uid': uid,
                                                   'rev': rev},
                                           update={'$set': kwargs,
@@ -235,7 +235,7 @@ async def create_indexes():
     status_coll = db.Collection('problem.status')
     await status_coll.create_index([('domain_id', 1),
                                     ('uid', 1),
-                                    ('_id', 1)], unique=True)
+                                    ('pid', 1)], unique=True)
 
 
 if __name__ == '__main__':
