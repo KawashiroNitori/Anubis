@@ -402,7 +402,7 @@ def get_argument(func):
 def post_argument(func):
     @functools.wraps(func)
     async def wrapped(self, **kwargs):
-        return await func(self, **kwargs, **await self.request.post())
+        return await func(self, **kwargs, **dict(await self.request.post()))
     return wrapped
 
 
