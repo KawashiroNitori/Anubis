@@ -12,7 +12,7 @@ from anubis.util import options
 from anubis import app
 
 options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
-options.define('prefork', default=0, help='Number of prefork workers')
+options.define('prefork', default=1, help='Number of prefork workers')
 options.define('log_format',
                default=('%(log_color)s[%(levelname).1s '
                         '%(asctime)s %(module)s:%(lineno)d]%(reset)s %(message)s'), help='Log format.')
