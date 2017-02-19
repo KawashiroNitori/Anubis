@@ -7,7 +7,7 @@ from anubis.util import options
 options.define('mq_host', default='localhost', help='Message queue hostname or IP address.')
 options.define('mq_vhost', default='/anubis', help='Message queue virtual host.')
 options.define('mq_user', default='guest', help='Message queue username.')
-options.define('mq_password', default='', help='Message queue password')
+options.define('mq_password', default='guest', help='Message queue password')
 
 _protocol_future = None
 _channel_futures = {}
@@ -20,7 +20,9 @@ async def _connect():
     _protocol_future = future = asyncio.Future()
     try:
         _, protocol = await aioamqp.connect(host=options.options.mq_host,
-                                            virtualhost=options.options.mq_vhost)
+                                            virtualhost=options.options.mq_vhost,
+                                            login=options.options.mq_user,
+                                            password=options.options.mq_password)
         future.set_result(protocol)
         asyncio.get_event_loop().create_task(_wait_protocol(protocol))
         return protocol

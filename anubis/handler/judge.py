@@ -84,10 +84,10 @@ class JudgeMainHandler(base.OperationHandler):
             update.setdefault('$push', {})['judge_texts'] = str(kwargs['judge_text'])
         if 'case' in kwargs:
             update.setdefault('$push', {})['cases'] = {
-                'status': int(kwargs['case']['status']),
-                'time_ms': int(kwargs['case']['time_ms']),
-                'memory_kb': int(kwargs['case']['memory_kb']),
-                'judge_text': str(kwargs['case']['judge_text']),
+                'status': int(kwargs['case_status']),
+                'time_ms': int(kwargs['case_time_ms']),
+                'memory_kb': int(kwargs['case_memory_kb']),
+                'judge_text': str(kwargs['case_judge_text']),
             }
         if 'progress' in kwargs:
             update.setdefault('$set', {})['progress'] = float(kwargs['progress'])

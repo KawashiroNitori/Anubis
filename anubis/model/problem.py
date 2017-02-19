@@ -12,16 +12,12 @@ from anubis.model import system
 from anubis.util import argmethod
 from anubis.util import validator
 
-MODE_COMPARE_CHAR_IGNORE_BLANK = 1
-MODE_COMPARE_CHAR = 2
-MODE_CUSTOM_JUDGE = 3
-
 
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int,
               time_ms: int, memory_kb: int, judge_mode: int,
-              data: objectid.ObjectId = None,
-              hidden: bool = False, **kwargs):
+              data: objectid.ObjectId=None,
+              hidden: bool=False, **kwargs):
     validator.check_title(title)
     validator.check_content(content)
     pid = await system.inc_problem_counter()
@@ -117,6 +113,16 @@ async def set_status(domain_id, pid, uid, **kwargs):
                                                  'uid': uid},
                                          update={'$set': kwargs},
                                          upsert=True,
+                                         return_document=True)
+    return doc
+
+
+async def inc_status(domain_id: str, pid: int, uid: int, key: str, value: int):
+    coll = db.Collection('problem.status')
+    doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                                 'pid': pid,
+                                                 'uid': uid},
+                                         update={'$inc': {key: value}},
                                          return_document=True)
     return doc
 

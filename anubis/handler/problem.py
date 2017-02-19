@@ -220,7 +220,7 @@ class ProblemCreateHandler(base.Handler):
     @base.sanitize
     async def post(self, *, title: str, content: str, hidden: bool=False,
                    time_ms: int=1000, memory_kb: int=65536,
-                   judge_mode: int=problem.MODE_COMPARE_CHAR_IGNORE_BLANK,
+                   judge_mode: int=constant.record.MODE_COMPARE_IGNORE_BLANK,
                    data: objectid.ObjectId=None):
         pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                                 hidden=hidden, time_ms=time_ms, memory_kb=memory_kb,

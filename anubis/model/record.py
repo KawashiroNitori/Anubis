@@ -36,12 +36,13 @@ async def add(domain_id: str, pid: int, type: int, uid: int, lang: str, code: st
         'data_id': data_id,
         'type': type
     })
-    await asyncio.gather(
-        queue.publish('judge', rid=rid),
-        bus.publish('record_change', rid),
-        problem.inc(domain_id, pid, 'num_submit', 1),
-        domain.inc_user(domain_id, uid, num_submit=1)
-    )
+    post_coros = [queue.publish('judge', rid=rid),
+                  bus.publish('record_change', rid)]
+    if type == constant.record.TYPE_SUBMISSION:
+        post_coros.extend([problem.inc(domain_id, pid, 'num_submit', 1),
+                           problem.inc_status(domain_id, pid, uid, 'num_submit', 1),
+                           domain.inc_user(domain_id, uid, num_submit=1)])
+    await asyncio.gather(*post_coros)
     return rid
 
 

@@ -41,7 +41,6 @@ def main():
         },
         'disable_existing_loggers': False,
     })
-    _logger.info('Server listening on %s', options.options.listen)
     url = urllib.parse.urlparse(options.options.listen)
     if url.scheme == 'http':
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -68,6 +67,7 @@ def main():
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
+    _logger.info('Server listening on %s', options.options.listen)
     loop.run_forever()
 
 if __name__ == '__main__':
