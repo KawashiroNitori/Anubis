@@ -13,6 +13,7 @@ from anubis.model import domain
 from anubis.model import record
 from anubis.model import user
 from anubis.model import problem
+from anubis.model import contest
 from anubis.model import testdata
 from anubis.service import bus
 
@@ -70,21 +71,36 @@ class RecordDetailHandler(base.Handler):
         if rdoc['domain_id'] != self.domain_id:
             self.redirect(self.reverse_url('record_detail', rid=rid, domain_id=rdoc['domain_id']))
             return
-        # TODO: Check permission for visibility: contest
+
         show_status = True  # Temporary
+        if rdoc['tid']:
+            now = datetime.datetime.utcnow()
+            try:
+                tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+                show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
+                              or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
+            except error.DocumentNotFoundError:
+                tdoc = None
+        else:
+            tdoc = None
+        # TODO: Check permission for visibility: contest
         if (not self.own(rdoc, field='uid')
-            and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
-            and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
+                and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
+                and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
             del rdoc['code']
         if not show_status and 'code' not in rdoc:
             raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
         udoc, dudoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
                                                  domain.get_user(self.domain_id, rdoc['uid']),
                                                  problem.get(rdoc['domain_id'], rdoc['pid']))
+        if show_status and 'judge_uid' in rdoc:
+            judge_udoc = await user.get_by_uid(rdoc['judge_uid'])
+        else:
+            judge_udoc = None
         if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
             pdoc = None
         self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc,
-                    show_status=show_status)
+                    judge_udoc=judge_udoc, show_status=show_status)
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')

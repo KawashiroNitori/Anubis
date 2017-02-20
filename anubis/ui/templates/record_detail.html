@@ -134,6 +134,10 @@
           <dt>{{ _('Judged At') }}</dt>
           <dd>{{ datetime_span(rdoc['judge_at']) }}</dd>
           {% endif %}
+          {% if judge_udoc %}
+            <dt>{{ _('Judged By') }}</dt>
+            <dd>{{ user.render_inline(judge_udoc, badge=false) }}</dd>
+          {% endif %}
           <dt>{{ _('Total Time') }}</dt>
           <dd>{{ rdoc['time_ms'] }}ms</dd>
           <dt>{{ _('Peak Memory') }}</dt>

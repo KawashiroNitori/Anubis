@@ -307,16 +307,23 @@ class ProblemSettingsHandler(base.Handler):
             self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
         if file:
             data = file.file.read()
-            data_dict = json.decode(data.decode('utf-8'))
+            try:
+                data_dict = json.decode(data.decode('utf-8'))
+            except Exception:
+                self.json_or_redirect(self.url)
+                return
+            if pdoc['data']:
+                await testdata.delete(self.domain_id, pdoc['data'])
             did = await testdata.add(self.domain_id, data_dict, self.user['_id'], testdata.TYPE_TEST_DATA,
                                      pid=pdoc['_id'])
-
+            """
             md5 = hashlib.md5(data).hexdigest()
             fid = await fs.link_by_md5(md5)
             if not fid:
                 fid = await fs.add_data(data)
             if pdoc.get('data'):
                 await fs.unlink(pdoc['data'])
+            """
             await problem.set_data(self.domain_id, pid, did)
         self.json_or_redirect(self.url)
 

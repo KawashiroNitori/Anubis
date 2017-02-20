@@ -22,27 +22,27 @@ async def add(domain_id: str, data: list, owner_uid: int, type: int, pid: int, *
 
 
 @argmethod.wrap
-async def get(domain_id: str, id: objectid.ObjectId):
+async def get(domain_id: str, did: objectid.ObjectId):
     coll = db.Collection('testdata')
     return await coll.find_one({'domain_id': domain_id,
-                                '_id': id})
+                                '_id': did})
 
 
 @argmethod.wrap
-async def edit(domain_id: str, id: objectid.ObjectId, **kwargs):
+async def edit(domain_id: str, did: objectid.ObjectId, **kwargs):
     coll = db.Collection('testdata')
     doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
-                                                 '_id': id},
+                                                 '_id': did},
                                          update={'$set': kwargs},
                                          return_document=True)
     return doc
 
 
 @argmethod.wrap
-async def delete(domain_id: str, id: objectid.ObjectId):
+async def delete(domain_id: str, did: objectid.ObjectId):
     coll = db.Collection('testdata')
     return await coll.delete_one({'domain_id': domain_id,
-                                  '_id': id})
+                                  '_id': did})
 
 
 @argmethod.wrap
