@@ -46,24 +46,24 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
                     renderTabBar={() => <ScrollableInkTabBar
                         extraContent={
                             <span>
-                <PanelButton
-                    data-tooltip={i18n('Refresh Records')}
-                    data-tooltip-pos="top right"
-                    onClick={() => this.props.handleClickRefresh()}
-                >
-                  {i18n('Refresh')}
-                </PanelButton>
-                <PanelButton
-                    onClick={() => this.props.handleClickClose()}
-                >
-                  <Icon name="close" />
-                </PanelButton>
-              </span>
+                                <PanelButton
+                                    data-tooltip={i18n('Refresh Records')}
+                                    data-tooltip-pos="top right"
+                                    onClick={() => this.props.handleClickRefresh()}
+                                >
+                                  {i18n('Refresh')}
+                                </PanelButton>
+                                <PanelButton
+                                    onClick={() => this.props.handleClickClose()}
+                                >
+                                  <Icon name="close" />
+                                </PanelButton>
+                            </span>
                         }
                     />}
                     renderTabContent={() => <TabContent />}
                 >
-                    <TabPane tab={<span>All</span>} key="all">
+                    <TabPane tab={<span>{i18n('All')}</span>} key="all">
                         <ScratchpadRecordsTable />
                     </TabPane>
                 </Tabs>

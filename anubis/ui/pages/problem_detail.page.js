@@ -113,9 +113,10 @@ class ProblemPageExtender {
 
 }
 
-const page = new NamedPage('problem_detail', () => {
+const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
     let componentMounted = false;
     let $floatingSidebar = null;
+    let reduxStore = null;
     const extender = new ProblemPageExtender();
 
     async function scratchpadFadeIn() {
@@ -188,6 +189,8 @@ const page = new NamedPage('problem_detail', () => {
             });
         };
 
+        reduxStore = store;
+
         store.dispatch({
             type: 'SCRATCHPAD_PROBLEM_SET_HTML',
             payload: $('.problem-content').html(),
@@ -204,14 +207,29 @@ const page = new NamedPage('problem_detail', () => {
         $('.loader-container').hide();
     }
 
+    function syncHtmlFromDomToReact() {
+        const html = $('.problem-content').html();
+        reduxStore.dispatch({
+            type: 'SCRATCHPAD_PROBLEM_SET_HTML',
+            payload: html,
+        });
+    }
+
+    function syncHtmlFromReactToDom() {
+        const html = $('.scratchpad__problem').html();
+        $('.problem-content').html(html);
+    }
+
     async function enterScratchpadMode() {
         await extender.extend();
         await mountComponent();
+        syncHtmlFromDomToReact();
         await scratchpadFadeIn();
         await createSidebar();
     }
 
     async function leaveScratchpadMode() {
+        syncHtmlFromReactToDom();
         await removeSidebar();
         await scratchpadFadeOut();
         await extender.collapse();

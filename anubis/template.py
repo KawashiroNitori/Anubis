@@ -95,3 +95,6 @@ def paginate(page, num_pages):
     if page < num_pages:
         yield 'next', page + 1
         yield 'last', num_pages
+
+
+def to_size(size, threshold)

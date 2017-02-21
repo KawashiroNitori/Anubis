@@ -23,7 +23,7 @@ export default function reducer(state = {
             }
             return {
                 ...state,
-                rows: [rdoc._id, ...state.rows],
+                rows: _.uniq([rdoc._id, ...state.rows]),
                 items: {
                     ...state.items,
                     [rdoc._id]: rdoc,
