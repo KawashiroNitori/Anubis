@@ -52,7 +52,7 @@
                 <span>{{ rcdoc['judge_text'] }}</span>
               </td>
               <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
-              <td class="col--memory">{{ record.render_memory_usage(rcdoc['memory_kb']) }}</td>
+              <td class="col--memory">{{ rcdoc['memory_kb']|to_size }}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -141,7 +141,7 @@
           <dt>{{ _('Total Time') }}</dt>
           <dd>{{ rdoc['time_ms'] }}ms</dd>
           <dt>{{ _('Peak Memory') }}</dt>
-          <dd>{{ record.render_memory_usage(rdoc['memory_kb']) }}</dd>
+          <dd>{{ rdoc['memory_kb']|to_size }}</dd>
           {% endif %}
         </dl>
       </div>
