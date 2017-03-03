@@ -1,0 +1,40 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="row">
+  <div class="medium-9 columns">
+    <div class="section">
+      {% include "partials/discussion_list.html" %}
+    </div>
+  </div>
+  <div class="medium-3 columns">
+    {% if vnode['doc_type'] == 'problem' %}
+      {% with pdoc=vnode, owner_udoc=udict[vnode['owner_uid']] %}
+      {% include "partials/problem_sidebar.html" %}
+      {% endwith %}
+    {% elif vnode['doc_type'] == 'contest' %}
+      {% with tdoc=vnode, owner_udoc=udict[vnode['owner_uid']] %}
+      {% include "partials/contest_sidebar.html" %}
+      {% endwith %}
+    {% elif vnode['doc_type'] == 'discussion_node' %}
+    <div class="section side">
+      {% if vnode['pic'] %}<div class="discussion-node__bg {{ vnode['pic'] }}"></div>{% endif %}
+      <div class="section__header">
+        <h1 class="section__title">{{ vnode['title'] or _('Create Discussion') }}</h1>
+      </div>
+      <div class="section__body">
+        {% if vnode %}
+        {% if handler.has_perm(anubis.model.builtin.PERM_CREATE_DISCUSSION) %}
+        <p><a href="{{ reverse_url('discussion_create', doc_id=vnode['doc_id']) }}" class="expanded primary button">{{ _('Create a discussion') }}</a></p>
+        {% else %}
+        <p><a href="javascript:;" class="expanded primary button">{{ _('Login to create a discussion' if not handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) else 'No permission to Create a discussion') }}</a></p>
+        {% endif %}
+        {% else %}
+        <p>{{ _('Select a node to create discussion') }}</p>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+  {% include "discussion_node_widget.html" %}
+  </div>
+</div>
+{% endblock %}

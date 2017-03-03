@@ -1,0 +1,17 @@
+<div class="section side">
+  <div class="section__header">
+    <h1 class="section__title">{{ _('Discussion Nodes') }}</h1>
+  </div>
+  <div class="section__body">
+    {% for category, nodes in discussion_nodes.items() %}
+    <div class="topic--widget__section">
+      <h2 class="section__title">{{ category }}</h2>
+      <ol>
+        {% for node in nodes %}
+        <li><a class="typo-a" href="{{ reverse_url('discussion_node', doc_id=node['name']) }}">{{ node['name'] }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+    {% endfor %}
+  </div>
+</div>

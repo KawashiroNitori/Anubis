@@ -23,6 +23,17 @@ def node_id(ddoc):
         return ddoc['parent_type'], ddoc['parent_id']
 
 
+def convert_doc_id(doc_id):
+    if doc_id is None:
+        return None
+    if objectid.ObjectId.is_valid(doc_id):
+        return objectid.ObjectId(doc_id)
+    try:
+        return int(doc_id)
+    except ValueError:
+        return str(doc_id)
+
+
 @argmethod.wrap
 async def get_node(domain_id: str, node_name: str):
     coll = db.Collection('discussion.node')
@@ -62,7 +73,7 @@ async def get_nodes_and_vnode(domain_id, node_or_dtuple):
     nodes = await get_nodes(domain_id)
     node = await get_node(domain_id, node_or_dtuple)
     if node:
-        vnode = {'type': 'discussion_node', **node}
+        vnode = {'doc_type': 'discussion_node', **node}
     elif isinstance(node_or_dtuple, tuple) and node_or_dtuple[0] in ALLOWED_DOC_TYPES:
         # TODO: projection
         coll = db.Collection(node_or_dtuple[0])
@@ -282,7 +293,7 @@ async def get_dict_vnodes(domain_id, node_or_dtuples):
     for node_or_dtuple in node_or_dtuples:
         if get_node(domain_id, node_or_dtuple):
             result[node_or_dtuple] = {'_id': node_or_dtuple,
-                                      'type': 'discussion_node',
+                                      'doc_type': 'discussion_node',
                                       'title': node_or_dtuple}
         elif node_or_dtuple[0] in ALLOWED_DOC_TYPES:
             dtuples.add(node_or_dtuple)
