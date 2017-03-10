@@ -17,6 +17,7 @@ from anubis.model import record
 from anubis.model import contest
 from anubis.util import pagination
 from anubis.util import json
+from anubis.util import validator
 from anubis.service import bus
 
 
@@ -219,9 +220,13 @@ class ProblemCreateHandler(base.Handler):
     @base.require_csrf_token
     @base.sanitize
     async def post(self, *, title: str, content: str, hidden: bool=False,
-                   time_ms: int=1000, memory_kb: int=65536,
+                   time_second: int=1, memory_mb: int=64,
                    judge_mode: int=constant.record.MODE_COMPARE_IGNORE_BLANK,
                    data: objectid.ObjectId=None):
+        validator.check_time_second_limit(time_second)
+        validator.check_memory_mb_limit(memory_mb)
+        time_ms = time_second * 1000
+        memory_kb = memory_mb * 1024
         pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                                 hidden=hidden, time_ms=time_ms, memory_kb=memory_kb,
                                 judge_mode=judge_mode, data=data)
@@ -253,9 +258,13 @@ class ProblemEditHandler(base.Handler):
     @base.require_csrf_token
     @base.sanitize
     async def post(self, *, pid: int, title: str, content: str, hidden: bool=False,
-                   time_ms: int=1000, memory_kb: int=65536,
+                   time_second: int=1, memory_mb: int=64,
                    judge_mode: int=constant.record.MODE_COMPARE_IGNORE_BLANK,
                    data: objectid.ObjectId=None):
+        validator.check_time_second_limit(time_second)
+        validator.check_memory_mb_limit(memory_mb)
+        time_ms = time_second * 1000
+        memory_kb = memory_mb * 1024
         await problem.edit(self.domain_id, pid, title=title, content=content, hidden=hidden,
                            time_ms=time_ms, memory_kb=memory_kb, judge_mode=judge_mode,
                            data=data)

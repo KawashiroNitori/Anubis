@@ -40,6 +40,16 @@ def check_mail(s):
         raise error.ValidationError('mail')
 
 
+def check_time_second_limit(s):
+    if s < 1 or s > 10:
+        raise error.ValidationError('time')
+
+
+def check_memory_mb_limit(s):
+    if s < 32 or s > 1024:
+        raise error.ValidationError('memory')
+
+
 def is_domain_id(s):
     return bool(re.fullmatch(r'[^0-9\\/\s\u3000][^\\/\n\r]{2,}[^\\/\s\u30000]', s))
 

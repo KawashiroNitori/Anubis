@@ -22,6 +22,23 @@
               </label>
             </div>
           </div>
+          <div class="row">
+            <div class="medium-4 columns">
+              <label>
+                {{ _('Time Limit') }} (s)
+                <br>
+                <input name="time_second" value="1" class="textbox">
+              </label>
+            </div>
+            <div class="medium-4 columns">
+              <label>
+                {{ _('Memory Limit') }} (MiB)
+                <br>
+                <input name="memory_mb" value="64" class="textbox">
+              </label>
+            </div>
+            {{ form.form_select(columns=4, label='Judge Mode', name='judge_mode', options=anubis.constant.record.MODE_TEXTS.items(), row=False) }}
+          </div>
           <div class="row"><div class="columns">
             <label>
               {{ _('Content') }}

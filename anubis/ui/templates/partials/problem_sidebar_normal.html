@@ -85,7 +85,7 @@
     <h1 class="section__title">{{ _('Information') }}</h1>
   </div>
   <div class="section__body typo">
-    <dl class="large horizontal"> {#
+    <dl class="large horizontal">
       <dt>{{ _('Status') }}</dt>
       <dd>
       {% if pdoc['psdoc']['status'] %}
@@ -97,6 +97,13 @@
         {{ _('(None)') }}
       {% endif %}
       </dd>
+      <dt>{{ _('Time Limit') }}</dt>
+      <dd>{{ pdoc['time_ms'] / 1000 }}s</dd>
+      <dt>{{ _('Memory Limit') }}</dt>
+      <dd>{{ pdoc['memory_kb']|to_size }}</dd>
+      <dt>{{ _('Judge Mode') }}</dt>
+      <dd>{{ _(anubis.constant.record.MODE_TEXTS[pdoc['judge_mode']]) }}</dd>
+      {#
       <dt>{{ _('Difficulty') }}</dt>
       <dd>{{ pdoc['difficulty']|default(_('(None)')) }}</dd>
       <dt>{{ _('Vote') }}</dt>

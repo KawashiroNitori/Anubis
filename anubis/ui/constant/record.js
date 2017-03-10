@@ -104,7 +104,7 @@ export const TYPE_TEXTS = {
 attachObjectMeta(TYPE_TEXTS, 'intKey', true);
 
 export const MODE_TEXTS = {
-    [MODE_COMPARE_IGNORE_BLANK]: 'Compare (Ignore ending blank)',
+    [MODE_COMPARE_IGNORE_BLANK]: 'Compare (Ignore Ending Blank)',
     [MODE_COMPARE]: 'Compare',
     [MODE_SPECIAL_JUDGE]: 'Special Judge',
 };
