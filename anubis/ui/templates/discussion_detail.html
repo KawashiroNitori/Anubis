@@ -5,9 +5,113 @@
   <div class="medium-9 columns">
     <div class="section">
       <div class="section__body">
-        <ul class="section__body">
-
+        <ul class="supplementary list">
+          <li>
+            <a class="v-center discussion-node-tag" href="{{ anubis.handler.discussion.node_url(handler, 'discussion_node', anubis.model.discussion.node_id(ddoc)) }}">
+              {% if ddoc['parent_type'] == 'discussion_node' %}
+              <span class="icon icon-tag"></span>
+              {% elif ddoc['parent_type'] == 'contest' %}
+              <span class="icon icon-award"></span>
+              {% else %}
+              <span class="icon icon-flag"></span>
+              {% endif %}
+              {{ vnode['title'] }}
+            </a>
+          </li>
+          <li>
+            {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']]) }}
+            @
+            {{ datetime_span(ddoc['_id'].generation_time) }}
+          </li>
         </ul>
+        <div class="typo topic__content" data-emoji-enabled data-raw-url="{{ reverse_url('discussion_detail_raw', did=ddoc['_id']) }}">
+          {{ ddoc['content']|markdown }}
+        </div>
+      </div>
+      <ul class="section__footer supplementary dot list">
+        {% if handler.own(ddoc, anubis.model.builtin.PERM_EDIT_DISCUSSION_SELF) or handler.has_perm(anubis.model.builtin.PERM_EDIT_DISCUSSION) %}
+        <li>
+          <a href="{{ reverse_url('discussion_edit', did=ddoc['_id']) }}"><span class="icon icon-edit"></span>{{ _('Edit') }}</a>
+        </li>
+        {% endif %}
+        <li>{{ _('{0} views').format(ddoc['num_views']) }}</li>
+        {% if handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) %}
+        <li><form class="form--inline" method="post">
+          <input type="hidden" name="operation" value="{% if not dsdoc['star'] %}star{% else %}unstar{% endif %}">
+          <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+          <button class="star{% if dsdoc['star'] %} activated{% endif %}" type="submit">
+            <span class="starred--hide"><span class="icon icon-star--outline"></span> {{ _('Star Topic') }}</span>
+            <span class="starred--show"><span class="icon icon-star"></span> {{ _('Unstar Topic') }}</span>
+          </button>
+        </form></li>
+        {% endif %}
+        <li>
+          <a href="#"><span class="icon icon-warning"></span> {{ _('Report') }}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('{0} comments').format(drcount) }}</h1>
+      </div>
+      <div class="section__body">
+        {{ comments.render(
+            view = 'discussion',
+            docs = drdocs,
+            udict = udict,
+            comment_ref = 'drid',
+            reply_ref = 'drrid',
+            comment_post_perm = anubis.model.builtin.PERM_REPLY_DISCUSSION,
+            comment_edit_perm = anubis.model.builtin.PERM_NONE if handler.own(ddoc, anubis.model.builtin.PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION) else anubis.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+            comment_edit_self_perm = anubis.model.builtin.PERM_EDIT_DISCUSSION_REPLY_SELF,
+            comment_delete_perm = anubis.model.builtin.PERM_NONE if handler.own(ddoc, anubis.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION) else anubis.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
+            comment_delete_self_perm = anubis.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF,
+            reply_post_perm = anubis.model.builtin.PERM_REPLY_DISCUSSION,
+            reply_edit_perm = anubis.model.builtin.PERM_NONE if handler.own(ddoc, anubis.model.builtin.PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION) else anubis.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+            reply_edit_self_perm = anubis.model.builtin.PERM_EDIT_DISCUSSION_REPLY_SELF,
+            reply_delete_perm = anubis.model.builtin.PERM_NONE if handler.own(ddoc, anubis.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION) else anubis.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
+            reply_delete_self_perm = anubis.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF
+        ) }}
+      </div>
+      {{ paginator.render(page, pcount) }}
+    </div>
+  </div>
+  <div class="medium-3 columns">
+    <div class="section side">
+      <div class="profile__bg user-profile-bg--12"></div>
+      <div class="section__body">
+        <div class="media sidebar-user-profile">
+          <div class="media__left">
+            <img src="{{ udict[ddoc['owner_uid']]['gravatar']|gravatar_url }}" width="80" height="80" class="medium user-profile-avatar">
+          </div>
+          <div class="media__body">
+            <p>
+              {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']], avatar=false, modbadge=false) }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="section__body">
+        <div class="balancer sidebar-user-stat">
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudict[ddoc['owner_uid']]['num_accept'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Accepted') }}</div>
+            </div>
+          </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudict[ddoc['owner_uid']]['num_liked'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Solutions Liked') }}</div>
+            </div>
+          </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudict[ddoc['owner_uid']]['num_problems'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Upload Problem') }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

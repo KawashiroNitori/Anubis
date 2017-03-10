@@ -12,7 +12,7 @@
     <a class="v-center user-profile-name" href="{{ reverse_url('user_detail', uid=udoc['_id']) }}">
       {{ udoc['uname'] }}
     </a>
-  {% if badge and modbadge and handler.udoc_pas_perm(udoc, anubis.builtin.PERM_MOD_BADGE) %}
+  {% if modbadge and handler.dudoc_has_perm(udoc, dudoc, anubis.model.builtin.PERM_MOD_BADGE) %}
     <span class="v-center user-profile-badge badge--mod" title="Moderator">MOD</span>
   {% endif %}
 </span>

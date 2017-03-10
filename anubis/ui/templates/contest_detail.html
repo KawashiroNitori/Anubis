@@ -76,7 +76,7 @@
         </blockquote>
       {% endif %}
       {% with vndict={(tdoc['doc_type'], tdoc['doc_id']): tdoc} %}
-        {# include "partials/discussion_list.html" #}
+        {% include "partials/discussion_list.html" %}
       {% endwith %}
       </div>
     </div>

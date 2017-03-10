@@ -16,7 +16,7 @@
   </a>
 {% endif %}
   <div>
-    <ol class="menu"> {#
+    <ol class="menu">
     {% if page_name == 'discussion_node' %}
     {% if handler.has_perm(anubis.model.builtin.PERM_CREATE_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type=tdoc['doc_type'], doc_id=tdoc['_id']) }}">
@@ -29,7 +29,7 @@
       </a></li>
       <li class="menu__seperator"></li>
     {% endif %}
-    {% endif %} #}
+    {% endif %}
     {% if page_name != 'contest_detail' %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_detail', tid=tdoc['_id']) }}">
         <span class="icon icon-award"></span> {{ _('View Contest') }}

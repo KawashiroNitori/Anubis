@@ -161,8 +161,9 @@ DOMAIN_SYSTEM = {
         ROLE_ADMIN: ADMIN_PERMISSIONS
     },
     'gravatar': '',
-    'name': 'Default'
+    'name': 'SUTOJ'
 }
+DOMAIN_NAME_SYSTEM = DOMAIN_SYSTEM['name']
 
 DOMAINS = [DOMAIN_SYSTEM]
 

@@ -46,8 +46,9 @@ async def get_nodes(domain_id: str):
     coll = db.Collection('discussion.node')
     category_list = await coll.aggregate([
         {'$match': {'domain_id': domain_id}},
-        {'$group': {'_id': '$category_name', 'nodes': {'$push': '$name'}}}
+        {'$group': {'_id': '$category_name', 'nodes': {'$push': '$$ROOT'}}}
     ]).to_list(None)
+
     return collections.OrderedDict([
         (category['_id'], category['nodes']) for category in category_list])
 
@@ -58,7 +59,7 @@ async def add_node(domain_id: str, category_name: str, node_name: str, node_pic:
     if await get_node(domain_id, node_name):
         raise error.DiscussionNodeAlreadyExistError(domain_id, node_name)
     coll = db.Collection('discussion.node')
-    await coll.insert_one({'_id': node_name,
+    await coll.insert_one({'domain_id': domain_id,
                            'name': node_name,
                            'pic': node_pic,
                            'category_name': category_name})
@@ -73,12 +74,17 @@ async def get_nodes_and_vnode(domain_id, node_or_dtuple):
     nodes = await get_nodes(domain_id)
     node = await get_node(domain_id, node_or_dtuple)
     if node:
-        vnode = {'doc_type': 'discussion_node', **node}
+        vnode = {'doc_type': 'discussion_node',
+                 'doc_id': node['name'],
+                 'title': node['name'],
+                 'pic': node['pic']}
     elif isinstance(node_or_dtuple, tuple) and node_or_dtuple[0] in ALLOWED_DOC_TYPES:
         # TODO: projection
         coll = db.Collection(node_or_dtuple[0])
-        vnode = await coll.find({'domain_id': domain_id,
-                                 '_id': node_or_dtuple[1]})
+        vnode = await coll.find_one({'domain_id': domain_id,
+                                     '_id': node_or_dtuple[1]})
+        vnode['doc_id'] = vnode['_id']
+        vnode['doc_type'] = node_or_dtuple[0]
     else:
         vnode = None
     return nodes, vnode
@@ -105,10 +111,11 @@ async def add(domain_id: str, node_or_dtuple: str, owner_uid: int, title: str, c
            'num_views': 0,
            'update_at': datetime.datetime.utcnow(),
            'parent_type': vnode['doc_type'],
-           'parent_id': vnode['_id'],
+           'parent_id': vnode['doc_id'],
            **kwargs}
     coll = db.Collection('discussion')
-    await coll.insert_one(doc)
+    res = await coll.insert_one(doc)
+    return res.inserted_id
 
 
 @argmethod.wrap
@@ -291,8 +298,8 @@ async def get_dict_vnodes(domain_id, node_or_dtuples):
     result = dict()
     dtuples = set()
     for node_or_dtuple in node_or_dtuples:
-        if get_node(domain_id, node_or_dtuple):
-            result[node_or_dtuple] = {'_id': node_or_dtuple,
+        if await get_node(domain_id, node_or_dtuple):
+            result[node_or_dtuple] = {'doc_id': node_or_dtuple,
                                       'doc_type': 'discussion_node',
                                       'title': node_or_dtuple}
         elif node_or_dtuple[0] in ALLOWED_DOC_TYPES:
@@ -352,7 +359,6 @@ async def create_indexes():
     await reply_coll.create_index([('domain_id', 1),
                                    ('parent_type', 1),
                                    ('parent_id', 1)], sparse=True)
-
 
 
 if __name__ == '__main__':

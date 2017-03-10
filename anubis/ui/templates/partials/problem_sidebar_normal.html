@@ -6,7 +6,7 @@
   </div>
 {% endif %}
   <div>
-    <ol class="menu">{#
+    <ol class="menu">
     {% if page_name == 'discussion_node' %}
     {% if handler.has_perm(anubis.model.builtin.PERM_CREATE_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type=pdoc['doc_type'], doc_id=pdoc['doc_id']) }}">
@@ -19,7 +19,7 @@
       </a></li>
       <li class="menu__seperator"></li>
     {% endif %}
-    {% endif %} #}
+    {% endif %}
     {% if page_name == 'problem_detail' %}
     {% if handler.has_perm(anubis.model.builtin.PERM_SUBMIT_PROBLEM) %}
       <li class="menu__item scratchpad--hide"><a class="menu__link highlight" name="problem-sidebar__open-scratchpad" href="javascript:;" data-global-hotkey="alt+e">
@@ -61,12 +61,12 @@
       </a></li>
     {% if handler.has_perm(anubis.model.builtin.PERM_VIEW_DISCUSSION) %}
       <li class="menu__seperator"></li>
-    {% endif %}
+    {% endif %}#}
     {% if handler.has_perm(anubis.model.builtin.PERM_VIEW_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node_document_as_node', doc_type='problem', doc_id=pdoc['_id']) }}">
         <span class="icon icon-comment--text"></span> {{ _('Discussions') }}
       </a></li>
-    {% endif %} #}
+    {% endif %}
     {% if handler.own(pdoc, anubis.model.builtin.PERM_EDIT_PROBLEM_SELF) or handler.has_perm(anubis.model.builtin.PERM_EDIT_PROBLEM) %}
       <li class="menu__seperator"></li>
       <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['_id']) }}">
