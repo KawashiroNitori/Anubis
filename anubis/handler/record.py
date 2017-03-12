@@ -52,6 +52,8 @@ class RecordMainConnection(base.Connection):
         if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
             pdoc = None
         # TODO: remove the rdoc sent.
+        if rdoc['type'] != constant.record.TYPE_PRETEST:
+            del rdoc['cases']
         self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc),
                   rdoc=rdoc)
 
@@ -79,6 +81,10 @@ class RecordDetailHandler(base.Handler):
                 tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
                 show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
                               or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
+                if not self.own(tdoc) and \
+                        not self.has_perm(builtin.PERM_READ_RECORD_DETAIL) and \
+                        not self.has_priv(builtin.PRIV_READ_RECORD_DETAIL):
+                    rdoc['cases'] = []
             except error.DocumentNotFoundError:
                 tdoc = None
         else:

@@ -18,9 +18,13 @@ data.type === recordEnum.TYPE_PRETEST;
 const getRecordDetail = (data) => {
     if (!shouldShowDetail(data) || !isPretest(data)) {
         return (
-            <span className={`record-status--text ${recordEnum.STATUS_CODES[data.status]}`}>
-        {recordEnum.STATUS_TEXTS[data.status]}
-      </span>
+            <a
+                className={`record-status--text ${recordEnum.STATUS_CODES[data.status]}`}
+                href={data.url}
+                target="_blank"
+            >
+                {recordEnum.STATUS_TEXTS[data.status]}
+            </a>
         );
     }
     const stat = _.pick(
@@ -35,8 +39,8 @@ const getRecordDetail = (data) => {
         });
         return (
             <span key={text} className={cn}>
-        {text}: {count}
-      </span>
+                {text}: {count}
+            </span>
         );
     });
 };

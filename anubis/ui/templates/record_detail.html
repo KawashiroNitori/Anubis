@@ -88,17 +88,16 @@
                 {{ _('Rejudge') }}
               </button>
             </form>
-          </li>{#
+          </li>
           <li class="menu__item">
-            <form method="post" action="{{ reverse_url('judge_score', rid=rdoc['_id']) }}">
+            <form method="post" action="{{ reverse_url('judge_cancel', rid=rdoc['_id']) }}">
               <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-              <input type="hidden" name="score" value="0">
               <input type="hidden" name="message" value="{{ _('score canceled') }}">
               <button type="submit" class="menu__link">
                 <span class="icon icon-close"></span> {{ _('Cancel Score') }}
               </button>
             </form>
-          </li> #}
+          </li>
         </ol>
       </div>
       {% endif %}

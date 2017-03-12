@@ -27,27 +27,18 @@ function renderItem(user) {
   `;
 }
 
-export default class UserSelectAutoComplete extends DOMAttachedObject {
+export default class UserSelectAutoComplete extends AutoComplete {
 
     static DOMAttachKey = 'anubisUserSelectAutoCompleteInstance';
 
-    constructor($dom) {
-        super($dom);
-        this.autocompleteInstance = AutoComplete.getOrConstruct(this.$dom, {
+    constructor($dom, options) {
+        super($dom, {
             classes: 'user-select',
             items: getItems,
             render: renderItem,
             text: getText,
+            ...options,
         });
-    }
-
-    detach() {
-        super.detach();
-        this.autocompleteInstance.detach();
-    }
-
-    value() {
-        return this.autocompleteInstance.value();
     }
 
 }

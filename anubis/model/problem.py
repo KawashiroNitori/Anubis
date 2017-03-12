@@ -45,6 +45,10 @@ async def get(domain_id: str, pid: int, uid: int=None):
                                 '_id': pid})
     if not pdoc:
         raise error.ProblemNotFoundError(domain_id, pid)
+    if uid is not None:
+        pdoc['psdoc'] = await get_status(domain_id, pid=pid, uid=uid)
+    else:
+        pdoc['psdoc'] = None
     return pdoc
 
 

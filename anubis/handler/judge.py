@@ -49,6 +49,28 @@ class JudgePlaygroundHandler(base.Handler):
         self.render('judge_playground.html')
 
 
+@app.route('/judge/{rid}/cancel', 'judge_cancel')
+class RecordCancelHandler(base.Handler):
+    @base.route_argument
+    @base.post_argument
+    @base.require_csrf_token
+    @base.sanitize
+    async def post(self, *, rid: objectid.ObjectId, message: str=''):
+        rdoc = await record.get(rid)
+        if rdoc['domain_id'] == self.domain_id:
+            self.check_perm(builtin.PERM_REJUDGE)
+        else:
+            self.check_priv(builtin.PRIV_REJUDGE)
+        await record.rejudge(rdoc['_id'], False)
+        await record.begin_judge(rid, self.user['_id'],
+                                 constant.record.STATUS_FETCHED)
+        await record.next_judge(rid, self.user['_id'], **{'$push': {'judge_text': message}})
+        await record.end_judge(rid, self.user['_id'],
+                               constant.record.STATUS_CANCELLED, 0, 0)
+        await _post_judge(rdoc)
+        self.json_or_redirect(self.referer_or_main)
+
+
 @app.route('/judge/heartbeat', 'judge_heartbeat')
 class JudgeHeartbeatHandler(base.Handler):
     @base.require_priv(builtin.JUDGE_PRIV)

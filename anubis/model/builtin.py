@@ -1,5 +1,7 @@
 import collections
 import datetime
+import functools
+import itertools
 
 from anubis.util import version
 from anubis import constant
@@ -53,47 +55,63 @@ PERM_ATTEND_CONTEST = 1 << 45
 
 # Training.
 PERM_VIEW_TRAINING = 1 << 46
+PERM_CREATE_TRAINING = 1 << 47
+PERM_EDIT_TRAINING = 1 << 48
+PERM_EDIT_TRAINING_SELF = 1 << 49
 
 PERM_ALL = -1
 
-PERM_TEXTS = collections.OrderedDict([
-    (PERM_VIEW, 'View this domain'),
-    (PERM_EDIT_PERM, 'Edit permission of a role'),
-    (PERM_MOD_BADGE, 'Show MOD Badge'),
-    (PERM_EDIT_DESCRIPTION, 'Edit description of this domain'),
-    (PERM_CREATE_PROBLEM, 'Create problems'),
-    (PERM_EDIT_PROBLEM, 'Edit problems'),
-    (PERM_EDIT_PROBLEM_SELF, 'Edit own problems'),
-    (PERM_VIEW_PROBLEM, 'View problems'),
-    (PERM_SUBMIT_PROBLEM, 'Submit problem'),
-    (PERM_READ_PROBLEM_DATA, 'Read data of problem'),
-    (PERM_READ_PROBLEM_DATA_SELF, 'Read data of own problems'),
-    (PERM_READ_RECORD_CODE, 'Read record codes'),
-    (PERM_READ_RECORD_DETAIL, 'Read record details'),
-    (PERM_REJUDGE_PROBLEM, 'Rejudge problems'),
-    (PERM_REJUDGE, 'Rejudge records'),
-    (PERM_VIEW_DISCUSSION, 'View discussions'),
-    (PERM_CREATE_DISCUSSION, 'Create discussions'),
-    (PERM_HIGHLIGHT_DISCUSSION, 'Highlight discussions'),
-    (PERM_EDIT_DISCUSSION, 'Edit discussions'),
-    (PERM_EDIT_DISCUSSION_SELF, 'Edit own discussions'),
-    (PERM_DELETE_DISCUSSION, 'Delete discussions'),
-    (PERM_DELETE_DISCUSSION_SELF, 'Delete own discussions'),
-    (PERM_REPLY_DISCUSSION, 'Reply discussions'),
-    (PERM_EDIT_DISCUSSION_REPLY, 'Edit discussion replies'),
-    (PERM_EDIT_DISCUSSION_REPLY_SELF, 'Edit own discussion replies'),
-    (PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION, 'Edit discussion replies of own discussion'),
-    (PERM_DELETE_DISCUSSION_REPLY, 'Delete discussion replies'),
-    (PERM_DELETE_DISCUSSION_REPLY_SELF, 'Delete own discussion replies'),
-    (PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION, 'Delete discussion replies of own discussion'),
-    (PERM_VIEW_CONTEST, 'View contests'),
-    (PERM_VIEW_CONTEST_STATUS, 'View contest status'),
-    (PERM_VIEW_CONTEST_HIDDEN_STATUS, 'View hidden contest status'),
-    (PERM_CREATE_CONTEST, 'Create contests'),
-    (PERM_ATTEND_CONTEST, 'Attend contests'),
-    (PERM_VIEW_TRAINING, 'View training'),
-    (PERM_ALL, 'Have ALL PERMISSIONS in this domain')
-])
+Permission = functools.partial(
+    collections.namedtuple('Permission',
+                           ['family', 'key', 'desc']))
+
+PERMS = [
+    Permission('perm_general', PERM_VIEW, 'View this domain'),
+    Permission('perm_general', PERM_EDIT_PERM, 'Edit permissions of a role'),
+    Permission('perm_general', PERM_MOD_BADGE, 'Show MOD badge'),
+    Permission('perm_general', PERM_EDIT_DESCRIPTION, 'Edit description of this domain'),
+    Permission('perm_problem', PERM_CREATE_PROBLEM, 'Create problems'),
+    Permission('perm_problem', PERM_EDIT_PROBLEM, 'Edit problems'),
+    Permission('perm_problem', PERM_EDIT_PROBLEM_SELF, 'Edit own problems'),
+    Permission('perm_problem', PERM_VIEW_PROBLEM, 'View problems'),
+    Permission('perm_problem', PERM_VIEW_PROBLEM_HIDDEN, 'View hidden problems'),
+    Permission('perm_problem', PERM_SUBMIT_PROBLEM, 'Submit problem'),
+    Permission('perm_problem', PERM_READ_PROBLEM_DATA, 'Read data of problem'),
+    Permission('perm_problem', PERM_READ_PROBLEM_DATA_SELF, 'Read data of own problems'),
+    Permission('perm_record', PERM_READ_RECORD_CODE, 'Read record codes'),
+    Permission('perm_record', PERM_READ_RECORD_DETAIL, 'Read record details'),
+    Permission('perm_record', PERM_REJUDGE_PROBLEM, 'Rejudge problems'),
+    Permission('perm_record', PERM_REJUDGE, 'Rejudge records'),
+    Permission('perm_discussion', PERM_VIEW_DISCUSSION, 'View discussions'),
+    Permission('perm_discussion', PERM_CREATE_DISCUSSION, 'Create discussions'),
+    Permission('perm_discussion', PERM_HIGHLIGHT_DISCUSSION, 'Highlight discussions'),
+    Permission('perm_discussion', PERM_EDIT_DISCUSSION, 'Edit discussions'),
+    Permission('perm_discussion', PERM_EDIT_DISCUSSION_SELF, 'Edit own discussions'),
+    Permission('perm_discussion', PERM_DELETE_DISCUSSION, 'Delete discussions'),
+    Permission('perm_discussion', PERM_DELETE_DISCUSSION_SELF, 'Delete own discussions'),
+    Permission('perm_discussion', PERM_REPLY_DISCUSSION, 'Reply discussions'),
+    Permission('perm_discussion', PERM_EDIT_DISCUSSION_REPLY, 'Edit discussion replies'),
+    Permission('perm_discussion', PERM_EDIT_DISCUSSION_REPLY_SELF, 'Edit own discussion replies'),
+    Permission('perm_discussion', PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION,
+               'Edit discussion replies of own discussion'),
+    Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY, 'Delete discussion replies'),
+    Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY_SELF, 'Delete own discussion replies'),
+    Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION,
+               'Delete discussion replies of own discussion'),
+    Permission('perm_contest', PERM_VIEW_CONTEST, 'View contests'),
+    Permission('perm_contest', PERM_VIEW_CONTEST_STATUS, 'View contest status'),
+    Permission('perm_contest', PERM_VIEW_CONTEST_HIDDEN_STATUS, 'View hidden contest status'),
+    Permission('perm_contest', PERM_CREATE_CONTEST, 'Create contests'),
+    Permission('perm_contest', PERM_ATTEND_CONTEST, 'Attend contests'),
+    Permission('perm_training', PERM_VIEW_TRAINING, 'View training plans'),
+    Permission('perm_training', PERM_CREATE_TRAINING, 'Create training plans'),
+    Permission('perm_training', PERM_EDIT_TRAINING, 'Edit training plans'),
+    Permission('perm_training', PERM_EDIT_TRAINING_SELF, 'Edit own training plans'),
+]
+
+PERMS_BY_FAMILY = collections.OrderedDict(
+    (f, list(g)) for f, g in itertools.groupby(PERMS, key=lambda p: p.family))
+PERMS_BY_KEY = collections.OrderedDict(zip((s.key for s in PERMS), PERMS))
 
 # Privileges.
 PRIV_NONE = 0

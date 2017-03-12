@@ -83,16 +83,23 @@ async def set_role(domain_id: str, role: str, perm: int):
 
 @argmethod.wrap
 async def delete_role(domain_id: str, role: str):
-    validator.check_role(role)
+    return await delete_roles(domain_id, [role])
+
+
+async def delete_roles(domain_id: str, roles):
+    roles = list(set(roles))
+    for role in roles:
+        validator.check_role(role)
     for domain in builtin.DOMAINS:
         if domain['_id'] == domain_id:
-            return domain
+            raise error.BuiltinDomainError(domain_id)
     user_coll = db.Collection('domain.user')
-    await user_coll.update({'domain_id': domain_id, 'role': role},
-                           {'$unset': {'role': ''}}, multi=True)
+    await user_coll.update_many({'domain_id': domain_id, 'role': {'$in': list(roles)}},
+                                {'$unset': {'role': ''}})
     coll = db.Collection('domain')
     return await coll.find_one_and_update(filter={'_id': domain_id},
-                                          update={'$unset': {'roles.{0}'.format(role): ''}},
+                                          update={'$unset': dict(('roles.{0}'.format(role), '')
+                                                                 for role in roles)},
                                           return_document=True)
 
 
@@ -120,11 +127,25 @@ async def set_user(domain_id, uid, **kwargs):
                                           upsert=True, return_document=True)
 
 
+async def set_users(domain_id, uids, **kwargs):
+    coll = db.Collection('domain.user')
+    await coll.update_many({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                           {'$set': kwargs},
+                           upsert=False)
+
+
 async def unset_user(domain_id, uid, fields):
     coll = db.Collection('domain.user')
     return await coll.find_one_and_update(filter={'domain_id': domain_id, 'uid': uid},
                                           update={'$unset': dict((f, '') for f in set(fields))},
                                           upsert=True, return_document=True)
+
+
+async def unset_users(domain_id, uids, fields):
+    coll = db.Collection('domain.user')
+    await coll.update_many({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                           {'$unset': dict((f, '') for f in set(fields))},
+                           upsert=True)
 
 
 @argmethod.wrap
@@ -136,6 +157,15 @@ async def set_user_role(domain_id: str, uid: int, role: str):
 @argmethod.wrap
 async def unset_user_role(domain_id: str, uid: int):
     return await unset_user(domain_id, uid, ['role'])
+
+
+async def set_users_role(domain_id: str, uids, role: str):
+    validator.check_role(role)
+    await set_users(domain_id, uids, role=role)
+
+
+async def unset_users_role(domain_id: str, uids):
+    await unset_users(domain_id, uids, ['role'])
 
 
 @argmethod.wrap

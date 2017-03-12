@@ -97,6 +97,8 @@ class ProblemSubmitHandler(base.Handler):
             rdocs = await record.get_user_in_problem_multi(
                 uid, self.domain_id, pdoc['_id']
             ).sort([('_id', -1)]).to_list(10)
+        for rdoc in rdocs:
+            rdoc['url'] = self.reverse_url('record_detail', rid=rdoc['_id'])
         path_components = self.build_path(
             (self.translate('problem_main'), self.reverse_url('problem_main')),
             (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['_id'])),
@@ -167,6 +169,9 @@ class ProblemPretestConnection(base.Connection):
                      or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
                 return
         # TODO: join form event to improve performance?
+        if rdoc['type'] != constant.record.TYPE_PRETEST:
+            del rdoc['cases']
+        rdoc['url'] = self.reverse_url('record_detail', rid=rdoc['_id'])
         self.send(rdoc=rdoc)
 
     async def on_close(self):

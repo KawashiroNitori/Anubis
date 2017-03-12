@@ -45,6 +45,14 @@ export default class AutoComplete extends DOMAttachedObject {
         this.attach();
     }
 
+    clear(clearValue = true) {
+        if (clearValue) {
+            this.$dom.val('');
+        }
+        this._value = null;
+        this.lastText = null;
+    }
+
     attach() {
         this.$dom.on(`click.${this.eventNS}`, this.onClick.bind(this));
         this.$dom.on(`focus.${this.eventNS}`, this.onFocus.bind(this));
@@ -184,6 +192,10 @@ export default class AutoComplete extends DOMAttachedObject {
 
     value() {
         return this._value;
+    }
+
+    focus() {
+        this.$dom.focus();
     }
 
 }
