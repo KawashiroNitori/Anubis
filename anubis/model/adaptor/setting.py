@@ -27,28 +27,37 @@ PREFERENCE_SETTINGS = [
     Setting('setting_display', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE,
             ui='select', name='Problem Tags Visibility',
             desc='Whether to show tags in the problem list.'),
-    Setting('setting_usage', 'send_code', int, range=constant.setting.FUNCTION_RANGE,
-            ui='select', name='Send Code after acceptance',
-            desc='If enabled, source code will be emailed to you after the submission is accepted.'),
+    # Setting('setting_usage', 'send_code', int, range=constant.setting.FUNCTION_RANGE,
+    #         ui='select', name='Send Code after acceptance',
+    #         desc='If enabled, source code will be emailed to you after the submission is accepted.'),
     Setting('setting_usage', 'code_lang', str, range=constant.language.LANG_TEXTS,
             ui='select', name='Default Code Language'),
     Setting('setting_usage', 'code_template', str,
             ui='textarea', name='Default Code Template',
-            desc='If left blank, the built-in template of te corresponding language will be used.')
+            desc='If left blank, the built-in template of the corresponding language will be used.')
 ]
 
 ACCOUNT_SETTINGS = [
     Setting('setting_info', 'gravatar', str,
             name='Gravatar Email', desc='We use Gravatar to present your avatar icon.'),
-    Setting('setting_info', 'qq', str, name='QQ'),
+    Setting('setting_info', 'qq', str,
+            name='QQ'),
+    Setting('setting_info', 'wechat', str,
+            name='WeChat'),
     Setting('setting_info', 'gender', int, range=constant.model.USER_GENDER_RANGE,
             ui='select', name='Gender'),
+    Setting('setting_info', 'bio', str,
+            ui='markdown', name='Bio'),
     Setting('setting_privacy', 'show_mail', int, range=constant.setting.PRIVACY_RANGE,
             ui='select', name='Email Visibility'),
     Setting('setting_privacy', 'show_qq', int, range=constant.setting.PRIVACY_RANGE,
             ui='select', name='QQ Visibility'),
+    Setting('setting_privacy', 'show_wechat', int, range=constant.setting.PRIVACY_RANGE,
+            ui='select', name='WeChat Visibility'),
     Setting('setting_privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE,
-            ui='select', name='Gender Visibility')
+            ui='select', name='Gender Visibility'),
+    Setting('setting_privacy', 'show_bio', int, range=constant.setting.PRIVACY_RANGE,
+            ui='select', name='Bio Visibility')
 ]
 
 SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS

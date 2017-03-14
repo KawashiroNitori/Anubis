@@ -1,3 +1,4 @@
+{% import "components/home.html" as home with context %}
 {% extends"layout/basic.html" %}
 {% block content %}
 <div class="row">
@@ -10,12 +11,12 @@
               <img src="{{ udoc['gravatar']|gravatar_url }}" width="120" height="120" class="large user-profile-avatar">
             </div>
             <div class="media__body profile-header__main">
-              <h1>{{ udoc['uname'] }} <small>({{ _('UID') }}: {{ udoc['_id'] }})</small></h1>
+              <h1>{{ udoc['uname'] }} <small>({{ _('UID') }}: {{ udoc['_id'] }}) {% if handler.get_udoc_setting(udoc, 'gender') != none %}{{ anubis.constant.model.USER_GENDER_RANGE[handler.get_udoc_setting(udoc, 'gender')] }}{% endif %}</small>{% if is_self_profile %} <small><a href="{{ reverse_url('home_account') }}#setting_info">[{{ _('Edit') }}]</a></small>{% endif %}</h1>
               <p>
                 {{ _('Registered at') }} {{ datetime_span(udoc['reg_at']) }},
                 {{ _('last login at') }} {{ datetime_span(udoc['login_at']) }}
               </p>
-              <p>{{ _('Solved {0} problems, RP: {1} (No. {2})').format(dudoc['num_accept']|default(0), dudoc['rp']|default(0.0)|round(2), dudoc['rank']|default('?')) }}</p>
+              <p>{{ _('Solved {0} problems.').format(dudoc['num_accept']|default(0)) }}</p>
             </div>
           </div>
         </div>
@@ -25,23 +26,28 @@
           <ul class="section__tabs">
             <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Submissions') }} ({{ dudoc['num_submit']|default(0) }})</h1>
-              <div class="section__tab-main">blabla</div>
+              <div class="section__tab-main">
+                <p><a href="{{ reverse_url('record_main') }}?uid_or_name={{ udoc['_id'] }}">{{ _('All Submissions') }}</a></p>
+                {% for rdoc in rdocs %}
+                <p><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}">R{{ rdoc['_id'] }}</a></p>
+                {% endfor %}
+              </div>
             </li>
             <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Problems') }}</h1>
-              <div class="section__tab-main">blabla</div>
+              <h1 class="section__tab-title">{{ _('Problems') }} ({{ pcount }})</h1>
+              <div class="section__tab-main">
+                {% for pdoc in pdocs %}
+                <p><a href="{{ reverse_url('problem_detail', pid=pdoc['_id']) }}">{{ pdoc['title'] }}</a></p>
+                {% endfor %}
+              </div>
             </li>
             <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Solutions') }}</h1>
-              <div class="section__tab-main">blabla</div>
-            </li>
-            <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Problems Sets') }}</h1>
-              <div class="section__tab-main">blabla</div>
-            </li>
-            <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Discussions') }}</h1>
-              <div class="section__tab-main">blabla</div>
+              <h1 class="section__tab-title">{{ _('Discussions') }} ({{ dcount }})</h1>
+              <div class="section__tab-main">
+                {% for ddoc in ddocs %}
+                <p><a href="{{ reverse_url('discussion_detail', did=ddoc['_id']) }}">{{ ddoc['title'] }}</a></p>
+                {% endfor %}
+              </div>
             </li>
           </ul>
         </div>
@@ -49,20 +55,53 @@
     </div>
   </div>
   <div class="medium-3 columns">
+  {% if is_self_profile %}
+    {{ home.render_sidebar() }}
+  {% endif %}
+    <div class="section side">
+      <div class="section__body">
+        <div class="balancer sidebar-user-stat">
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudoc['num_accept'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Accepted') }}</div>
+            </div>
+          </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudoc['num_problems'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Upload Problem') }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% if handler.can_view(udoc, 'bio') %}
     <div class="section side">
       <div class="section__header">
-        <h1 class="section__title">{{ _('Bio') }}</h1>
+        <h1 class="section__title">{{ _('Bio') }}{% if is_self_profile %} <small><a href="{{ reverse_url('home_account') }}#setting_info">[{{ _('Edit') }}]</a></small>{% endif %}</h1>
       </div>
       <div class="section__body typo">
         {{ udoc['bio']|default('')|markdown }}
       </div>
     </div>
+  {% endif %}
     <div class="section side">
       <div class="section__header">
-        <h1 class="section__title">{{ _('Recent Activities') }}</h1>
+        <h1 class="section__title">{{ _('Contact') }}{% if is_self_profile %} <small><a href="{{ reverse_url('home_account') }}#setting_info">[{{ _('Edit') }}]</a></small>{% endif %}</h1>
       </div>
-      <div class="section__body">
-        <p>foo bar</p>
+      <div class="section__body typo">
+        <dl class="large horizontal">
+        {% if email != none %}
+          <dt>{{ _('Email') }}</dt><dd>{{ email }}</dd>
+        {% endif %}
+        {% if handler.can_view(udoc, 'qq') and udoc['qq'] %}
+          <dt>{{ _('QQ') }}</dt><dd><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={{ udoc['qq'] }}&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:{{ udoc['qq'] }}:52" alt="{{ _('Click here to chat with me') }}" title="{{ _('Click here to chat with me') }}"/></a> {{ udoc['qq'] }}</dd>
+        {% endif %}
+        {% if handler.can_view(udoc, 'wechat') and udoc['wechat'] %}
+          <dt>{{ _('WeChat') }}</dt><dd>{{ udoc['wechat'] }}</dd>
+        {% endif %}
+        </dl>
       </div>
     </div>
   </div>

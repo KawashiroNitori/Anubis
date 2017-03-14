@@ -1,17 +1,40 @@
 import asyncio
 import datetime
+import random
 
 from anubis import app
 from anubis import error
 from anubis import template
+from anubis import constant
 from anubis.model import builtin
 from anubis.model import domain
 from anubis.model import system
 from anubis.model import token
 from anubis.model import user
+from anubis.model import problem
+from anubis.model import discussion
+from anubis.model import record
+from anubis.model.adaptor import setting
 from anubis.util import options
 from anubis.util import validator
 from anubis.handler import base
+
+
+class UserSettingsMixin(object):
+  def can_view(self, udoc, key):
+    privacy = udoc.get('show_' + key, next(iter(setting.SETTINGS_BY_KEY['show_' + key].range)))
+    return udoc['_id'] == self.user['_id'] \
+           or (privacy == constant.setting.PRIVACY_PUBLIC and True) \
+           or (privacy == constant.setting.PRIVACY_REGISTERED_ONLY
+               and self.has_priv(builtin.PRIV_USER_PROFILE)) \
+           or (privacy == constant.setting.PRIVACY_SECRET
+               and self.has_priv(builtin.PRIV_VIEW_USER_SECRET))
+
+  def get_udoc_setting(self, udoc, key):
+    if self.can_view(udoc, key):
+      return udoc.get(key, None)
+    else:
+      return None
 
 
 @app.route('/register', 'user_register')
@@ -129,17 +152,33 @@ class UserLogoutHandler(base.Handler):
 
 
 @app.route('/user/{uid:-?\d+}', 'user_detail')
-class UserDetailHandler(base.Handler):
+class UserDetailHandler(base.Handler, UserSettingsMixin):
     @base.route_argument
     @base.sanitize
     async def get(self, *, uid: int):
+        is_self_profile = self.has_priv(builtin.PRIV_USER_PROFILE) and self.user['_id'] == uid
         udoc = await user.get_by_uid(uid)
         if not udoc:
             raise error.UserNotFoundError(uid)
-        dudoc = await asyncio.gather(
-            domain.get_user(self.domain_user, udoc)
-        )
-        self.render('user_detail.html', udoc=udoc, dudoc=dudoc)
+        dudoc = await domain.get_user(self.domain_id, udoc['_id'])
+        email = self.get_udoc_setting(udoc, 'mail')
+        if email:
+            email = email.replace('@', random.choice([' [at] ', '#']))
+        bg = random.randint(1, 21)
+        rdocs = record.get_multi(get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD),
+                                 uid=uid).sort([('_id', -1)])
+        rdocs = await rdocs.limit(10).to_list(None)
+        # TODO(twd2): check status, eg. test, hidden problem, ...
+        pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid).sort([('_id', -1)])
+        pcount = await pdocs.count()
+        pdocs = await pdocs.limit(10).to_list(None)
+        ddocs = discussion.get_multi(self.domain_id, owner_uid=uid)
+        dcount = await ddocs.count()
+        ddocs = await ddocs.limit(10).to_list(None)
+        self.render('user_detail.html', is_self_profile=is_self_profile,
+                    udoc=udoc, dudoc=dudoc, email=email, bg=bg,
+                    rdocs=rdocs, pdocs=pdocs, pcount=pcount,
+                    ddocs=ddocs, dcount=dcount)
 
 
 @app.route('/user/search', 'user_search')

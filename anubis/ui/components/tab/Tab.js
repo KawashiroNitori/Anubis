@@ -5,15 +5,19 @@ export default class Tab extends DOMAttachedObject {
 
     static DOMAttachKey = 'anubisTabInstance';
 
-    static attachAll() {
-        for (const tab of $('.section__tabs')) {
+    static initAll() {
+        $('.section__tabs').get().forEach((tab) => {
             Tab.getOrConstruct($(tab)).attach();
-        }
+        });
     }
 
     constructor($dom) {
         super($dom);
         this.attached = false;
+    }
+
+    handleClick(i) {
+        return () => this.selectTab(i);
     }
 
     attach() {
@@ -30,11 +34,14 @@ export default class Tab extends DOMAttachedObject {
             .append(this.$header)
             .append(this.$content);
 
-        for (const element of this.$dom.find('.section__tab-title')) {
+        let i = 0;
+        this.$dom.find('.section__tab-title').get().forEach((element) => {
             $(document.createElement('li')).text($(element).text())
                 .addClass('section__tab-header-item')
+                .on('click', this.handleClick(i))
                 .appendTo(this.$header);
-        }
+            ++i;
+        });
 
         this.$dom.find('.section__tab-main')
             .appendTo(this.$content);
@@ -47,7 +54,10 @@ export default class Tab extends DOMAttachedObject {
     }
 
     selectTab(index) {
+        this.$header.find('.section__tab-header-item').removeClass('selected');
         this.$header.find('.section__tab-header-item').eq(index).addClass('selected');
+        this.$content.find('.section__tab-main').css('display', 'none');
+        this.$content.find('.section__tab-main').eq(index).css('display', '');
     }
 
 }

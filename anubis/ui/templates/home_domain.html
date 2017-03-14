@@ -39,19 +39,41 @@
             <img src="{{ ddoc['gravatar']|gravatar_url }}" width="32" height="32">
           </td>
           <td class="col--name">
-            {{ ddoc['name'] }} ({{ ddoc['_id'] }})
+            <span data-tooltip="{{ _('This is a built-in domain that every user is in.') }}">{{ ddoc['name'] }} ({{ ddoc['_id'] }})</span>
           </td>
           <td class="col--role">
-            {% if ddoc['owner_uid'] == handler.user['_id'] %}
-            ({{ _('Owner') }})
-            {% else %}
-            {{ uddict.get(ddoc['_id'], {})['role']|default(anubis.model.builtin.ROLE_DEFAULT) }}
-            {% endif %}
+            {{ dudict.get(ddoc['_id'], {})['role']|default(anubis.model.builtin.ROLE_DEFAULT) }}
           </td>
           <td class="col--action">
             <a class="typo-a" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">
               {{ _('Visit') }}
             </a>
+            {% if can_manage[ddoc['_id']] %}
+            <a class="typo-a" href="{{ reverse_url('domain_manage', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% for ddoc in ddocs %}
+        <tr>
+          <td class="col--icon">
+            <img src="{{ ddoc['gravatar']|gravatar_url }}" width="32" height="32">
+          </td>
+          <td class="col--name">
+            {{ ddoc['name'] }} ({{ ddoc['_id'] }})
+          </td>
+          <td class="col--role">
+            {% if ddoc['owner_uid'] == handler.user['_id'] %}
+            ({{ _('owner') }})
+            {% else %}
+            {{ dudict.get(ddoc['_id'], {})['role']|default(anubis.model.builtin.ROLE_DEFAULT) }}
+            {% endif %}
+          </td>
+          <td class="col--action">
+            <a class="typo-a" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Visit') }}</a>
+            {% if can_manage[ddoc['_id']] %}
+            <a class="typo-a" href="{{ reverse_url('domain_manage', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
