@@ -37,12 +37,43 @@
   <div class="medium-3 columns">
     <div class="section">
       <div class="section__header">
+        <h1 class="section__title">{{ _('Filter') }}</h1>
+      </div>
+      <form method="get">
+        <div class="section__body">
+          <label class="filter-user">
+            {{ _('By Username / UID') }}
+            <input name="uid_or_name" type="text" class="textbox" value="{{ filter_uid_or_uname }}" autocomplete="off" data-autofocus>
+          </label>
+          <label>
+            {{ _('By Problem') }}
+            <input name="pid" type="text" class="textbox" value="{{ filter_pid }}">
+          </label>
+          <label>
+            {{ _('By Contest') }}
+            <input name="tid" type="text" class="textbox" value="{{ filter_tid }}">
+          </label>
+          <button type="submit" class="primary button"><span class="icon icon-filter"></span> {{ _('Filter') }}</button>
+          <a href="{{ reverse_url('record_main') }}" class="button">{{ _('Reset') }}</a>
+        </div>
+      </form>
+    </div>
+    {% if statistics %}
+    <div class="section">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
       </div>
       <div class="section__body">
-        <p>Under test...</p>
+        <dl class="section__body">
+          <dt>{{ _('Day') }}</dt><dd>{{ statistics['day'] }}</dd>
+          <dt>{{ _('Week') }}</dt><dd>{{ statistics['week'] }}</dd>
+          <dt>{{ _('Month') }}</dt><dd>{{ statistics['month'] }}</dd>
+          <dt>{{ _('Year') }}</dt><dd>{{ statistics['year'] }}</dd>
+          <dt>{{ _('Total') }}</dt><dd>{{ statistics['total'] }}</dd>
+        </dl>
       </div>
     </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

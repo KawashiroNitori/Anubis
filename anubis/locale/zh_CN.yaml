@@ -568,6 +568,16 @@ Tags: 标签
 Time Limit: 时间限制
 Memory Limit: 内存限制
 Judge Mode: 评测模式
-Compare (Ignore Ending Blank): 逐字符比对（忽略行末空白与文末换行）
+Compare (Ignore Ending Blank): 逐字符比对（忽略尾部空白）
 Compare: 逐字符比对
 Special Judge: 自定义评测
+Day: 日
+Week: 周
+Month: 月
+Year: 年
+Total: 总计
+Filter: 过滤
+By Username / UID: 由用户名或 UID
+By Problem: 由题目
+By Contest: 由比赛
+Reset: 重置

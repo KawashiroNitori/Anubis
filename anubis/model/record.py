@@ -96,6 +96,15 @@ def get_multi(projection=None, **kwargs):
 
 
 @argmethod.wrap
+async def get_count(begin_id: objectid.ObjectId=None):
+    coll = db.Collection('record')
+    query = {}
+    if begin_id:
+        query['_id'] = {'$gte': begin_id}
+    return await coll.find(query).count()
+
+
+@argmethod.wrap
 def get_problem_multi(domain_id: str, pid: int, get_hidden: bool=False, type: int=None, *, projection=None):
     coll = db.Collection('record')
     query = {'hidden': False if not get_hidden else {'$gte': False},

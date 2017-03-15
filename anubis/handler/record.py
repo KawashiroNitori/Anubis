@@ -1,5 +1,7 @@
 import asyncio
 import datetime
+import struct
+import calendar
 import io
 import zipfile
 from bson import objectid
@@ -20,11 +22,26 @@ from anubis.service import bus
 
 @app.route('/records', 'record_main')
 class RecordMainHandler(base.Handler):
-    async def get(self):
+    async def get(self, *, uid_or_name: str='', pid: str='', tid: str=''):
+        query = {}
+        if uid_or_name:
+            try:
+                query['uid'] = int(uid_or_name)
+            except ValueError:
+                udoc = await user.get_by_uname(uid_or_name)
+                if not udoc:
+                    raise error.UserNotFoundError(uid_or_name) from None
+                query['uid'] = udoc['_id']
+        if pid:
+            query['domain_id'] = self.domain_id
+            query['pid'] = pid
+        if tid:
+            query['domain_id'] = self.domain_id
+            query['tid'] = tid
         # TODO: projection, pagination
-        rdocs = await record.get_all_multi(
+        rdocs = await record.get_all_multi(**query,
             get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)
-        ).sort([('_id', -1)]).to_list(50)
+        ).sort([('_id', -1)]).limit(50).to_list(None)
         if rdocs:
             # TODO: projection
             udict, pdict = await asyncio.gather(
@@ -34,7 +51,24 @@ class RecordMainHandler(base.Handler):
         else:
             udict = {}
             pdict = {}
-        self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict)
+        # statistics
+        statistics = None
+        if self.has_priv(builtin.PRIV_VIEW_JUDGE_STATISTICS):
+            ts = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+            day_count, week_count, month_count, year_count, rcount = await asyncio.gather(
+                record.get_count(objectid.ObjectId(
+                    struct.pack('>i', ts - 24 * 3600) + struct.pack('b', -1) * 8)),
+                record.get_count(objectid.ObjectId(
+                    struct.pack('>i', ts - 7 * 24 * 3600) + struct.pack('b', -1) * 8)),
+                record.get_count(objectid.ObjectId(
+                    struct.pack('>i', ts - 30 * 24 * 3600) + struct.pack('b', -1) * 8)),
+                record.get_count(objectid.ObjectId(
+                    struct.pack('>i', ts - int(365.2425 * 24 * 3600)) + struct.pack('b', -1) * 8)),
+                record.get_count())
+            statistics = {'day': day_count, 'week': week_count, 'month': month_count,
+                          'year': year_count, 'total': rcount}
+        self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
+                    filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
@@ -46,16 +80,23 @@ class RecordMainConnection(base.Connection):
 
     async def on_record_change(self, e):
         rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
-        # TODO: check permission for visibility: contest
+        # check permission for visibility: contest
+        if rdoc['tid']:
+            now = datetime.datetime.utcnow()
+            tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+            if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+                and (self.domain_id != tdoc['domain_id']
+                     or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+                return
         udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
                                           problem.get(rdoc['domain_id'], rdoc['pid']))
-        if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+        if pdoc.get('hidden', False) and (pdoc['domain_id'] != self.domain_id
+                                          or not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)):
             pdoc = None
         # TODO: remove the rdoc sent.
         if rdoc['type'] != constant.record.TYPE_PRETEST:
             del rdoc['cases']
-        self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc),
-                  rdoc=rdoc)
+        self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc))
 
     async def on_close(self):
         bus.unsubscribe(self.on_record_change)

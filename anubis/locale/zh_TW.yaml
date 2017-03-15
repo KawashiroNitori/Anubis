@@ -515,6 +515,6 @@ Partic.: 參賽人數
 Time Limit: 時間限制
 Memory Limit: 記憶體限制
 Judge Mode: 評測模式
-Compare (Ignore Ending Blank): 逐字元比對（忽略行末空白與文末換行）
+Compare (Ignore Ending Blank): 逐字元比對（忽略尾部空白）
 Compare: 逐字元比對
 Special Judge: 自定義評測
