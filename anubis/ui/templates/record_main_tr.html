@@ -24,7 +24,7 @@
   <td class="col--submit-by"><a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">{{ udoc['uname'] }}</a></td>
   {% if pdoc['judge_mode'] != anubis.constant.record.MODE_SUBMIT_ANSWER %}
   <td class="col--time">{{ rdoc['time_ms'] }}ms</td>
-  <td class="col--memory">{{ rdoc['memory_kb']|to_size }}</td>
+  <td class="col--memory">{{ rdoc['memory_kb']|to_size(ndigits=1) }}</td>
   <td class="col--lang">{{ anubis.constant.language.LANG_TEXTS[rdoc['lang']] }}</td>
   {% else %}
   <td class="col--time">-</td>
