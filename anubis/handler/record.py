@@ -22,6 +22,8 @@ from anubis.service import bus
 
 @app.route('/records', 'record_main')
 class RecordMainHandler(base.Handler):
+    @base.get_argument
+    @base.sanitize
     async def get(self, *, uid_or_name: str='', pid: str='', tid: str=''):
         query = {}
         if uid_or_name:
@@ -34,14 +36,14 @@ class RecordMainHandler(base.Handler):
                 query['uid'] = udoc['_id']
         if pid:
             query['domain_id'] = self.domain_id
-            query['pid'] = pid
+            query['pid'] = int(pid)
         if tid:
             query['domain_id'] = self.domain_id
-            query['tid'] = tid
+            query['tid'] = int(tid)
         # TODO: projection, pagination
         rdocs = await record.get_all_multi(**query,
-            get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)
-        ).sort([('_id', -1)]).limit(50).to_list(None)
+                                           get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)
+                                           ).sort([('_id', -1)]).limit(50).to_list(None)
         if rdocs:
             # TODO: projection
             udict, pdict = await asyncio.gather(
@@ -86,16 +88,16 @@ class RecordMainConnection(base.Connection):
             tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
             if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
                 and (self.domain_id != tdoc['domain_id']
-                     or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+                     or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))
+                or (rdoc['status'] == constant.record.STATUS_JUDGING and len(rdoc['cases'])
+                    and not (self.has_perm(builtin.PERM_READ_RECORD_DETAIL)
+                             or self.has_priv(builtin.PRIV_READ_RECORD_DETAIL)))):
                 return
         udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
                                           problem.get(rdoc['domain_id'], rdoc['pid']))
         if pdoc.get('hidden', False) and (pdoc['domain_id'] != self.domain_id
                                           or not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)):
             pdoc = None
-        # TODO: remove the rdoc sent.
-        if rdoc['type'] != constant.record.TYPE_PRETEST:
-            del rdoc['cases']
         self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc))
 
     async def on_close(self):
@@ -132,8 +134,8 @@ class RecordDetailHandler(base.Handler):
             tdoc = None
         # TODO: Check permission for visibility: contest
         if (not self.own(rdoc, field='uid')
-                and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
-                and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
+            and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
+            and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
             del rdoc['code']
         if not show_status and 'code' not in rdoc:
             raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
@@ -186,7 +188,7 @@ class RecordPretestDataHandler(base.Handler):
         for i, (data_input, data_output) in enumerate(ddoc['content']):
             input_file = 'input{0}.txt'.format(i)
             output_file = 'output{0}.txt'.format(i)
-            config_content +='{0}|{1}|1|10|262144\n'.format(input_file, output_file)
+            config_content += '{0}|{1}|1|10|262144\n'.format(input_file, output_file)
             zip_file.writestr('Input/{0}'.format(input_file), data_input)
             zip_file.writestr('Output/{0}'.format(output_file), data_output)
         zip_file.writestr('Config.ini', config_content)

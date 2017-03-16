@@ -92,6 +92,7 @@ Logout: 登出
 Logout All Sessions: 登出所有會話
 Logout This Session: 登出該會話
 Lost Password: 忘記密碼
+Memory: 記憶體
 Memory Cost: 記憶體佔用
 Messages: 站內訊息
 My Profile: 我的資料
@@ -216,6 +217,7 @@ contest_status: 比賽狀態
 current domain: 當前域
 currently offline: 目前離線
 discussion_create: 創建討論
+discussion_create_document_as_node: 創建討論
 discussion_main: 討論
 discussion_node: 討論
 error: 錯誤
@@ -336,6 +338,7 @@ You've already attended this contest.: 您已經參加本次比賽。
 You haven't attended this contest yet.: 您還沒有參加本次比賽。
 Contest status is hidden.: 當前比賽狀態隱藏，暫不可顯示。
 Problem {1} not found.: 題目 {1} 不存在。
+Problem {0} can't be pretested.: 題目 {0} 無法自測。
 Training requirement is not satisfied.: 不滿足訓練條件。
 Record {0} not found.: 記錄 {0} 不存在。
 '{0} limit exceeded (limit: {2} operations in {1} seconds).': '{0} 超過頻率限制。限制：{1} 秒內最多 {2} 次操作。'
@@ -518,3 +521,6 @@ Judge Mode: 評測模式
 Compare (Ignore Ending Blank): 逐字元比對（忽略尾部空白）
 Compare: 逐字元比對
 Special Judge: 自定義評測
+Answer: 答案
+Submit Answer: 直接提交答案
+For this problem, you have to put your answer here.: 請在此處直接提交本題的答案。

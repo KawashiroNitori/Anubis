@@ -9,6 +9,7 @@ from anubis import db
 from anubis import error
 from anubis.model import fs
 from anubis.model import system
+from anubis.model import testdata
 from anubis.util import argmethod
 from anubis.util import validator
 
@@ -150,7 +151,7 @@ async def get_data(domain_id, pid):
     pdoc = await get(domain_id, pid)
     if not pdoc.get('data', None):
         raise error.ProblemDataNotFoundError(domain_id, pid)
-    return await fs.get(pdoc['data'])
+    return await testdata.get(domain_id, pdoc['data'])
 
 
 @argmethod.wrap
@@ -235,6 +236,20 @@ async def create_indexes():
     await coll.create_index([('domain_id', 1),
                              ('owner_uid', 1),
                              ('_id', -1)])
+    await coll.create_index([('domain_id', 1),
+                             ('category', 1),
+                             ('_id', 1)], sparse=True)
+    await coll.create_index([('domain_id', 1),
+                             ('hidden', 1),
+                             ('category', 1),
+                             ('_id', 1)], sparse=True)
+    await coll.create_index([('domain_id', 1),
+                             ('tag', 1),
+                             ('_id', 1)], sparse=True)
+    await coll.create_index([('domain_id', 1),
+                             ('hidden', 1),
+                             ('tag', 1),
+                             ('_id', 1)], sparse=True)
 
     status_coll = db.Collection('problem.status')
     await status_coll.create_index([('domain_id', 1),

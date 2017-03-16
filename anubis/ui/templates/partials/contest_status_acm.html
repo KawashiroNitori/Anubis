@@ -37,7 +37,9 @@
     {% for pid in tdoc['pids'] %}
       <td class="col--p{{ loop.index }}">
       {% if tsddict[pid][0]['accept'] %}
-        <a href="{{ reverse_url('record_detail', rid=tsddict[pid][0]['rid']) }}">{{ _('Accepted') }}</a> ({{ tsddict[pid][0]['time'] }})
+        <a href="{{ reverse_url('record_detail', rid=tsddict[pid][0]['rid']) }}" data-tooltip="{{ tsddict[pid][0]['time']|int }}s">{{ _('Accepted') }}</a>{% if tsddict[pid][0]['naccept'] %} (-{{ tsddict[pid][0]['naccept'] }}){% endif %}
+      {% elif tsddict[pid][0]['naccept'] %}
+        (-{{ tsddict[pid][0]['naccept'] }})
       {% else %}
         -
       {% endif %}

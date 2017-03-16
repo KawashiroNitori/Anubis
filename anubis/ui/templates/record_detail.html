@@ -21,7 +21,7 @@
         <pre class="judge-text">{{ rdoc['judge_texts']|join('\n') }}</pre>
       </div>
       {% endif %}
-      {% if rdoc['cases'] %}
+      {% if rdoc['cases'] and (not rdoc['tid'] or (handler.has_perm(anubis.model.builtin.PERM_READ_RECORD_DETAIL) or handler.has_priv(anubis.model.builtin.PRIV_READ_RECORD_DETAIL))) %}
       <div class="section__body no-padding">
         <table class="data-table record_detail__table">
           <colgroup>
@@ -49,7 +49,9 @@
                 <span class="record-status--text {{ anubis.constant.record.STATUS_CODES[rcdoc['status']] }}">
                   {{ anubis.constant.record.STATUS_TEXTS[rcdoc['status']] }}
                 </span>
+                {% if handler.has_perm(anubis.model.builtin.PERM_READ_RECORD_DETAIL) or handler.has_priv(anubis.model.builtin.PRIV_READ_RECORD_DETAIL) %}
                 <span>{{ rcdoc['judge_text'] }}</span>
+                {% endif %}
               </td>
               <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
               <td class="col--memory">{{ rcdoc['memory_kb']|to_size }}</td>
@@ -124,8 +126,10 @@
             {{ _('Download') }}
           </a></dd>
           {% endif %}
+          {% if pdoc['judge_mode'] != anubis.constant.record.MODE_SUBMIT_ANSWER %}
           <dt>{{ _('Language') }}</dt>
           <dd>{{ anubis.constant.language.LANG_TEXTS[rdoc['lang']] }}</dd>
+          {% endif %}
           <dt>{{ _('Submit At') }}</dt>
           <dd>{{ datetime_span(rdoc['_id'].generation_time) }}</dd>
           {% if show_status %}
@@ -137,14 +141,16 @@
             <dt>{{ _('Judged By') }}</dt>
             <dd>{{ user.render_inline(judge_udoc, badge=false) }}</dd>
           {% endif %}
+          {% if pdoc['judge_mode'] != anubis.constant.record.MODE_SUBMIT_ANSWER %}
           <dt>{{ _('Total Time') }}</dt>
           <dd>{{ rdoc['time_ms'] }}ms</dd>
           <dt>{{ _('Peak Memory') }}</dt>
           <dd>{{ rdoc['memory_kb']|to_size }}</dd>
           {% endif %}
+          {% endif %}
         </dl>
       </div>
-    </div>
+    </div>{#
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
@@ -152,7 +158,7 @@
       <div class="section__body typo">
         <p>{{ _('Under test') }}</p>
       </div>
-    </div>
+    </div>#}
   </div>
 </div>
 {% endblock %}

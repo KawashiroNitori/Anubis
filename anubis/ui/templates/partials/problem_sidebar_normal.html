@@ -21,6 +21,7 @@
     {% endif %}
     {% endif %}
     {% if page_name == 'problem_detail' %}
+    {% if pdoc['judge_mode'] != anubis.constant.record.MODE_SUBMIT_ANSWER %}
     {% if handler.has_perm(anubis.model.builtin.PERM_SUBMIT_PROBLEM) %}
       <li class="menu__item scratchpad--hide"><a class="menu__link highlight" name="problem-sidebar__open-scratchpad" href="javascript:;" data-global-hotkey="alt+e">
         <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }} (Alt+E)
@@ -28,21 +29,25 @@
       <li class="menu__item non-scratchpad--hide"><a class="menu__link" name="problem-sidebar__quit-scratchpad" href="javascript:;" data-global-hotkey="alt+q">
         <span class="icon icon-enlarge"></span> {{ _('Quit Scratchpad') }} (Alt+Q)
       </a></li>
+      <li class="menu__seperator"></li>
     {% elif not handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) %}
       <li class="menu__item scratchpad--hide"><a class="menu__link highlight" href="javascript:;">
         <span class="icon icon-enlarge"></span> {{ _('Login to Use Scratchpad') }}
       </a></li>
+      <li class="menu__seperator"></li>
     {% else %}
       <li class="menu__item scratchpad--hide"><a class="menu__link highlight" href="javascript:;">
         <span class="icon icon-enlarge"></span> {{ _('No Permission to Use Scratchpad') }}
       </a></li>
+      <li class="menu__seperator"></li>
+    {% endif %}
     {% endif %}
     {% else %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['_id']) }}">
         <span class="icon icon-flag"></span> {{ _('View Problem') }}
       </a></li>
-    {% endif %}
       <li class="menu__seperator"></li>
+    {% endif %}
     {% if handler.has_perm(anubis.model.builtin.PERM_SUBMIT_PROBLEM) %}
       <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['_id']) }}">
         <span class="icon icon-send"></span> {{ _('Submit') }}
@@ -97,10 +102,12 @@
         {{ _('(None)') }}
       {% endif %}
       </dd>
+      {% if pdoc['judge_mode'] != anubis.constant.record.MODE_SUBMIT_ANSWER %}
       <dt>{{ _('Time Limit') }}</dt>
       <dd>{{ pdoc['time_ms'] / 1000 }}s</dd>
       <dt>{{ _('Memory Limit') }}</dt>
       <dd>{{ pdoc['memory_kb']|to_size }}</dd>
+      {% endif %}
       <dt>{{ _('Judge Mode') }}</dt>
       <dd>{{ _(anubis.constant.record.MODE_TEXTS[pdoc['judge_mode']]) }}</dd>
       {#

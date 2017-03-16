@@ -93,6 +93,7 @@ Logout: 登出
 Logout All Sessions: 注销所有会话
 Logout This Session: 注销该会话
 Lost Password: 忘记密码
+Memory: 内存
 Memory Cost: 内存占用
 Messages: 站内消息
 My Profile: 我的资料
@@ -217,6 +218,7 @@ contest_status: 比赛状态
 current domain: 当前域
 currently offline: 目前离线
 discussion_create: 创建讨论
+discussion_create_document_as_node: 创建讨论
 discussion_main: 讨论
 discussion_node: 讨论
 error: 错误
@@ -337,6 +339,7 @@ You've already attended this contest.: 您已经参加本次比赛。
 You haven't attended this contest yet.: 您还没有参加本次比赛。
 Contest status is hidden.: 当前比赛状态隐藏，暂不可显示。
 Problem {1} not found.: 题目 {1} 不存在。
+Problem {0} can't be pretested.: 题目 {0} 无法自测。
 Training requirement is not satisfied.: 不满足训练条件。
 Record {0} not found.: 记录 {0} 不存在。
 '{0} limit exceeded (limit: {2} operations in {1} seconds).': '{0} 超过频率限制。限制：{1} 秒内最多 {2} 次操作。'
@@ -581,3 +584,6 @@ By Username / UID: 由用户名或 UID
 By Problem: 由题目
 By Contest: 由比赛
 Reset: 重置
+Answer: 答案
+Submit Answer: 直接提交答案
+For this problem, you have to put your answer here.: 请在此处直接提交本题的答案。

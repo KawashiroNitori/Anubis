@@ -23,6 +23,7 @@ export const STATUS_IGNORED = 30;
 export const TYPE_SUBMISSION = 0;
 export const TYPE_PRETEST = 1;
 
+export const MODE_SUBMIT_ANSWER = -1;
 export const MODE_COMPARE_IGNORE_BLANK = 0;
 export const MODE_COMPARE = 1;
 export const MODE_SPECIAL_JUDGE = 2;
@@ -104,6 +105,7 @@ export const TYPE_TEXTS = {
 attachObjectMeta(TYPE_TEXTS, 'intKey', true);
 
 export const MODE_TEXTS = {
+    [MODE_SUBMIT_ANSWER]: 'Submit Answer',
     [MODE_COMPARE_IGNORE_BLANK]: 'Compare (Ignore Ending Blank)',
     [MODE_COMPARE]: 'Compare',
     [MODE_SPECIAL_JUDGE]: 'Special Judge',

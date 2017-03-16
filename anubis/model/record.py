@@ -10,6 +10,7 @@ from anubis.model import queue
 from anubis.service import bus
 from anubis.util import argmethod
 from anubis.util import validator
+from anubis.model.adaptor import judge
 
 
 PROJECTION_PUBLIC = {'code': 0}
@@ -20,7 +21,7 @@ PROJECTION_ALL = None
 async def add(domain_id: str, pid: int, type: int, uid: int, lang: str, code: str,
               data_id: objectid.ObjectId=None, tid: objectid.ObjectId=None,
               hidden=False):
-    validator.check_lang(lang)
+    code = code.strip()
     coll = db.Collection('record')
     rid = await coll.insert({
         'hidden': hidden,
@@ -36,8 +37,14 @@ async def add(domain_id: str, pid: int, type: int, uid: int, lang: str, code: st
         'data_id': data_id,
         'type': type
     })
-    post_coros = [queue.publish('judge', rid=rid),
-                  bus.publish('record_change', rid)]
+    post_coros = []
+    pdoc = await problem.get(domain_id=domain_id, pid=pid)
+    if pdoc['judge_mode'] == constant.record.MODE_SUBMIT_ANSWER:
+        await judge.judge_answer(domain_id, rid, pdoc, code)
+    else:
+        validator.check_lang(lang)
+        post_coros.extend([queue.publish('judge', rid=rid),
+                           bus.publish('record_change', rid)])
     if type == constant.record.TYPE_SUBMISSION:
         post_coros.extend([problem.inc(domain_id, pid, 'num_submit', 1),
                            problem.inc_status(domain_id, pid, uid, 'num_submit', 1),
@@ -66,9 +73,14 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
                                                           'memory_kb': 0,
                                                           'rejudged': True}},
                                          return_document=False)
-    post_coros = [bus.publish('record_change', doc['_id'])]
-    if enqueue:
-        post_coros.append(queue.publish('judge', rid=doc['_id']))
+    post_coros = []
+    pdoc = await problem.get(doc['domain_id'], doc['pid'])
+    if pdoc['judge_mode'] == constant.record.MODE_SUBMIT_ANSWER:
+        await judge.judge_answer(doc['domain_id'], record_id, pdoc, doc['code'])
+    else:
+        post_coros.append(bus.publish('record_change', doc['_id']))
+        if enqueue:
+            post_coros.append(queue.publish('judge', rid=doc['_id']))
     await asyncio.gather(*post_coros)
 
 
@@ -81,9 +93,9 @@ async def rejudge_all():
 
 
 @argmethod.wrap
-def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, projection=None):
+def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, projection=None, **kwargs):
     coll = db.Collection('record')
-    query = {'hidden': False if not get_hidden else {'$gte': False}}
+    query = {**kwargs, 'hidden': False if not get_hidden else {'$gte': False}}
     if end_id:
         query['_id'] = {'$lt': end_id}
     return coll.find(query, projection=projection)
@@ -151,8 +163,7 @@ async def begin_judge(record_id: objectid.ObjectId, judge_uid: int, status: int)
 @argmethod.wrap
 async def next_judge(record_id: objectid.ObjectId, judge_uid: int, **kwargs):
     coll = db.Collection('record')
-    doc = await coll.find_one_and_update(filter={'_id': record_id,
-                                                 'judge_uid': judge_uid},
+    doc = await coll.find_one_and_update(filter={'_id': record_id},
                                          update=kwargs,
                                          return_document=True)
     return doc
@@ -162,8 +173,7 @@ async def next_judge(record_id: objectid.ObjectId, judge_uid: int, **kwargs):
 async def end_judge(record_id: objectid.ObjectId, judge_uid: int,
                     status: int, time_ms: int, memory_kb: int):
     coll = db.Collection('record')
-    doc = await coll.find_one_and_update(filter={'_id': record_id,
-                                                 'judge_uid': judge_uid},
+    doc = await coll.find_one_and_update(filter={'_id': record_id},
                                          update={'$set': {'status': status,
                                                           'time_ms': time_ms,
                                                           'memory_kb': memory_kb},

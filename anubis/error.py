@@ -236,6 +236,12 @@ class ProblemNotFoundError(NotFoundError):
         return 'Problem {1} not found.'
 
 
+class ProblemCannotPretestError(ForbiddenError):
+    @property
+    def message(self):
+        return "Problem {0} can't be pretested."
+
+
 class ContestProblemNotFoundError(NotFoundError):
     @property
     def message(self):

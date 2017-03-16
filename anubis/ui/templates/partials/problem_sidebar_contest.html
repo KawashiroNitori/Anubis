@@ -7,7 +7,7 @@
 {% endif %}
   <div>
     <ol class="menu">
-    {% if page_name == 'contest_detail_problem' %}
+    {% if page_name == 'contest_detail_problem' and pdoc['judge_mode'] != anubis.constant.record.MODE_SUBMIT_ANSWER %}
       <li class="menu__item scratchpad--hide"><a class="menu__link highlight" name="problem-sidebar__open-scratchpad" href="javascript:;" data-global-hotkey="alt+e">
         <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }} (Alt+E)
       </a></li>
@@ -32,5 +32,22 @@
       </a></li>
     {% endif %}
     </ol>
+  </div>
+</div>
+<div class="section side">
+  <div class="section__header">
+    <h1 class="section__title">{{ _('Information') }}</h1>
+  </div>
+  <div class="section__body typo">
+    <dl class="large horizontal">
+      {% if pdoc['judge_mode'] != anubis.constant.record.MODE_SUBMIT_ANSWER %}
+      <dt>{{ _('Time Limit') }}</dt>
+      <dd>{{ pdoc['time_ms'] / 1000 }}s</dd>
+      <dt>{{ _('Memory Limit') }}</dt>
+      <dd>{{ pdoc['memory_kb']|to_size }}</dd>
+      {% endif %}
+      <dt>{{ _('Judge Mode') }}</dt>
+      <dd>{{ _(anubis.constant.record.MODE_TEXTS[pdoc['judge_mode']]) }}</dd>
+    </dl>
   </div>
 </div>

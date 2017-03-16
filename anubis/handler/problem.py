@@ -5,6 +5,7 @@ import datetime
 from bson import objectid
 
 from anubis import app
+from anubis import error
 from anubis import constant
 from anubis.handler import base
 from anubis.model import builtin
@@ -21,6 +22,25 @@ from anubis.util import validator
 from anubis.service import bus
 
 
+async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs, category, psdict, **kwargs):
+    if 'page_title' not in kwargs:
+        kwargs['page_title'] = self.translate(self.TITLE)
+    if 'path_components' not in kwargs:
+        kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
+    if self.prefer_json:
+        list_html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
+                                     pcount=pcount, pdocs=pdocs, psdict=psdict)
+        stat_html = self.render_html('partials/problem_stat.html', pcount=pcount)
+        path_html = self.render_html('partials/path.html', path_components=kwargs['path_components'])
+        self.json({'title': self.render_title(kwargs['page_title']),
+                   'fragments': [{'html': list_html},
+                                 {'html': stat_html},
+                                 {'html': path_html}]})
+    else:
+        self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
+                    category=category, psdict=psdict, **kwargs)
+
+
 @app.route('/p', 'problem_main')
 class ProblemMainHandler(base.OperationHandler):
     PROBLEMS_PER_PAGE = 100
@@ -34,7 +54,7 @@ class ProblemMainHandler(base.OperationHandler):
             f = {'hidden': False}
         else:
             f = {}
-        pdocs, ppcount, _ = await pagination.paginate(
+        pdocs, ppcount, pcount = await pagination.paginate(
             problem.get_multi(domain_id=self.domain_id, **f).sort([('_id', 1)]),
             page, self.PROBLEMS_PER_PAGE)
         if self.has_priv(builtin.PRIV_USER_PROFILE):
@@ -44,7 +64,8 @@ class ProblemMainHandler(base.OperationHandler):
                                                    (pdoc['_id'] for pdoc in pdocs))
         else:
             psdict = None
-        self.render('problem_main.html', page=page, ppcount=ppcount, pdocs=pdocs, psdict=psdict)
+        await render_or_json_problem_list(self, page=page, ppcount=ppcount, pcount=pcount,
+                                          pdocs=pdocs, category='', psdict=psdict)
 
     @base.require_priv(builtin.PRIV_USER_PROFILE)
     @base.require_csrf_token
@@ -56,6 +77,60 @@ class ProblemMainHandler(base.OperationHandler):
 
     post_star = functools.partialmethod(star_unstar, star=True)
     post_unstar = functools.partialmethod(star_unstar, star=False)
+
+
+@app.route('/p/category/{category:.*}', 'problem_category')
+class ProblemCategoryHandler(base.OperationHandler):
+    PROBLEMS_PER_PAGE = 100
+
+    @staticmethod
+    def my_split(string, delim):
+        return list(filter(lambda s: bool(s), map(lambda s: s.strip(), string.split(delim))))
+
+    @staticmethod
+    def build_query(query_string):
+        category_groups = ProblemCategoryHandler.my_split(query_string, ' ')
+        if not category_groups:
+            return {}
+        query = {'$or': []}
+        for g in category_groups:
+            categories = ProblemCategoryHandler.my_split(g, ',')
+            if not categories:
+                continue
+            sub_query = {'$and': []}
+            for c in categories:
+                sub_query['$and'].append({'tag': c})
+            query['$or'].append(sub_query)
+        return query
+
+    @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+    @base.get_argument
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, category: str, page: int=1):
+        if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+            f = {'hidden': False}
+        else:
+            f = {}
+        query = ProblemCategoryHandler.build_query(category)
+        pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
+                                                                             **query,
+                                                                             **f).sort([('_id', 1)]),
+                                                           page, self.PROBLEMS_PER_PAGE)
+        if self.has_priv(builtin.PRIV_USER_PROFILE):
+            psdict = await problem.get_dict_status(self.domain_id,
+                                                   self.user['_id'],
+                                                   (pdoc['_id'] for pdoc in pdocs))
+        else:
+            psdict = None
+        page_title = category or self.translate('(All Problems)')
+        path_components = self.build_path(
+            (self.translate('problem_main'), self.reverse_url('problem_main')),
+            (page_title, None)
+        )
+        await render_or_json_problem_list(self, page=page, ppcount=ppcount, pcount=pcount,
+                                          pdocs=pdocs, category=category, psdict=psdict,
+                                          page_title=page_title, path_components=path_components)
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
@@ -134,6 +209,8 @@ class ProblemPretestHandler(base.Handler):
     async def post(self, *, pid: int, lang: str, code: str, data_input: str, data_output: str):
         # TODO: check status, eg. test, hidden problem, ...
         pdoc = await problem.get(self.domain_id, pid)
+        if pdoc['judge_mode'] == constant.record.MODE_SUBMIT_ANSWER:
+            raise error.ProblemCannotPretestError(pid)
         # Don't need to check hidden status
         data = list(zip(self.request.POST.getall('data_input'),
                         self.request.POST.getall('data_output')))
@@ -166,11 +243,12 @@ class ProblemPretestConnection(base.Connection):
             tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
             if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
                 and (self.domain_id != tdoc['domain_id']
-                     or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+                     or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))
+                    or (rdoc['status'] == constant.record.STATUS_JUDGING and len(rdoc['cases'])
+                        and not (self.has_perm(builtin.PERM_READ_RECORD_DETAIL)
+                                 or self.has_priv(builtin.PRIV_READ_RECORD_DETAIL)))):
                 return
         # TODO: join form event to improve performance?
-        if rdoc['type'] != constant.record.TYPE_PRETEST:
-            del rdoc['cases']
         rdoc['url'] = self.reverse_url('record_detail', rid=rdoc['_id'])
         self.send(rdoc=rdoc)
 

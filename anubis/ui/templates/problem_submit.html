@@ -44,8 +44,15 @@
       </div>
       <div class="section__body">
         <form method="post">
+          {% if pdoc['judge_mode'] != anubis.constant.record.MODE_SUBMIT_ANSWER %}
           {{ form.form_select(label='Code language', options=anubis.constant.language.LANG_TEXTS.items(), name='lang', value=handler.get_setting('code_lang')) }}
-          {{ form.form_textarea(label='Code', columns=12, name='code', extra_class='monospace', autofocus=true) }}
+          {% else %}
+          <blockquote class="note typo">
+            {{ _('For this problem, you have to put your answer here.') }}
+          </blockquote>
+          <input type="hidden" name="lang" value="">
+          {% endif %}
+          {{ form.form_textarea(label='Answer', columns=12, name='code', extra_class='monospace', autofocus=true) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <input type="submit" class="rounded primary button" value="{{ _('Submit') }}">
