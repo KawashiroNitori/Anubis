@@ -11,6 +11,8 @@ from anubis.model import builtin
 from anubis.model import domain
 from anubis.model import token
 from anubis.model import user
+from anubis.model import userfile
+from anubis.model import fs
 from anubis.model.adaptor import setting
 from anubis.handler import base
 from anubis.service import bus
@@ -158,3 +160,29 @@ class HomeDomainCreateHandler(base.Handler):
     async def post(self, *, id: str, name: str, gravatar: str):
         domain_id = await domain.add(id, self.user['_id'], name=name, gravatar=gravatar)
         self.json_or_redirect(self.reverse_url('domain_main', domain_id=domain_id))
+
+
+@app.route('/home/file', 'home_file')
+class HomeFileHandler(base.OperationHandler):
+    def file_url(self, fdoc):
+        return options.options.cdn_prefix.rstrip('/') + self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
+                                                                         secret=fdoc['metadata']['secret'])
+
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    async def get(self):
+        ufdocs = await userfile.get_multi(owner_uid=self.user['_id']).to_list(None)
+        fdict = await fs.get_meta_dict(ufdoc.get('file_id') for ufdoc in ufdocs)
+        self.render('home_file.html', ufdocs=ufdocs, fdict=fdict)
+
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    @base.post_argument
+    @base.require_csrf_token
+    @base.sanitize
+    async def post_delete(self, *, ufid: objectid.ObjectId):
+        ufdoc = await userfile.get(ufid)
+        if not self.own(ufdoc, priv=builtin.PRIV_DELETE_FILE_SELF):
+            self.check_priv(builtin.PRIV_DELETE_FILE)
+        result = await userfile.delete(ufdoc['_id'])
+        if result:
+            await userfile.dec_usage(self.user['_id'], ufdoc['length'])
+        self.redirect(self.referer_or_main)

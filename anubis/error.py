@@ -1,5 +1,6 @@
 from anubis.model import builtin
 
+
 class Error(Exception):
     pass
 
@@ -13,7 +14,6 @@ class InvalidStateError(Error):
 
 
 class UserFacingError(Error):
-
     def to_dict(self):
         return {'name': self.__class__.__name__, 'args': self.args}
 
@@ -59,6 +59,18 @@ class ValidationError(ForbiddenError):
             return 'Field {0} validation failed.'
         elif len(self.args) == 2:
             return 'Field {0} or {1} validation failed.'
+
+
+class FileTooLongError(ValidationError):
+    @property
+    def message(self):
+        return 'The uploaded file is too long.'
+
+
+class FileTypeNotAllowedError(ValidationError):
+    @property
+    def message(self):
+        return 'This type of files are not allowed to be uploaded.'
 
 
 class UnknownFieldError(ForbiddenError):
@@ -230,6 +242,12 @@ class ContestNotLiveError(ForbiddenError):
         return "This contest is not live."
 
 
+class UserFileNotFoundError(NotFoundError):
+    @property
+    def message(self):
+        return 'File {0} not found.'
+
+
 class ProblemNotFoundError(NotFoundError):
     @property
     def message(self):
@@ -264,3 +282,9 @@ class OpCountExceededError(ForbiddenError):
     @property
     def message(self):
         return 'Too frequent operations of {0} (Limit: {2} operations in {1} seconds.).'
+
+
+class UsageExceedError(ForbiddenError):
+    @property
+    def message(self):
+        return 'Usage exceeded.'
