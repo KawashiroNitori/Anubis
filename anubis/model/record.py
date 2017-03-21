@@ -59,13 +59,19 @@ async def get(record_id: objectid.ObjectId, projection=PROJECTION_ALL):
     return await coll.find_one(record_id, projection=projection)
 
 
+async def remove_property(record_id: objectid.ObjectId, property_name: str):
+    coll = db.Collection('record')
+    return await coll.find_one_and_update(filter={'_id': record_id},
+                                          update={'$unset': {property_name: ''}})
+
+
 @argmethod.wrap
 async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
     coll = db.Collection('record')
     doc = await coll.find_one_and_update(filter={'_id': record_id},
                                          update={'$unset': {'judge_uid': '',
                                                             'judge_at': '',
-                                                            'compiler_texts':'',
+                                                            'compiler_texts': '',
                                                             'judge_texts': '',
                                                             'cases': ''},
                                                  '$set': {'status': constant.record.STATUS_WAITING,

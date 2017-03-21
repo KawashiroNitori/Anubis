@@ -17,6 +17,7 @@
       <div class="media__body top">
         <h1 class="discussion__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['_id']) }}#{{ datetime_stamp(ddoc['update_at']) if ddoc['update_at'] else '' }}" data-emoji-enabled>{{ ddoc['title'] }}</a></h1>
         <ul class="supplementary list">
+          {% if not tdoc %}
           <li>
             <a class="v-center discussion-node-tag" href="{{ anubis.handler.discussion.node_url(handler, 'discussion_node', anubis.model.discussion.node_id(ddoc)) }}">
               {% if ddoc['parent_type'] == 'discussion_node' %}
@@ -29,6 +30,7 @@
               {{ vndict[anubis.model.discussion.node_id(ddoc)]['title'] }}
             </a>
           </li>
+          {% endif %}
           <li>
             {{ user.render_inline(udict[ddoc['owner_uid']], badge=false) }}
             @

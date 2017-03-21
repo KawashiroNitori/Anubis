@@ -19,6 +19,7 @@ from anubis.model import contest
 from anubis.model import discussion
 from anubis.handler import base
 from anubis.util import pagination
+from anubis.service import bus
 
 
 class ContestStatusMixin(object):
@@ -160,7 +161,7 @@ class ContestCodeHandler(base.OperationHandler):
         await self.binary(output_buffer.getvalue(), 'application/zip')
 
 
-@app.route('/contest/{tid}/{letter:[A-Z]}', 'contest_detail_problem')
+@app.route('/contest/{tid:\d{4,}}/{letter:[A-Z]}', 'contest_detail_problem')
 class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
     @base.require_perm(builtin.PERM_VIEW_CONTEST)
     @base.require_perm(builtin.PERM_VIEW_PROBLEM)
@@ -194,7 +195,28 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
                     page_title=pdoc['title'], path_components=path_components)
 
 
-@app.route('/contest/{tid}/{letter:[A-Z]}/submit', 'contest_detail_problem_submit')
+@app.connection_route('/contest/{tid:\d{4,}}/notification-conn', 'contest_notification-conn')
+class ContestNotificationConnection(base.Connection, ContestStatusMixin):
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    async def on_open(self):
+        await super(ContestNotificationConnection, self).on_open()
+        tid = int(self.request.match_info['tid'])
+        tdoc = await contest.get(self.domain_id, tid)
+        if self.is_done(tdoc):
+            raise error.ContestNotLiveError(tid)
+        tsdoc = await contest.get_status(self.domain_id, tid, self.user['_id'])
+        if not tsdoc or tsdoc.get('attend') != 1:
+            raise error.ContestNotAttendedError(tid)
+        bus.subscribe(self.on_notification, ['contest_notification-' + str(tid)])
+
+    async def on_notification(self, e):
+        self.send(**e['value'])
+
+    async def on_close(self):
+        bus.unsubscribe(self.on_notification)
+
+
+@app.route('/contest/{tid:\d{4,}}/{letter:[A-Z]}/submit', 'contest_detail_problem_submit')
 class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
     @base.require_perm(builtin.PERM_VIEW_CONTEST)
     @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
@@ -261,7 +283,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
             self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.route('/contest/{tid}/status', 'contest_status')
+@app.route('/contest/{tid:\d{4,}}/status', 'contest_status')
 class ContestStatusHandler(base.Handler, ContestStatusMixin):
     @base.require_perm(builtin.PERM_VIEW_CONTEST)
     @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)

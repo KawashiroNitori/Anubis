@@ -9,8 +9,12 @@
   {% if avatar %}
     <img class="v-center small user-profile-avatar" src="{{ udoc['gravatar']|gravatar_url }}" width="20" height="20">
   {% endif %}
-    <a class="v-center user-profile-name" href="{{ reverse_url('user_detail', uid=udoc['_id']) }}">
+    <a class="v-center user-profile-name" href="{{ reverse_url('user_detail', uid=udoc['_id']) }}"{% if udoc['nickname'] %} data-tooltip="{{ udoc['uname'] }}"{% endif %}>
+      {% if udoc['nickname'] %}
+      {{ udoc['nickname'] }}
+      {% else %}
       {{ udoc['uname'] }}
+      {% endif %}
     </a>
   {% if modbadge and handler.dudoc_has_perm(udoc, dudoc, anubis.model.builtin.PERM_MOD_BADGE) %}
     <span class="v-center user-profile-badge badge--mod" title="Moderator">MOD</span>

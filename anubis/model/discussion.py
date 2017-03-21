@@ -83,8 +83,9 @@ async def get_nodes_and_vnode(domain_id, node_or_dtuple):
         coll = db.Collection(node_or_dtuple[0])
         vnode = await coll.find_one({'domain_id': domain_id,
                                      '_id': node_or_dtuple[1]})
-        vnode['doc_id'] = vnode['_id']
-        vnode['doc_type'] = node_or_dtuple[0]
+        if vnode:
+            vnode['doc_id'] = vnode['_id']
+            vnode['doc_type'] = node_or_dtuple[0]
     else:
         vnode = None
     return nodes, vnode

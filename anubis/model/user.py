@@ -22,7 +22,7 @@ PROJECTION_ALL = None
 
 
 @argmethod.wrap
-async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', priv: int=builtin.DEFAULT_PRIV):
+async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', priv: int=builtin.DEFAULT_PRIV, **kwargs):
     # Add a user.
     validator.check_uname(uname)
     # TODO: Filter name by keywords
@@ -52,7 +52,8 @@ async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', pr
             'priv': priv,
             'login_at': datetime.datetime.utcnow(),
             'login_ip': reg_ip,
-            'gravatar': mail
+            'gravatar': mail,
+            **kwargs
         })
     except errors.DuplicateKeyError:
         raise error.UserAlreadyExistError(uid, uname, mail) from None

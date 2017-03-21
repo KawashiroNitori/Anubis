@@ -12,6 +12,7 @@ from anubis import db
 from anubis.util import argmethod
 from anubis.util import validator
 from anubis.model import system
+from anubis.model import record
 
 RULE_OI = 2
 RULE_ACM = 3
@@ -107,7 +108,10 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
 @argmethod.wrap
 async def get(domain_id: str, tid: int):
     coll = db.Collection('contest')
-    return await coll.find_one({'domain_id': domain_id, '_id': tid})
+    tdoc = await coll.find_one({'domain_id': domain_id, '_id': tid})
+    if not tdoc:
+        raise error.ContestNotFoundError(domain_id, tid)
+    return tdoc
 
 
 def get_multi(domain_id: str, projection=None, **kwargs):
@@ -140,6 +144,20 @@ async def attend(domain_id: str, tid: int, uid: int):
                                                   '_id': tid},
                                           update={'$inc': {'attend': 1}},
                                           return_document=ReturnDocument.AFTER)
+
+
+@argmethod.wrap
+async def remove_status(domain_id: str, tid: int, uid: int):
+    tsdoc = await get_status(domain_id, tid, uid)
+    if not tsdoc:
+        raise error.UserNotFoundError(uid)
+    for j in tsdoc['journal']:
+        await record.remove_property(j['rid'], 'tid')
+    coll = db.Collection('contest.status')
+    await coll.delete_one({'domain_id': domain_id,
+                           'tid': tid,
+                           'uid': uid})
+    return tsdoc
 
 
 @argmethod.wrap
@@ -193,8 +211,9 @@ async def update_status(domain_id: str, tid: int, uid: int, rid: objectid.Object
                                                                'accept': accept}
                                                },
                                                '$inc': {'rev': 1}},
-                                           upsert=True,
                                            return_document=ReturnDocument.AFTER)
+    if not tsdoc:
+        return {}
     if 'attend' not in tsdoc or not tsdoc['attend']:
         raise error.ContestNotAttendedError(domain_id, tid, uid)
 

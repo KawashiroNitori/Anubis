@@ -224,6 +224,12 @@ class ContestAlreadyAttendedError(ForbiddenError):
         return "You've already attended this contest."
 
 
+class ContestNotFoundError(NotFoundError):
+    @property
+    def message(self):
+        return 'Contest {1} not found.'
+
+
 class ContestNotAttendedError(ForbiddenError):
     @property
     def message(self):

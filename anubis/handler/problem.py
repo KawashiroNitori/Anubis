@@ -349,8 +349,7 @@ class ProblemEditHandler(base.Handler):
         time_ms = time_second * 1000
         memory_kb = memory_mb * 1024
         await problem.edit(self.domain_id, pid, title=title, content=content, hidden=hidden,
-                           time_ms=time_ms, memory_kb=memory_kb, judge_mode=judge_mode,
-                           data=data)
+                           time_ms=time_ms, memory_kb=memory_kb, judge_mode=judge_mode)
         self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 

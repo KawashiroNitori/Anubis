@@ -7,10 +7,12 @@
       <h1>{{ tdoc['title'] }}</h1>
     </div>
     <div class="section__body">
+      {% if page_name != 'discussion_node' %}
       {% if attended %}
       <span class="icon icon-check"></span> {{ _('Attended') }}
       {% else %}
       <span class="icon icon-schedule"></span> {{ _('Not Attended') }}
+      {% endif %}
       {% endif %}
     </div>
   </a>
@@ -35,7 +37,7 @@
         <span class="icon icon-award"></span> {{ _('View Contest') }}
       </a></li>
     {% endif %}
-    {% if not attended and not handler.is_done(tdoc) %}
+    {% if not attended and not handler.is_done(tdoc) and page_name != 'discussion_node' %}
       <li class="menu__item">
     {% if handler.has_perm(anubis.model.builtin.PERM_ATTEND_CONTEST) and handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) %}
         <form action="{{ reverse_url('contest_detail', tid=tdoc['_id']) }}" method="POST">
@@ -69,7 +71,11 @@
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_code', tid=tdoc['_id']) }}">
         <span class="icon icon-download"></span> {{ _('Code') }}
       </a></li>
-    {% endif %}{#
+    {% endif %}
+    <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node_document_as_node', doc_type='contest', doc_id=tdoc['_id']) }}">
+      <span class="icon icon-comment--text"></span> {{ _('Discussion') }}
+    </a></li>
+      {#
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('wiki_help') }}#contest">
         <span class="icon icon-help"></span> {{ _('Help') }}
       </a></li> #}

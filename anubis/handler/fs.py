@@ -51,7 +51,7 @@ async def handle_file_upload(self, form_fields=None, raise_error=True):
         field = await reader.next()
         check_type_and_name(field, 'file')
         file_type = mimetypes.guess_type(field.filename)[0]
-        if not file_type or not any(file_type.startwith(allowed_type) for allowed_type in ALLOWED_MIMETYPE_PREFIX):
+        if not file_type or not any(file_type.startswith(allowed_type) for allowed_type in ALLOWED_MIMETYPE_PREFIX):
             raise error.FileTypeNotAllowedError('file', file_type)
         grid_in = None
         finally_delete = True
