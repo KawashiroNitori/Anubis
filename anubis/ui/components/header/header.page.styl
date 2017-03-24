@@ -6,11 +6,12 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
 .header
   position: relative
   height: rem($header-bg-height)
-  background: no-repeat center top
+  background: #fead61 url(./header-background.png) no-repeat center top
   transition: height .5s
   transition-timing-function: ease-out-cubic
   overflow: hidden
   +retina()
+    background-image: url(./header-background@2x.png)
     background-size: rem($header-bg-width $header-bg-height)
   +mobile()
     .header-content
