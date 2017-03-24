@@ -310,6 +310,66 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
                     udict=udict, pdict=pdict, path_components=path_components)
 
 
+@app.route('/contest/{tid:\d{4,}}/edit', 'contest_edit')
+class ContestEditHandler(base.Handler, ContestStatusMixin):
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, tid: int):
+        tdoc = await contest.get(self.domain_id, tid)
+        if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
+            self.check_perm(builtin.PERM_EDIT_CONTEST)
+        udoc = await user.get_by_uid(self.user['_id'])
+        tsdoc = await contest.get_status(self.domain_id, tid, self.user['_id'])
+        attended = tsdoc and tsdoc.get('attend') == 1
+        duration = (tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600  # Seconds to hours
+        pids = ','.join(list(map(str, tdoc['pids'])))
+        path_components = self.build_path(
+            (self.translate('contest_main'), self.reverse_url('contest_main')),
+            (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['_id'])),
+            (self.translate('contest_edit'), None))
+        self.render('contest_edit.html', tdoc=tdoc, udoc=udoc,
+                    duration=duration, pids=pids, attended=attended,
+                    date_text=tdoc['begin_at'].strftime('%Y-%m-%d'),
+                    time_text=tdoc['begin_at'].strftime('%H:%M'),
+                    page_title=tdoc['title'], path_components=path_components)
+
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+    @base.route_argument
+    @base.post_argument
+    @base.require_csrf_token
+    @base.sanitize
+    async def post(self, *, tid: int, title: str, content: str, rule: int,
+                   begin_at_date: str, begin_at_time: str,
+                   duration: float, pids: str):
+        tdoc = await contest.get(self.domain_id, tid)
+        if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
+            self.check_perm(builtin.PERM_EDIT_CONTEST)
+        try:
+            begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
+            begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
+            end_at = begin_at + datetime.timedelta(hours=duration)
+        except ValueError as e:
+            raise error.ValidationError('begin_at_date', 'begin_at_time')
+        if begin_at >= end_at:
+            raise error.ValidationError('duration')
+        pids = list(set(map(int, pids.split(','))))
+        pdocs = await problem.get_multi(domain_id=self.domain_id, _id={'$in': pids},
+                                        projection={'_id': 1}).sort('_id', 1).to_list(None)
+        exist_pids = [pdoc['_id'] for pdoc in pdocs]
+        if len(pids) != len(exist_pids):
+            for pid in pids:
+                if pid not in exist_pids:
+                    raise error.ProblemNotFoundError(self.domain_id, pid)
+        await contest.edit(domain_id=self.domain_id, tid=tid,
+                           title=title, content=content, rule=rule,
+                           begin_at=begin_at, end_at=end_at, pids=pids)
+        for pid in pids:
+            await problem.set_hidden(self.domain_id, pid, True)
+        self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
+
+
 @app.route('/contest/create', 'contest_create')
 class ContestCreateHandler(base.Handler, ContestStatusMixin):
     @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -320,7 +380,7 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
         # find next quarter
         ts = ts - ts % (15 * 60) + 15 * 60
         dt = datetime.datetime.fromtimestamp(ts, self.timezone)
-        self.render('contest_create.html',
+        self.render('contest_edit.html',
                     date_text=dt.strftime('%Y-%m-%d'),
                     time_text=dt.strftime('%H:%M'))
 

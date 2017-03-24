@@ -213,6 +213,7 @@ No Permission to Write Your Solution: 您没有权限发表题解
 author: 作者
 content: 内容
 contest_create: 创建比赛
+contest_edit: 编辑比赛
 contest_main: 比赛
 contest_status: 比赛状态
 current domain: 当前域

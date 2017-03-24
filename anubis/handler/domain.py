@@ -1,17 +1,51 @@
 import collections
+import asyncio
 
 from anubis import app
 from anubis import error
 from anubis.model import builtin
 from anubis.model import domain
 from anubis.model import user
+from anubis.model import contest
+from anubis.model import discussion
 from anubis.handler import base
 
 
 @app.route('/', 'domain_main')
 class DomainMainHandler(base.Handler):
+    CONTESTS_ON_MAIN = 5
+    DISCUSSIONS_ON_MAIN = 20
+
+    async def prepare_contest(self):
+        if self.has_perm(builtin.PERM_VIEW_CONTEST):
+            tdocs = await contest.get_multi(self.domain_id) \
+                                 .limit(self.CONTESTS_ON_MAIN) \
+                                 .to_list(None)
+            tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
+                                                   (tdoc['_id'] for tdoc in tdocs))
+        else:
+            tdocs = []
+            tsdict = {}
+        return tdocs, tsdict
+
+    async def prepare_discussion(self):
+        if self.has_perm(builtin.PERM_VIEW_DISCUSSION):
+            ddocs = await discussion.get_multi(self.domain_id) \
+                                    .limit(self.DISCUSSIONS_ON_MAIN) \
+                                    .to_list(None)
+            vndict = await discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs))
+        else:
+            ddocs = []
+            vndict = {}
+        return ddocs, vndict
+
     async def get(self):
-        self.render('domain_main.html')
+        (tdocs, tsdict), (ddocs, vndict) = await asyncio.gather(
+            self.prepare_contest(), self.prepare_discussion())
+        udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
+        nodes = await discussion.get_nodes(self.domain_id)
+        self.render('domain_main.html', discussion_nodes=nodes, tdocs=tdocs, tsdict=tsdict,
+                    ddocs=ddocs, vndict=vndict, udict=udict, datetime_stamp=self.datetime_stamp)
 
 
 @app.route('/manage', 'domain_manage')

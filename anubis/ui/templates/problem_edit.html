@@ -9,7 +9,7 @@
             <div class="medium-8 columns">
               <label>
                 {{ _('Title') }}
-                <input name="title" placeholder="{{ _('title') }}" value="{{ pdoc and pdoc['title'] }}" class="textbox" autofocus>
+                <input name="title" placeholder="{{ _('title') }}" value="{{ pdoc['title']|default('') }}" class="textbox" autofocus>
               </label>
             </div>
             <div class="medium-4 columns">
@@ -27,17 +27,17 @@
               <label>
                 {{ _('Time Limit') }} (s)
                 <br>
-                <input name="time_second" value="1" class="textbox">
+                <input name="time_second" value="{{ (pdoc['time_ms']|default(1000) / 1000)|int }}" class="textbox">
               </label>
             </div>
             <div class="medium-4 columns">
               <label>
                 {{ _('Memory Limit') }} (MiB)
                 <br>
-                <input name="memory_mb" value="64" class="textbox">
+                <input name="memory_mb" value="{{ (pdoc['memory_kb']|default(65536) / 1024)|int  }}" class="textbox">
               </label>
             </div>
-            {{ form.form_select(columns=4, label='Judge Mode', name='judge_mode', options=anubis.constant.record.MODE_TEXTS.items(), row=False) }}
+            {{ form.form_select(columns=4, label='Judge Mode', name='judge_mode', value=pdoc['judge_mode']|default(None), options=anubis.constant.record.MODE_TEXTS.items(), row=False) }}
           </div>
           <div class="row"><div class="columns">
             <label>

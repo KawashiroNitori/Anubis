@@ -106,6 +106,22 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
 
 
 @argmethod.wrap
+async def edit(domain_id: str, tid: int, **kwargs):
+    if 'title' in kwargs:
+        validator.check_title(kwargs['title'])
+    if 'content' in kwargs:
+        validator.check_content(kwargs['content'])
+    coll = db.Collection('contest')
+    tdoc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                                  '_id': tid},
+                                          update={'$set': kwargs},
+                                          return_document=True)
+    if not tdoc:
+        raise error.ContestNotFoundError(domain_id, tid)
+    return tdoc
+
+
+@argmethod.wrap
 async def get(domain_id: str, tid: int):
     coll = db.Collection('contest')
     tdoc = await coll.find_one({'domain_id': domain_id, '_id': tid})
