@@ -19,6 +19,7 @@ from anubis.model import contest
 from anubis.model import discussion
 from anubis.handler import base
 from anubis.util import pagination
+from anubis.util.orderedset import OrderedSet
 from anubis.service import bus
 
 
@@ -354,7 +355,7 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
             raise error.ValidationError('begin_at_date', 'begin_at_time')
         if begin_at >= end_at:
             raise error.ValidationError('duration')
-        pids = list(set(map(int, pids.split(','))))
+        pids = list(OrderedSet(map(int, pids.split(','))))
         pdocs = await problem.get_multi(domain_id=self.domain_id, _id={'$in': pids},
                                         projection={'_id': 1}).sort('_id', 1).to_list(None)
         exist_pids = [pdoc['_id'] for pdoc in pdocs]
@@ -405,7 +406,7 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
             raise error.ValidationError('begin_at_date', 'begin_at_time')
         if begin_at >= end_at:
             raise error.ValidationError('duration')
-        pids = list(set(map(int, pids.split(','))))
+        pids = list(OrderedSet(map(int, pids.split(','))))
         pdocs = await problem.get_multi(domain_id=self.domain_id, _id={'$in': pids},
                                         projection={'_id': 1}).sort('_id', 1).to_list(None)
         exist_pids = [pdoc['_id'] for pdoc in pdocs]
