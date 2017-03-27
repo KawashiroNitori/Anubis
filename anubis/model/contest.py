@@ -267,7 +267,10 @@ async def set_status_balloon(domain_id: str, tid: int, uid: int, pid: int, ballo
                                                    'detail.pid': pid},
                                            update={'$set': {'detail.$.balloon': balloon}},
                                            return_document=ReturnDocument.AFTER)
-    await bus.publish('balloon_change', str({'user': await user.get_by_uid(uid),
+    udoc = await user.get_by_uid(uid)
+    await bus.publish('balloon_change', str({'uid': uid,
+                                             'uname': udoc['uname'],
+                                             'nickname': udoc['nickname'],
                                              'tid': tid,
                                              'pid': pid,
                                              'letter': convert_to_letter(tdoc['pids'], pid),
