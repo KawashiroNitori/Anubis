@@ -242,6 +242,12 @@ class ContestStatusHiddenError(ForbiddenError):
         return "Contest status is hidden."
 
 
+class ContestIllegalBalloonError(ForbiddenError):
+    @property
+    def message(self):
+        return "This balloon can't be send."
+
+
 class ContestNotLiveError(ForbiddenError):
     @property
     def message(self):
