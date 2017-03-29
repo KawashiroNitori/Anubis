@@ -8,7 +8,7 @@
         <div class="profile-header__content clearfix">
           <div class="media">
             <div class="media__left">
-              <img src="{{ udoc['gravatar']|gravatar_url }}" width="120" height="120" class="large user-profile-avatar">
+              <img src="{% if udoc['avatar'] %}{{ udoc['avatar'] }}{% else %}{{ udoc['gravatar']|gravatar_url }}{% endif %}" width="120" height="120" class="large user-profile-avatar">
             </div>
             <div class="media__body profile-header__main">
               <h1>{{ udoc['uname'] }} <small>({{ _('UID') }}: {{ udoc['_id'] }}) {% if handler.get_udoc_setting(udoc, 'gender') != none %}{{ anubis.constant.model.USER_GENDER_RANGE[handler.get_udoc_setting(udoc, 'gender')] }}{% endif %}</small>{% if is_self_profile %} <small><a href="{{ reverse_url('home_account') }}#setting_info">[{{ _('Edit') }}]</a></small>{% endif %}</h1>
