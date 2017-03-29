@@ -11,8 +11,11 @@ from anubis import error
 from anubis import db
 from anubis.util import argmethod
 from anubis.util import validator
+from anubis.util import json
 from anubis.model import system
+from anubis.model import user
 from anubis.model import record
+from anubis.service import bus
 
 RULE_OI = 2
 RULE_ACM = 3
@@ -234,16 +237,45 @@ async def update_status(domain_id: str, tid: int, uid: int, rid: objectid.Object
         raise error.ContestNotAttendedError(domain_id, tid, uid)
 
     # Sort and uniquify journal of the contest status, by rid.
+
     key_func = lambda j: j['rid']
     journal = [list(g)[-1]
                for _, g in itertools.groupby(sorted(tsdoc['journal'], key=key_func), key=key_func)]
     stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
+    psdict = {}
+    for detail in tsdoc['detail']:
+        psdict[detail['pid']] = detail
+    tsdoc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                                   'tid': tid,
+                                                   'uid': uid},
+                                           update={'$set': {'journal': journal, **stats}, '$inc': {'rev': 1}},
+                                           return_document=ReturnDocument.AFTER)
+    if accept and not psdict.get(pid, {'accept': False})['accept']:
+        await set_status_balloon(domain_id, tid, uid, pid, False)
+    return tsdoc
+
+
+@argmethod.wrap
+async def set_status_balloon(domain_id: str, tid: int, uid: int, pid: int, balloon: bool=True):
+    tdoc = await get(domain_id, tid)
+    if pid not in tdoc['pids']:
+        raise error.ValidationError('pid')
+
+    coll = db.Collection('contest.status')
     tsdoc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                    'tid': tid,
                                                    'uid': uid,
-                                                   'rev': tsdoc['rev']},
-                                           update={'$set': {'journal': journal, **stats}, '$inc': {'rev': 1}},
+                                                   'detail.pid': pid},
+                                           update={'$set': {'detail.$.balloon': balloon}},
                                            return_document=ReturnDocument.AFTER)
+    udoc = await user.get_by_uid(uid)
+    await bus.publish('balloon_change', json.encode({'uid': uid,
+                                                     'uname': udoc['uname'],
+                                                     'nickname': udoc.get('nickname', ''),
+                                                     'tid': tid,
+                                                     'pid': pid,
+                                                     'letter': convert_to_letter(tdoc['pids'], pid),
+                                                     'balloon': balloon}))
     return tsdoc
 
 
@@ -265,6 +297,14 @@ async def create_indexes():
                                     ('tid', 1),
                                     ('accept', -1),
                                     ('time', 1)], sparse=True)
+    await status_coll.create_index([('domain_id', 1),
+                                    ('tid', 1),
+                                    ('detail.accept', 1),
+                                    ('detail.balloon', -1)], sparse=True)
+    await status_coll.create_index([('domain_id', 1),
+                                    ('tid', 1),
+                                    ('uid', 1),
+                                    ('detail.pid', 1)], sparse=True)
 
 
 if __name__ == '__main__':

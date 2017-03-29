@@ -1,0 +1,38 @@
+$list-height = 750px
+
+#balloonPad
+  height: rem($list-height)
+  position: relative
+
+.balloonpad
+  position: relative
+  &.loading
+    opacity: 0.6
+
+.balloonpad__list
+  width: 50%
+  overflow: auto
+  height: rem($list-height)
+
+  &.float-left
+    float: left
+    border-right: 1px solid #EEE
+
+  &.float-right
+    float: right
+    //border-left: 1px solid #EEE
+
+  .col--nickname
+    border-right: 1px solid #EEE
+
+  .col--letter
+    text-align: center
+    width: rem(60px)
+
+  .col--balloon
+    text-align: center
+
+  .button
+    height: rem(25px)
+    padding: 0 rem(10px) 0 rem(10px)
+    margin: 0
