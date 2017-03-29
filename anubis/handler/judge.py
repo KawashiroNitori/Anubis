@@ -65,8 +65,8 @@ class RecordCancelHandler(base.Handler):
         await record.begin_judge(rid, self.user['_id'],
                                  constant.record.STATUS_FETCHED)
         await record.next_judge(rid, self.user['_id'], **{'$push': {'judge_text': message}})
-        await record.end_judge(rid, self.user['_id'],
-                               constant.record.STATUS_CANCELLED, 0, 0)
+        rdoc = await record.end_judge(rid, self.user['_id'],
+                                      constant.record.STATUS_CANCELLED, 0, 0)
         await judge.post_judge(rdoc)
         self.json_or_redirect(self.referer_or_main)
 

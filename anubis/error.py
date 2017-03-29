@@ -15,7 +15,7 @@ class InvalidStateError(Error):
 
 class UserFacingError(Error):
     def to_dict(self):
-        return {'name': self.__class__.__name__, 'args': self.args}
+        return {'name': self.__class__.__name__, 'args': self.args, 'message': self.message}
 
     @property
     def http_status(self):
@@ -240,6 +240,12 @@ class ContestStatusHiddenError(ForbiddenError):
     @property
     def message(self):
         return "Contest status is hidden."
+
+
+class ContestIllegalBalloonError(ForbiddenError):
+    @property
+    def message(self):
+        return "This balloon can't be send."
 
 
 class ContestNotLiveError(ForbiddenError):

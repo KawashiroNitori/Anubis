@@ -196,6 +196,7 @@ Uploaded By: 上传者
 Upload Problem: 上传题目
 User: 用户
 Username: 用户名
+Nickname: 昵称
 Using your account: 使用您的账户
 View Problem: 查看题目
 View or create discussion: 查看与发表讨论
@@ -216,6 +217,7 @@ contest_create: 创建比赛
 contest_edit: 编辑比赛
 contest_main: 比赛
 contest_status: 比赛状态
+contest_balloon: 递送气球
 current domain: 当前域
 currently offline: 目前离线
 discussion_create: 创建讨论
@@ -588,3 +590,8 @@ Reset: 重置
 Answer: 答案
 Submit Answer: 直接提交答案
 For this problem, you have to put your answer here.: 请在此处直接提交本题的答案。
+Balloon: 气球
+Pending Balloon: 待递送气球
+Sent Balloon: 已递送气球
+Balloon information changed.: 气球信息已发生变化。
+This balloon can't be send.: 此气球已被递送。

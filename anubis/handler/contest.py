@@ -19,6 +19,7 @@ from anubis.model import contest
 from anubis.model import discussion
 from anubis.handler import base
 from anubis.util import pagination
+from anubis.util import json
 from anubis.util.orderedset import OrderedSet
 from anubis.service import bus
 
@@ -196,6 +197,84 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
                     page_title=pdoc['title'], path_components=path_components)
 
 
+@app.route('/contest/{tid:\d{4,}}/balloon', 'contest_balloon')
+class ContestBalloonHandler(base.OperationHandler, ContestStatusMixin):
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    @base.require_perm(builtin.PERM_SEND_CONTEST_BALLOON)
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, tid: int):
+        tdocs = await contest.get_multi(self.domain_id, **{'begin_at': {'$lte': self.now},
+                                                           'end_at': {'$gt': self.now}},
+                                        projection={'_id': True}).to_list(None)
+        tids = [tdoc['_id'] for tdoc in tdocs]
+        query = {'domain_id': self.domain_id,
+                 'tid': {'$in': list(set(tids))},
+                 'detail.accept': True,
+                 'detail.balloon': False}
+        tsdocs = await contest.get_multi_status(**query).sort('_id', 1).to_list(None)
+        balloons = []
+        for tsdoc in tsdocs:
+            for pstatus in tsdoc['detail']:
+                if pstatus['accept'] and not pstatus['balloon']:
+                    balloons.append({'tid': tsdoc['tid'],
+                                     'uid': tsdoc['uid'],
+                                     'pid': pstatus['pid'],
+                                     'balloon': pstatus['balloon']})
+        udict, udoc, tdoc = await asyncio.gather(
+            user.get_dict([balloon['uid'] for balloon in balloons]),
+            user.get_by_uid(self.user['_id']),
+            contest.get(self.domain_id, tid))
+        for balloon in balloons:
+            balloon.update({'uname': udict[balloon['uid']]['uname'],
+                            'nickname': udict[balloon['uid']].get('nickname', ''),
+                            'letter': contest.convert_to_letter(tdoc['pids'], balloon['pid'])})
+        if not self.prefer_json:
+            path_components = self.build_path(
+                (self.translate('contest_main'), self.reverse_url('contest_main')),
+                (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
+                (self.translate('contest_balloon'), None)
+            )
+            self.render('contest_balloon.html', path_components=path_components,
+                        udict=udict, udoc=udoc, tdoc=tdoc, balloons=balloons)
+        else:
+            self.json({'balloons': balloons})
+
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
+    @base.require_perm(builtin.PERM_SEND_CONTEST_BALLOON)
+    @base.require_csrf_token
+    @base.sanitize
+    async def send_or_cancel(self, *, tid: int, uid: int, pid: int, balloon: bool=True):
+        tsdoc = await contest.get_status(self.domain_id, tid, uid)
+        pdetail = None
+        for pstatus in tsdoc['detail']:
+            if pstatus['pid'] == pid:
+                pdetail = pstatus
+                break
+        if not pdetail:
+            raise error.ProblemNotFoundError(self.domain_id, pid)
+        if balloon and (not pdetail['accept'] or pdetail['balloon']):
+            raise error.ContestIllegalBalloonError()
+        await contest.set_status_balloon(self.domain_id, tid, uid, pid, balloon)
+        self.json_or_redirect(self.reverse_url('contest_balloon', tid=tid))
+
+    post_send = functools.partialmethod(send_or_cancel, balloon=True)
+    post_cancel = functools.partialmethod(send_or_cancel, balloon=False)
+
+
+@app.connection_route('/contest/balloon-conn', 'contest_balloon-conn')
+class ContestBalloonConnection(base.Connection):
+    @base.require_perm(builtin.PERM_SEND_CONTEST_BALLOON)
+    async def on_open(self):
+        bus.subscribe(self.on_message, ['balloon_change'])
+
+    async def on_message(self, e):
+        self.send(**json.decode(e['value']))
+
+    async def on_close(self):
+        bus.unsubscribe(self.on_message)
+        
+
 @app.connection_route('/contest/{tid:\d{4,}}/notification-conn', 'contest_notification-conn')
 class ContestNotificationConnection(base.Connection, ContestStatusMixin):
     @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -275,8 +354,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
             raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['_id'])
         rid = await record.add(self.domain_id, pdoc['_id'], constant.record.TYPE_SUBMISSION,
                                self.user['_id'], lang, code, tid=tdoc['_id'], hidden=True)
-        await contest.update_status(self.domain_id, tdoc['_id'], self.user['_id'],
-                                    rid, pdoc['_id'], False)
+        # here is a update status.
         if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
                 and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
             self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['_id']))
