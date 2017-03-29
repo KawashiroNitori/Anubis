@@ -15,7 +15,7 @@ class InvalidStateError(Error):
 
 class UserFacingError(Error):
     def to_dict(self):
-        return {'name': self.__class__.__name__, 'args': self.args}
+        return {'name': self.__class__.__name__, 'args': self.args, 'message': self.message}
 
     @property
     def http_status(self):

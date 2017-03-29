@@ -19,6 +19,7 @@ from anubis.model import contest
 from anubis.model import discussion
 from anubis.handler import base
 from anubis.util import pagination
+from anubis.util import json
 from anubis.util.orderedset import OrderedSet
 from anubis.service import bus
 
@@ -197,14 +198,18 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
 
 
 @app.route('/contest/{tid:\d{4,}}/balloon', 'contest_balloon')
-class ContestBalloonHandler(base.OperationHandler):
+class ContestBalloonHandler(base.OperationHandler, ContestStatusMixin):
     @base.require_priv(builtin.PRIV_USER_PROFILE)
     @base.require_perm(builtin.PERM_SEND_CONTEST_BALLOON)
     @base.route_argument
     @base.sanitize
     async def get(self, *, tid: int):
+        tdocs = await contest.get_multi(self.domain_id, **{'begin_at': {'$lte': self.now},
+                                                           'end_at': {'$gt': self.now}},
+                                        projection={'_id': True}).to_list(None)
+        tids = [tdoc['_id'] for tdoc in tdocs]
         query = {'domain_id': self.domain_id,
-                 'tid': tid,
+                 'tid': {'$in': list(set(tids))},
                  'detail.accept': True,
                  'detail.balloon': False}
         tsdocs = await contest.get_multi_status(**query).sort('_id', 1).to_list(None)
@@ -214,17 +219,29 @@ class ContestBalloonHandler(base.OperationHandler):
                 if pstatus['accept'] and not pstatus['balloon']:
                     balloons.append({'tid': tsdoc['tid'],
                                      'uid': tsdoc['uid'],
-                                     'pid': pstatus['pid']})
+                                     'pid': pstatus['pid'],
+                                     'balloon': pstatus['balloon']})
         udict, udoc, tdoc = await asyncio.gather(
             user.get_dict([balloon['uid'] for balloon in balloons]),
             user.get_by_uid(self.user['_id']),
             contest.get(self.domain_id, tid))
-        self.json_or_render('contest_balloon.html', udict=udict, udoc=udoc,
-                            tdoc=tdoc, balloons=balloons)
+        for balloon in balloons:
+            balloon.update({'uname': udict[balloon['uid']]['uname'],
+                            'nickname': udict[balloon['uid']].get('nickname', ''),
+                            'letter': contest.convert_to_letter(tdoc['pids'], balloon['pid'])})
+        if not self.prefer_json:
+            path_components = self.build_path(
+                (self.translate('contest_main'), self.reverse_url('contest_main')),
+                (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
+                (self.translate('contest_balloon'), None)
+            )
+            self.render('contest_balloon.html', path_components=path_components,
+                        udict=udict, udoc=udoc, tdoc=tdoc, balloons=balloons)
+        else:
+            self.json({'balloons': balloons})
 
     @base.require_priv(builtin.PRIV_USER_PROFILE)
     @base.require_perm(builtin.PERM_SEND_CONTEST_BALLOON)
-    @base.route_argument
     @base.require_csrf_token
     @base.sanitize
     async def send_or_cancel(self, *, tid: int, uid: int, pid: int, balloon: bool=True):
@@ -252,7 +269,7 @@ class ContestBalloonConnection(base.Connection):
         bus.subscribe(self.on_message, ['balloon_change'])
 
     async def on_message(self, e):
-        self.send(**e['value'])
+        self.send(**json.decode(e['value']))
 
     async def on_close(self):
         bus.unsubscribe(self.on_message)

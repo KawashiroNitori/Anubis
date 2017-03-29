@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { NamedPage } from '../misc/PageLoader';
 import loadReactRedux from '../utils/loadReactRedux';
 
@@ -17,7 +16,19 @@ const page = new NamedPage('contest_balloon', () => {
                 payload: msg,
             });
         };
+        sock.onclose = () => {
+            window.location.reload();
+        };
 
-
+        render(
+            <Provider store={store}>
+                <BalloonPadApp />
+            </Provider>,
+            $('#balloonPad').get(0),
+        );
     }
+
+    mountComponent();
 });
+
+export default page;

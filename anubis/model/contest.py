@@ -11,6 +11,7 @@ from anubis import error
 from anubis import db
 from anubis.util import argmethod
 from anubis.util import validator
+from anubis.util import json
 from anubis.model import system
 from anubis.model import user
 from anubis.model import record
@@ -268,13 +269,13 @@ async def set_status_balloon(domain_id: str, tid: int, uid: int, pid: int, ballo
                                            update={'$set': {'detail.$.balloon': balloon}},
                                            return_document=ReturnDocument.AFTER)
     udoc = await user.get_by_uid(uid)
-    await bus.publish('balloon_change', str({'uid': uid,
-                                             'uname': udoc['uname'],
-                                             'nickname': udoc['nickname'],
-                                             'tid': tid,
-                                             'pid': pid,
-                                             'letter': convert_to_letter(tdoc['pids'], pid),
-                                             'balloon': balloon}))
+    await bus.publish('balloon_change', json.encode({'uid': uid,
+                                                     'uname': udoc['uname'],
+                                                     'nickname': udoc.get('nickname', ''),
+                                                     'tid': tid,
+                                                     'pid': pid,
+                                                     'letter': convert_to_letter(tdoc['pids'], pid),
+                                                     'balloon': balloon}))
     return tsdoc
 
 

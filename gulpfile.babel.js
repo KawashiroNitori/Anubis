@@ -30,6 +30,7 @@ gulp.task('iconfont', () => {
             fontName: 'anubisIcon',
             formats: ['svg', 'ttf', 'eot', 'woff', 'woff2'],
             timestamp: iconTimestamp,
+            normalize: true,
         }))
         .on('glyphs', (glyphs, options) => {
             gulp
