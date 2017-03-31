@@ -99,7 +99,7 @@ class UserAlreadyExistError(ForbiddenError):
 class LoginError(ForbiddenError):
     @property
     def message(self):
-        return 'Invalid user {0} or password.'
+        return 'Invalid password for user {0}.'
 
 
 class DocumentNotFoundError(NotFoundError):
@@ -300,3 +300,9 @@ class UsageExceedError(ForbiddenError):
     @property
     def message(self):
         return 'Usage exceeded.'
+
+
+class CampaignAlreadyExistError(ForbiddenError):
+    @property
+    def message(self):
+        return 'Campaign {0} already exists.'

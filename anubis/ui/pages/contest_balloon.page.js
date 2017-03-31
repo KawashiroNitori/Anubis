@@ -3,6 +3,7 @@ import loadReactRedux from '../utils/loadReactRedux';
 
 const page = new NamedPage('contest_balloon', () => {
     async function mountComponent() {
+        $('.loader-container').show();
         const SockJs = await System.import('sockjs-client');
         const { default: BalloonPadApp } = await System.import('../components/balloonpad');
         const { default: BalloonPadReducer } = await System.import('../components/balloonpad/Reducer');
@@ -26,6 +27,7 @@ const page = new NamedPage('contest_balloon', () => {
             </Provider>,
             $('#balloonPad').get(0),
         );
+        $('.loader-container').hide();
     }
 
     mountComponent();
