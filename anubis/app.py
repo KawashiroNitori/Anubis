@@ -11,7 +11,6 @@ from anubis.util import locale
 from anubis.util import json
 from anubis.util import tools
 from anubis.service import bus
-from anubis.service import judge_result
 
 options.define('debug', default=False, help='Enable debug mode.')
 options.define('static', default=True, help='Serve static files.')
@@ -44,8 +43,7 @@ class Application(web.Application):
         # TODO: Add Message Queue Register.
         self.loop.run_until_complete(asyncio.gather(
             tools.create_all_indexes(),
-            bus.init(),
-            judge_result.init()
+            bus.init()
         ))
 
         from anubis.handler import domain
@@ -58,6 +56,7 @@ class Application(web.Application):
         from anubis.handler import judge
         from anubis.handler import discussion
         from anubis.handler import fs
+        # from anubis.handler import campaign
         if options.options.static:
             self.router.add_static(
                 '/', path.join(path.dirname(__file__), '.static_build'), name='static')
