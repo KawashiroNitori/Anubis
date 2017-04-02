@@ -302,7 +302,7 @@ async def create_indexes():
     await status_coll.create_index([('domain_id', 1),
                                     ('tid', 1),
                                     ('detail.accept', 1),
-                                    ('detail.balloon', -1)], sparse=True)
+                                    ('detail.balloon', -1)])
     await status_coll.create_index([('domain_id', 1),
                                     ('tid', 1),
                                     ('uid', 1),

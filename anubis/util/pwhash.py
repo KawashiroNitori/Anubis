@@ -3,6 +3,8 @@ import binascii
 import functools
 import hashlib
 import os
+import random
+import string
 
 from anubis import error
 from anubis.util import argmethod
@@ -27,6 +29,11 @@ def _b64decode(s):
 @argmethod.wrap
 def gen_salt(byte_length: int=20):
     return binascii.hexlify(os.urandom(byte_length)).decode()
+
+
+@argmethod.wrap
+def gen_password(length: int=16):
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
 
 
 @argmethod.wrap

@@ -14,6 +14,8 @@ Login to Attend Contest: 请登录后参加比赛
 No Permission to Attend Contest: 您没有权限参加比赛
 Begin Date: 开始日期
 Begin Time: 开始时间
+End Date: 结束日期
+End Time: 结束时间
 Belongs to: 属于
 Bio: 个人简介
 Bio Visibility: 个人简介可见性
@@ -218,6 +220,17 @@ contest_edit: 编辑比赛
 contest_main: 比赛
 contest_status: 比赛状态
 contest_balloon: 递送气球
+campaign_attend: 报名参赛
+campaign_create: 创建竞赛
+campaign_edit: 编辑竞赛
+campaign_main: 竞赛
+All Campaigns: 所有竞赛
+There are no campaigns...: 现在没有竞赛...
+Create Campaign: 创建竞赛
+Create a campaign: 创建一场竞赛
+Campaign ID: 竞赛 ID
+Campaign Title: 竞赛标题
+Newbie: 入门组
 current domain: 当前域
 currently offline: 目前离线
 discussion_create: 创建讨论
@@ -359,6 +372,7 @@ Duration: 持续时间
 hour(s): 小时
 Not Attended: 未参加
 Live...: 正在进行…
+Attending...: 正在报名…
 Ready (☆▽☆): 马上开始 (☆▽☆)
 View Details: 查看详情
 All Contests: 所有比赛

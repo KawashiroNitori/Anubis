@@ -15,7 +15,7 @@ class InvalidStateError(Error):
 
 class UserFacingError(Error):
     def to_dict(self):
-        return {'name': self.__class__.__name__, 'args': self.args, 'message': self.message}
+        return {'name': self.__class__.__name__, 'args': self.args, 'message': self.message.format(*self.args)}
 
     @property
     def http_status(self):
@@ -44,6 +44,10 @@ class NotFoundError(UserFacingError):
     @property
     def message(self):
         return 'path {0} not found.'
+
+
+class InvalidTeacherError(InvalidStateError):
+    pass
 
 
 class BuiltinDomainError(ForbiddenError):
@@ -306,3 +310,33 @@ class CampaignAlreadyExistError(ForbiddenError):
     @property
     def message(self):
         return 'Campaign {0} already exists.'
+
+
+class CampaignTeamAlreadyExistError(ForbiddenError):
+    @property
+    def message(self):
+        return 'Member {0} already exists.'
+
+
+class CampaignTeamNotFoundError(NotFoundError):
+    @property
+    def message(self):
+        return 'Team {1} in campaign {0} not found.'
+
+
+class CampaignNotInTimeError(ForbiddenError):
+    @property
+    def message(self):
+        return 'Campaign {0} is not in attend time.'
+
+
+class StudentFetchError(ForbiddenError):
+    @property
+    def message(self):
+        return 'Student {0} fetch failed.'
+
+
+class StudentNotFoundError(NotFoundError):
+    @property
+    def message(self):
+        return 'Student {0} not found.'

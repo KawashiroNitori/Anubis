@@ -57,8 +57,7 @@ class UserRegisterHandler(base.Handler):
             raise error.UserAlreadyExistError(uname)
         if password != verify_password:
             raise error.VerifyPasswordError()
-        uid = await system.inc_user_counter()
-        await user.add(uid, uname, password, mail, self.remote_ip)
+        uid = await user.add(uname, password, mail, self.remote_ip)
         await domain.set_user_role(builtin.DOMAIN_ID_SYSTEM, uid, builtin.ROLE_DEFAULT)
         await self.update_session(new_saved=False, uid=uid)
         self.json_or_redirect(self.reverse_url('domain_main'))

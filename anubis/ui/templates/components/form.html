@@ -104,7 +104,7 @@
 {% endmacro %}
 
 {% macro form_checkbox(columns=5) %}
-<div class="row"><div class="medium-{{ columns }} columns">
+  {{ form_begin(columns=columns, **kwargs) }}
   {{ checkbox(**kwargs) }}
-</div></div>
+  {{ form_end(columns=columns, **kwargs) }}
 {% endmacro %}
