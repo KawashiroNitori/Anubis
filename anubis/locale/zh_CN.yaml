@@ -9,9 +9,24 @@ Accepted Ratio: 通过率
 Active Sessions: 活动会话
 Arguments: 参数
 Attend Contest: 参加比赛
+Attend Campaign: 报名参赛
+Edit Attend Information: 编辑报名信息
 Attended: 已参加
 Login to Attend Contest: 请登录后参加比赛
+Login to Attend Campaign: 请登陆后报名参赛
 No Permission to Attend Contest: 您没有权限参加比赛
+No Permission to Attend Campaign: 您没有权限报名参赛
+Team Name: 队伍名称
+Team Members: 队伍成员
+Class: 班级
+College: 学院
+Attend: 报名
+Student ID: 学号
+Verifying...: 正在验证…
+Student Verify Failed.: 学生验证失败。
+Attend Failed.: 报名失败。
+Last 6 digits of Citizen ID: 身份证号码末6位
+4-16 chinese, english characters, numbers or spaces.: 4-16位长的汉字、英文字母、数字或空格。
 Begin Date: 开始日期
 Begin Time: 开始时间
 End Date: 结束日期
@@ -64,6 +79,7 @@ Duration (hours): 持续时间 (小时)
 Edit: 编辑
 Edit Problem: 编辑题目
 Email: 电子邮件
+Telephone: 电话号码
 Email Visibility: Email 可见性
 Enabled: 开启
 Footer: 页脚
@@ -226,6 +242,7 @@ campaign_edit: 编辑竞赛
 campaign_main: 竞赛
 All Campaigns: 所有竞赛
 There are no campaigns...: 现在没有竞赛...
+This campaign is for newbie.: 该竞赛为入门组竞赛。
 Create Campaign: 创建竞赛
 Create a campaign: 创建一场竞赛
 Campaign ID: 竞赛 ID
@@ -491,6 +508,7 @@ All {0} Contests: 所有 {0} 比赛
 Show: 显示
 There are no contests...: 没有比赛…
 View Contest: 查看比赛
+View Campaign: 查看竞赛
 Cancel Score: 取消成绩
 score canceled: 成绩取消
 You have permissions to create problems for this domain.: 您有权限为此域创建题目。

@@ -19,13 +19,12 @@
           </div>
           {{ form.form_text(columns=None, label='Campaign Title', name='title', value=cdoc['title']|default(''), required=True) }}
           <div class="row">
-            {{ form.form_text(columns=6, label='Begin Date', name='begin_at_date', placeholder='YYYY-mm-dd', value=begin_date_text, date=True, row=False) }}
-            {{ form.form_text(columns=6, label='Begin Time', name='begin_at_time', placeholder='HH:MM', value=begin_time_text, time=True, row=False) }}
+            {{ form.form_text(columns=3, label='Begin Date', name='begin_at_date', placeholder='YYYY-mm-dd', value=begin_date_text, date=True, row=False) }}
+            {{ form.form_text(columns=3, label='Begin Time', name='begin_at_time', placeholder='HH:MM', value=begin_time_text, time=True, row=False) }}
+            {{ form.form_text(columns=3, label='End Date', name='end_at_date', placeholder='YYYY-mm-dd', value=end_date_text, date=True, row=False) }}
+            {{ form.form_text(columns=3, label='End Time', name='end_at_time', placeholder='HH:MM', value=end_time_text, time=True, row=False) }}
           </div>
-          <div class="row">
-            {{ form.form_text(columns=6, label='End Date', name='end_at_date', placeholder='YYYY-mm-dd', value=end_date_text, date=True, row=False) }}
-            {{ form.form_text(columns=6, label='End Time', name='end_at_time', placeholder='HH:MM', value=end_time_text, time=True, row=False) }}
-          </div>
+
           {{ form.form_textarea(columns=None, label='Content', name='content', value=cdoc['content']|default(''), markdown=True, required=True) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">

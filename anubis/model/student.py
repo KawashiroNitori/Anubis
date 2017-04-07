@@ -10,9 +10,9 @@ _logger = logging.getLogger(__name__)
 
 
 @argmethod.wrap
-async def add(*, _id: str, **kwargs):
+async def add(sid: str, **kwargs):
     coll = db.Collection('student')
-    return (await coll.insert_one({'_id': _id, **kwargs})).inserted_id
+    return (await coll.insert_one({'_id': sid, **kwargs})).inserted_id
 
 
 @argmethod.wrap
@@ -27,8 +27,20 @@ async def get(student_id: str):
             return None
         if not sdoc:
             return None
-        await add(**sdoc)
+        await add(sid=sdoc['_id'], **sdoc)
     return sdoc
+
+
+def get_multi(*, projection=None, **kwargs):
+    coll = db.Collection('student')
+    return coll.find(kwargs, projection)
+
+
+async def get_list(sids: list):
+    result = []
+    async for student in get_multi(_id={'$in': list(set(sids))}):
+        result.append(student)
+    return result
 
 
 @argmethod.wrap

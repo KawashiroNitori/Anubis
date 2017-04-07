@@ -1,10 +1,5 @@
-import asyncio
-import collections
 import datetime
-import itertools
 
-import functools
-from bson import objectid
 from pymongo import errors
 from pymongo import ReturnDocument
 
@@ -13,6 +8,7 @@ from anubis import db
 from anubis.util import argmethod
 from anubis.util import validator
 from anubis.util import pwhash
+from anubis.util.orderedset import OrderedSet
 from anubis.model import domain
 from anubis.model import contest
 from anubis.model import user
@@ -32,6 +28,7 @@ async def add(campaign_id: str, title: str, content: str, owner_uid: int,
     coll = db.Collection('campaign')
     try:
         return (await coll.insert_one({'_id': campaign_id,
+                                       'domain_id': builtin.DOMAIN_ID_SYSTEM,
                                        'owner_uid': owner_uid,
                                        'title': title,
                                        'content': content,
@@ -57,7 +54,7 @@ def get_multi(*, projection=None, **kwargs):
 
 
 @argmethod.wrap
-async def get_list(*, projection=None, limit: int=None, **kwargs):
+async def get_list(projection=None, limit: int=None, **kwargs):
     coll = db.Collection('campaign')
     return await coll.find(kwargs, projection).limit(limit).to_list(None)
 
@@ -91,9 +88,16 @@ async def get_team(campaign_id: str, team_name: str):
 
 
 @argmethod.wrap
+async def get_team_by_uid(campaign_id: str, uid: int):
+    coll = db.Collection('campaign.team')
+    team = await coll.find_one({'cid': campaign_id, 'uid': uid})
+    return team
+
+
+@argmethod.wrap
 async def get_team_by_member(campaign_id: str, student_id: str):
     coll = db.Collection('campaign.team')
-    return await coll.find_one({'cid': campaign_id, 'members': {'$elemMatch': student_id}})
+    return await coll.find_one({'cid': campaign_id, 'members': student_id})
 
 
 @argmethod.wrap
@@ -107,6 +111,7 @@ async def attend(campaign_id: str, uid: int, mail: str, tel: str, team_name: str
     validator.check_mail(mail)
     validator.check_tel(tel)
     validator.check_team_name(team_name)
+    members = list(OrderedSet(members))
     coll = db.Collection('campaign.team')
     try:
         return await coll.find_one_and_update(filter={'cid': campaign_id,

@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import random
+import re
 
 from anubis import app
 from anubis import error
@@ -51,6 +52,8 @@ class UserRegisterHandler(base.Handler):
     async def post(self, *, mail: str, uname: str, password: str, verify_password: str):
         validator.check_mail(mail)
         validator.check_name(uname)
+        if re.fullmatch(r'^team\d+$', uname):
+            raise error.UserAlreadyExistError(uname)
         if await user.get_by_mail(mail):
             raise error.UserAlreadyExistError(mail)
         if await user.get_by_uname(uname):
