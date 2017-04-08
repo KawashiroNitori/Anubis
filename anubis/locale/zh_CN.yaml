@@ -241,8 +241,9 @@ campaign_create: 创建竞赛
 campaign_edit: 编辑竞赛
 campaign_main: 竞赛
 All Campaigns: 所有竞赛
-There are no campaigns...: 现在没有竞赛...
-This campaign is for newbie.: 该竞赛为入门组竞赛。
+There are no campaigns...: 现在没有竞赛…
+This campaign is include newbie.: 该竞赛包含入门组竞赛。
+Only freshmen is allowed.: 仅允许大一新生参加入门组。
 Create Campaign: 创建竞赛
 Create a campaign: 创建一场竞赛
 Campaign ID: 竞赛 ID

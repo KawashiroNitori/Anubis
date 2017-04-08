@@ -43,7 +43,7 @@ export default class AttendFormMemberItemContainer extends React.PureComponent {
                         onClick={(e) => this.props.handleRemoveClick(e, this.props._id)}
                         onKeyDown={(e) => e.preventDefault()}
                     >
-                        <span className="icon icon-close" data-tooltip={i18n('Remove')} />
+                        <span className="icon icon-delete" data-tooltop={i18n('Remove')} />
                     </button>
                 </td>
             </tr>

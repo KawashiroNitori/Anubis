@@ -336,6 +336,12 @@ class StudentFetchError(ForbiddenError):
         return 'Student {0} fetch failed.'
 
 
+class StudentIsNotNewbieError(ForbiddenError):
+    @property
+    def message(self):
+        return 'Student {0} is not newbie.'
+
+
 class StudentNotFoundError(NotFoundError):
     @property
     def message(self):

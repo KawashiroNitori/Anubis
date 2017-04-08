@@ -4,6 +4,7 @@
   var Context = {{ {
     'getSearchUrl': reverse_url('student_search')|string(),
     'teamInfo': team,
+    'enableNewbie': cdoc['is_newbie'],
   }|json|safe }};
 </script>
 <div class="row">

@@ -107,7 +107,7 @@ async def get_list_teams(campaign_id: str):
 
 
 @argmethod.wrap
-async def attend(campaign_id: str, uid: int, mail: str, tel: str, team_name: str, members: list):
+async def attend(campaign_id: str, uid: int, mail: str, tel: str, team_name: str, is_newbie: bool, members: list):
     validator.check_mail(mail)
     validator.check_tel(tel)
     validator.check_team_name(team_name)
@@ -119,6 +119,7 @@ async def attend(campaign_id: str, uid: int, mail: str, tel: str, team_name: str
                                               update={'$set': {'mail': mail,
                                                                'tel': tel,
                                                                'team_name': team_name,
+                                                               'is_newbie': is_newbie,
                                                                'members': members}},
                                               upsert=True,
                                               return_document=ReturnDocument.AFTER)
@@ -126,9 +127,7 @@ async def attend(campaign_id: str, uid: int, mail: str, tel: str, team_name: str
         raise error.CampaignTeamAlreadyExistError(members, team_name)
 
 
-@argmethod.wrap
-async def create_user_for_teams(campaign_id: str):
-    teams = await get_list_teams(campaign_id)
+async def create_user_for_teams(teams: list):
     for index, team in enumerate(teams, 1):
         del team['uid'], team['_id']
         team_uname = 'team{0}'.format(index)
@@ -139,12 +138,10 @@ async def create_user_for_teams(campaign_id: str):
             await user.update(udoc['_id'], **team)
 
 
-@argmethod.wrap
-async def attend_contest_for_teams(campaign_id: str, domain_id: str, tid: int):
-    teams = await get_list_teams(campaign_id)
-    tdoc = await contest.get(domain_id, tid)
+async def attend_contest_for_teams(teams: list, domain_id: str, tid: int):
+    await contest.get(domain_id, tid)
     for index, team in enumerate(teams, 1):
-        team_uname = 'team{0}'.format(index)
+        team_uname = team.get('team_id', 'team{0}'.format(index))
         udoc = await user.get_by_uname(team_uname)
         if not udoc:
             await user.add(team_uname, pwhash.gen_password(), team['mail'], **team)
@@ -162,9 +159,9 @@ async def create_indexes():
     await team_coll.create_index([('cid', 1),
                                   ('uid', 1)], unique=True)
     await team_coll.create_index([('cid', 1),
-                                  ('members', 1)], unique=True)
+                                  ('members', 1)], sparse=True)
     await team_coll.create_index([('cid', 1),
-                                  ('team_name', 1)], unique=True)
+                                  ('team_name', 1)])
 
 
 if __name__ == '__main__':

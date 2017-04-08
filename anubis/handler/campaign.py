@@ -75,7 +75,8 @@ class CampaignDetailHandler(base.Handler, CampaignStatusMixin):
         )
         self.render('campaign_detail.html', path_components=path_components, udoc=self.user,
                     cdoc=cdoc, page_title=cdoc['title'], udict=udict, attended=attended,
-                    ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount)
+                    ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount,
+                    datetime_stamp=self.datetime_stamp)
 
 
 @app.route('/campaign/{cid}/attend', 'campaign_attend')
@@ -114,7 +115,7 @@ class CampaignAttendHandler(base.Handler, CampaignStatusMixin):
     @base.post_argument
     @base.require_csrf_token
     @base.sanitize
-    async def post(self, *, cid: str, mail: str, tel: str, team_name: str,
+    async def post(self, *, cid: str, mail: str, tel: str, team_name: str, is_newbie: bool=False,
                    member_id: str, member_id_number: str):
         validator.check_mail(mail)
         validator.check_tel(tel)
@@ -123,13 +124,18 @@ class CampaignAttendHandler(base.Handler, CampaignStatusMixin):
                            self.request.POST.getall('member_id_number')))
         if len(members) > 3 or len(members) < 1:
             raise error.ValidationError('members')
-
         cdoc = await campaign.get(cid)
+        if not cdoc['is_newbie'] and is_newbie:
+            raise error.ValidationError('is_newbie')
         if not self.is_live(cdoc):
             raise error.CampaignNotInTimeError(cdoc['title'])
-        await asyncio.gather(*[student.check_student_by_id(*member) for member in members])
+
+        for member in members:
+            sdoc = await student.check_student_by_id(*member)
+            if is_newbie and sdoc['grade'] != datetime.datetime.utcnow().year:
+                raise error.StudentIsNotNewbieError(member[0])
         members = [member[0] for member in members]
-        await campaign.attend(cid, self.user['_id'], mail, tel, team_name, members)
+        await campaign.attend(cid, self.user['_id'], mail, tel, team_name, is_newbie, members)
         redirect_url = self.reverse_url('campaign_detail', cid=cid)
         self.json_or_redirect(redirect_url, redirect=redirect_url)
 
@@ -177,6 +183,13 @@ class CampaignEditHandler(base.Handler, CampaignStatusMixin):
         await campaign.edit(cid, title=title, content=content,
                             begin_at=begin_at, end_at=end_at, is_newbie=is_newbie)
         self.json_or_redirect(self.reverse_url('campaign_detail', cid=cid))
+
+
+@app.route('/campaign/{cid}/teams', 'campaign_teams')
+class CampaignManageHandler(base.OperationHandler):
+    @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_CAMPAIGN)
+    async def get(self):
+        pass
 
 
 @app.route('/campaign/create', 'campaign_create')

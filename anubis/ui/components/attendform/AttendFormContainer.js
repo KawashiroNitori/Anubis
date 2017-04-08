@@ -41,6 +41,8 @@ const teamNameValidator = {
     },
 };
 
+const thisYear = new Date().getFullYear();
+
 const mapStateToProps = (state, ownProps) => ({
     ...ownProps,
     ...state,
@@ -48,6 +50,8 @@ const mapStateToProps = (state, ownProps) => ({
     && (state.inputs.tel ? state.inputs.tel.isCorrect : false)
     && (state.inputs.team_name ? state.inputs.team_name.isCorrect : false)
     && state.members.members.length > 0,
+    isNewbie: state.newbie.isNewbie,
+    canNewbie: state.members.members.reduce((acc, val) => acc && val.grade === thisYear, true),
     handleSubmit(e) {
         e.preventDefault();
         const member_id = state.members.members.map(item => item._id);
@@ -56,6 +60,7 @@ const mapStateToProps = (state, ownProps) => ({
             mail: state.inputs.mail.value,
             tel: state.inputs.tel.value,
             team_name: state.inputs.team_name.value,
+            is_newbie: Context.enableNewbie && state.newbie.isNewbie ? 'on' : '',
             member_id,
             member_id_number,
         };
@@ -81,6 +86,12 @@ const mapDispatchToProps = (dispatch) => ({
             payload: members,
         });
     },
+    handleNewbieChanged(is_newbie) {
+        dispatch({
+            type: 'NEWBIE_CHECKBOX_CHANGED',
+            payload: is_newbie,
+        });
+    },
 
 });
 
@@ -99,6 +110,7 @@ export default class AttendFormContainer extends React.PureComponent {
             value: teamInfo.team_name,
         });
         this.props.initMembers(teamInfo.members);
+        this.props.handleNewbieChanged(teamInfo.is_newbie);
     }
 
     render() {
@@ -132,6 +144,24 @@ export default class AttendFormContainer extends React.PureComponent {
                             <AttendFormMemberContainer />
                         </div>
                     </div>
+                    {Context.enableNewbie &&
+                    <div className="row"><div className="medium columns">
+                        <label className="checkbox">
+                            <input
+                                type="checkbox"
+                                name="newbie"
+                                checked={this.props.isNewbie}
+                                onChange={(e) => this.props.handleNewbieChanged(e.target.checked)}
+                                disabled={!this.props.canNewbie}
+                            />
+                            {i18n('Newbie')}{' '}
+                            <span
+                                className="icon icon-help"
+                                data-tooltip={i18n('Only freshmen is allowed.')}
+                            />
+                        </label>
+                    </div></div>
+                    }
                     <button
                         className="rounded primary button submit-button"
                         type="submit"

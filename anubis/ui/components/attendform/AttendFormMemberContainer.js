@@ -41,11 +41,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class AttendFormMemberContainer extends React.PureComponent {
-    static handleKeyDown(e) {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-        }
-    }
 
     render() {
         return (
