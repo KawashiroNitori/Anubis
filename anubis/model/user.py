@@ -5,6 +5,7 @@ from pymongo import errors
 from anubis import db
 from anubis import error
 from anubis.model import builtin
+from anubis.model import system
 from anubis.util import argmethod
 from anubis.util import pwhash
 from anubis.util import validator
@@ -22,7 +23,8 @@ PROJECTION_ALL = None
 
 
 @argmethod.wrap
-async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', priv: int=builtin.DEFAULT_PRIV, **kwargs):
+async def add(uname: str, password: str, mail: str, reg_ip: str='',
+              uid: int=None, priv: int=builtin.DEFAULT_PRIV, **kwargs):
     # Add a user.
     validator.check_uname(uname)
     # TODO: Filter name by keywords
@@ -31,6 +33,8 @@ async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', pr
 
     uname_lower = uname.strip().lower()
     mail_lower = mail.strip().lower()
+    if not uid:
+        uid = await system.inc_user_counter()
 
     for user in builtin.USERS:
         if user['_id'] == uid or user['uname_lower'] == uname_lower or user['mail_lower'] == mail_lower:
@@ -39,7 +43,7 @@ async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', pr
     salt = pwhash.gen_salt()
     coll = db.Collection('user')
     try:
-        await coll.insert_one({
+        return (await coll.insert_one({
             '_id': uid,
             'uname': uname,
             'uname_lower': uname_lower,
@@ -54,7 +58,7 @@ async def add(uid: int, uname: str, password: str, mail: str, reg_ip: str='', pr
             'login_ip': reg_ip,
             'gravatar': mail,
             **kwargs
-        })
+        })).inserted_id
     except errors.DuplicateKeyError:
         raise error.UserAlreadyExistError(uid, uname, mail) from None
 

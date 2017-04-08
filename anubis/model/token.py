@@ -3,8 +3,6 @@ import datetime
 import hashlib
 import os
 
-from bson import BSON
-
 from anubis.util import argmethod
 from anubis.util import json
 from anubis import redis

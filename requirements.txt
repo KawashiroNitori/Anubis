@@ -15,3 +15,6 @@ GitPython
 geoip2
 hoedown
 httpagentparser
+bs4
+Pillow
+pyocr

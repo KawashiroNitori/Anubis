@@ -13,7 +13,7 @@ from anubis.service import smallcache
 from anubis.util import argmethod
 from anubis.util import validator
 
-ALLOWED_DOC_TYPES = ['problem', 'contest']
+ALLOWED_DOC_TYPES = ['problem', 'contest', 'campaign']
 
 
 def node_id(ddoc):

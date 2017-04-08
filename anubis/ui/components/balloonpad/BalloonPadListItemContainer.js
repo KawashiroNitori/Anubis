@@ -15,7 +15,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({
     postSend(item) {
-        const req = util.post(`/contest/${item.tid}/balloon`, {
+        const req = util.post('', {
             operation: 'send',
             tid: item.tid,
             uid: item.uid,
@@ -28,7 +28,7 @@ const mapDispatchToProps = dispatch => ({
     },
 
     postCancel(item) {
-        const req = util.post(`/contest/${item.tid}/balloon`, {
+        const req = util.post('', {
             operation: 'cancel',
             tid: item.tid,
             uid: item.uid,

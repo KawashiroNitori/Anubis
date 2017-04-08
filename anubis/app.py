@@ -56,7 +56,8 @@ class Application(web.Application):
         from anubis.handler import judge
         from anubis.handler import discussion
         from anubis.handler import fs
-        # from anubis.handler import campaign
+        from anubis.handler import campaign
+        from anubis.handler import student
         if options.options.static:
             self.router.add_static(
                 '/', path.join(path.dirname(__file__), '.static_build'), name='static')

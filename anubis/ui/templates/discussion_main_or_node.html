@@ -15,6 +15,10 @@
       {% with tdoc=vnode, owner_udoc=udict[vnode['owner_uid']] %}
       {% include "partials/contest_sidebar.html" %}
       {% endwith %}
+    {% elif vnode['doc_type'] == 'campaign' %}
+      {% with cdoc=vnode, owner_udoc=udict[vnode['owner_uid']] %}
+      {% include "partials/campaign_sidebar.html" %}
+      {% endwith %}
     {% elif vnode['doc_type'] == 'discussion_node' %}
     <div class="section side">
       {% if vnode['pic'] %}<div class="discussion-node__bg {{ vnode['pic'] }}"></div>{% endif %}
