@@ -6468,6 +6468,11 @@
       "resolved": "https://registry.npm.taobao.org/validate-npm-package-license/download/validate-npm-package-license-3.0.1.tgz",
       "dev": true
     },
+    "validate.js": {
+      "version": "0.11.1",
+      "from": "validate.js@latest",
+      "resolved": "https://registry.npmjs.org/validate.js/-/validate.js-0.11.1.tgz"
+    },
     "varstream": {
       "version": "0.3.2",
       "from": "varstream@>=0.3.2 <0.4.0",

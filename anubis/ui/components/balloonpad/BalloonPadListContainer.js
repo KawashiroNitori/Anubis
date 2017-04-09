@@ -5,7 +5,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import i18n from '../../utils/i18n';
-import _ from 'lodash';
 
 import BalloonRow from './BalloonPadListItemContainer';
 

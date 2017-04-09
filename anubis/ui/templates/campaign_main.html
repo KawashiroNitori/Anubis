@@ -1,0 +1,91 @@
+{% extends "layout/basic.html" %}
+{% import "components/campaign.html" as campaign with context %}
+{% macro render_important_campaign(view, title, cdoc) %}
+<div class="section immersive--content section--campaign {{ view }}">
+  <div class="media">
+    <div class="media__body middle">
+      <div class="section__body">
+        <div><h2 class="status_title">{{ _(title) }}</h2></div>
+        <h1>{{ cdoc['title'] }}</h1>
+        <ul class="info">
+          <li>
+            <span class="icon icon-calendar"></span>
+            {{ _('Start at') }}: {{ campaign.render_time(cdoc['begin_at']) }}
+          </li>
+          <li>
+            <span class="icon icon-calendar"></span>
+            {{ _('End at') }}: {{ campaign.render_time(cdoc['end_at']) }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="media__right middle">
+      <div class="section__body">
+        <a href="{{ reverse_url('campaign_detail', cid=cdoc['_id']) }}" class="detail-button">{{ _('View Details') }}</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endmacro %}
+
+{% block content %}
+<div class="row">
+  <div class="medium-9 columns">
+    {% for cdoc in cdocs %}
+    {% if handler.is_live(cdoc) %}
+    {{ render_important_campaign('live', 'Attending...', cdoc) }}
+    {% elif handler.is_ready(cdoc) %}
+    {{ render_important_campaign('ready', 'Ready (☆▽☆)', cdoc) }}
+    {% endif %}
+    {% endfor %}
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('All Campaigns') }}</h1>
+      </div>
+      {% if not cdocs %}
+      {{ nothing.render('There are no campaigns...') }}
+      {% else %}
+      <ol class="section__list campaign__list">
+        {% for cdoc in cdocs %}
+        <li class="section__list__item campaign__item">
+          <div class="media">
+            <div class="media__body medium">
+              <h1 class="campaign__title"><a href="{{ reverse_url('campaign_detail', cid=cdoc['_id']) }}" data-emoji-enabled>{{ cdoc['title'] }}</a></h1>
+              <ul class="supplementary list">
+                <li>
+                  <span class="v-center">
+                    <span class="icon icon-calendar text-blue"></span>
+                    {{ _('Start at') }}: {{ campaign.render_time(cdoc['begin_at']) }}
+                  </span>
+                </li>
+                <li>
+                  <span class="v-center">
+                    <span class="icon icon-calendar text-red"></span>
+                    {{ _('End at') }}: {{ campaign.render_time(cdoc['end_at']) }}
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+        {{ paginator.render(page, cpcount, add_qs=qs) }}
+      </ol>
+      {% endif %}
+    </div>
+  </div>
+  <div class="medium-3 columns">
+    {% if handler.has_priv(anubis.model.builtin.PRIV_CREATE_CAMPAIGN) %}
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Create Campaign') }}</h1>
+      </div>
+      <div class="section__body">
+        <p><a href="{{ reverse_url('campaign_create') }}" class="expanded primary button">{{ _('Create a campaign') }}</a></p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -13,7 +13,20 @@ input.textbox, textarea.textbox
     outline: $input-focus-outline
     outline-offset: 0
 
-  // Overwrite, for IE compatibility
+  &.has-fail
+    border-color: $fail-color
+    outline: $input-focus-outline-fail
+    outline-offset: 0
+
+  &.has-success
+    border-color: $success-color
+    outline: $input-focus-outline-success
+    outline-offset: 0
+
+  &.has-feedback
+    padding-right: rem($form-control-height * 1.25)
+
+// Overwrite, for IE compatibility
   &:read-only
     outline: 0
 

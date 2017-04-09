@@ -9,11 +9,28 @@ Accepted Ratio: 通过率
 Active Sessions: 活动会话
 Arguments: 参数
 Attend Contest: 参加比赛
+Attend Campaign: 报名参赛
+Edit Attend Information: 编辑报名信息
 Attended: 已参加
 Login to Attend Contest: 请登录后参加比赛
+Login to Attend Campaign: 请登陆后报名参赛
 No Permission to Attend Contest: 您没有权限参加比赛
+No Permission to Attend Campaign: 您没有权限报名参赛
+Team Name: 队伍名称
+Team Members: 队伍成员
+Class: 班级
+College: 学院
+Attend: 报名
+Student ID: 学号
+Verifying...: 正在验证…
+Student Verify Failed.: 学生验证失败。
+Attend Failed.: 报名失败。
+Last 6 digits of Citizen ID: 身份证号码末6位
+4-16 chinese, english characters, numbers or spaces.: 4-16位长的汉字、英文字母、数字或空格。
 Begin Date: 开始日期
 Begin Time: 开始时间
+End Date: 结束日期
+End Time: 结束时间
 Belongs to: 属于
 Bio: 个人简介
 Bio Visibility: 个人简介可见性
@@ -62,6 +79,7 @@ Duration (hours): 持续时间 (小时)
 Edit: 编辑
 Edit Problem: 编辑题目
 Email: 电子邮件
+Telephone: 电话号码
 Email Visibility: Email 可见性
 Enabled: 开启
 Footer: 页脚
@@ -218,6 +236,19 @@ contest_edit: 编辑比赛
 contest_main: 比赛
 contest_status: 比赛状态
 contest_balloon: 递送气球
+campaign_attend: 报名参赛
+campaign_create: 创建竞赛
+campaign_edit: 编辑竞赛
+campaign_main: 竞赛
+All Campaigns: 所有竞赛
+There are no campaigns...: 现在没有竞赛…
+This campaign is include newbie.: 该竞赛包含入门组竞赛。
+Only freshmen is allowed.: 仅允许大一新生参加入门组。
+Create Campaign: 创建竞赛
+Create a campaign: 创建一场竞赛
+Campaign ID: 竞赛 ID
+Campaign Title: 竞赛标题
+Newbie: 入门组
 current domain: 当前域
 currently offline: 目前离线
 discussion_create: 创建讨论
@@ -359,6 +390,7 @@ Duration: 持续时间
 hour(s): 小时
 Not Attended: 未参加
 Live...: 正在进行…
+Attending...: 正在报名…
 Ready (☆▽☆): 马上开始 (☆▽☆)
 View Details: 查看详情
 All Contests: 所有比赛
@@ -477,6 +509,7 @@ All {0} Contests: 所有 {0} 比赛
 Show: 显示
 There are no contests...: 没有比赛…
 View Contest: 查看比赛
+View Campaign: 查看竞赛
 Cancel Score: 取消成绩
 score canceled: 成绩取消
 You have permissions to create problems for this domain.: 您有权限为此域创建题目。
@@ -587,6 +620,17 @@ By Username / UID: 由用户名或 UID
 By Problem: 由题目
 By Contest: 由比赛
 Reset: 重置
+My Files: 我的文件
+home_file: 我的文件
+"What's file?": 什么是文件？
+Upload File: 上传文件
+fs_upload: 上传文件
+New file: 新文件
+Size: 大小
+Hash: 散列
+This type of files are not allowed to be uploaded.: 不允许上传这种文件。
+Usage exceeded.: 用量超限。
+The uploaded file is too long.: 上传的文件太长。
 Answer: 答案
 Submit Answer: 直接提交答案
 For this problem, you have to put your answer here.: 请在此处直接提交本题的答案。

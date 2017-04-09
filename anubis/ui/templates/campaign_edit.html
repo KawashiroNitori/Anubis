@@ -1,0 +1,50 @@
+{% extends 'layout/basic.html' %}
+{% block content %}
+<div class="row">
+  <div class="medium-9 columns">
+    <div class="section">
+      <div class="section__body">
+        <form method="post">
+          <div class="row">
+            {{ form.form_text(columns=8, label='Campaign ID', name='campaign_id', value=cdoc['_id']|default(''), autofucus=True, required=True, row=False, disabled=page_name == 'campaign_edit') }}
+            <div class="medium-4 columns">
+              <label>
+                {{ _('Settings') }}
+                <br>
+                <label class="checkbox">
+                  <input type="checkbox" name="is_newbie" value="on"{% if cdoc['is_newbie'] %} checked{% endif %}>{{ _('Newbie') }}
+                </label>
+              </label>
+            </div>
+          </div>
+          {{ form.form_text(columns=None, label='Campaign Title', name='title', value=cdoc['title']|default(''), required=True) }}
+          <div class="row">
+            {{ form.form_text(columns=3, label='Begin Date', name='begin_at_date', placeholder='YYYY-mm-dd', value=begin_date_text, date=True, row=False) }}
+            {{ form.form_text(columns=3, label='Begin Time', name='begin_at_time', placeholder='HH:MM', value=begin_time_text, time=True, row=False) }}
+            {{ form.form_text(columns=3, label='End Date', name='end_at_date', placeholder='YYYY-mm-dd', value=end_date_text, date=True, row=False) }}
+            {{ form.form_text(columns=3, label='End Time', name='end_at_time', placeholder='HH:MM', value=end_time_text, time=True, row=False) }}
+          </div>
+
+          {{ form.form_textarea(columns=None, label='Content', name='content', value=cdoc['content']|default(''), markdown=True, required=True) }}
+          <div class="row"><div class="columns">
+            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+            <button type="submit" class="rounded primary button">
+              {% if page_name == 'campaign_edit' %}
+              {{ _('Update') }}
+              {% else %}
+              {{ _('Create') }}
+              {% endif %}
+            </button>
+            <button type="button" class="rounded button" onclick="window.history.go(-1)">
+              {{ _('Cancel') }}
+            </button>
+          </div></div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="medium-3 columns">
+    {% include 'components/md_hint.html' %}
+  </div>
+</div>
+{% endblock %}

@@ -429,7 +429,7 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
             begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
             begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
             end_at = begin_at + datetime.timedelta(hours=duration)
-        except ValueError as e:
+        except ValueError:
             raise error.ValidationError('begin_at_date', 'begin_at_time')
         if begin_at >= end_at:
             raise error.ValidationError('duration')
@@ -478,7 +478,7 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
             begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
             begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
             end_at = begin_at + datetime.timedelta(hours=duration)
-        except ValueError as e:
+        except ValueError:
             raise error.ValidationError('begin_at_date', 'begin_at_time')
         if begin_at <= self.now:
             raise error.ValidationError('begin_at_date', 'begin_at_time')

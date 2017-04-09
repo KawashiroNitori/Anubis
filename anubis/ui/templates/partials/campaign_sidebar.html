@@ -1,0 +1,58 @@
+<div class="section side">
+  <div>
+    <ol class="menu">
+      {% if page_name == 'discussion_node' %}
+      {% if handler.has_perm(anubis.model.builtin.PERM_CREATE_DISCUSSION) %}
+      <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type='campaign', doc_id=cdoc['_id']) }}">
+        <span class="icon icon-add"></span> {{ _('Create a discussion') }}
+      </a></li>
+      <li class="menu__seperator"></li>
+      {% else %}
+      <li class="menu__item"><a class="menu__link highlight" href="javascript:;" name="nav_login">
+        <span class="icon icon-add"></span> {{ _('Login to Create a discussion' if not handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Create a discussion') }}
+      </a></li>
+      <li class="menu__seperator"></li>
+      {% endif %}
+      {% endif %}
+      {% if page_name != 'campaign_detail' %}
+      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('campaign_detail', cid=cdoc['_id']) }}">
+        <span class="icon icon-award"></span> {{ _('View Campaign') }}
+      </a></li>
+      {% endif %}
+      {% if handler.is_live(cdoc) %}
+      {% if not attended and page_name != 'discussion_node' %}
+      <li class="menu__item">
+        {% if handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) and handler.has_priv(anubis.model.builtin.PRIV_ATTEND_CAMPAIGN) %}
+        <a class="menu__link{% if page_name == 'campaign_attend' %} active{% endif %}" href="{{ reverse_url('campaign_attend', cid=cdoc['_id']) }}">
+          <span class="icon icon-add"></span> {{ _('Attend Campaign') }}
+        </a>
+        {% elif not handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) %}
+        <button class="menu__link" name="nav_login">
+          <span class="icon icon-add"></span> {{ _('Login to Attend Campaign') }}
+        </button>
+        {% else %}
+        <button class="menu__link" type="submit">
+          <span class="icon icon-add"></span> {{ _('No Permission to Attend Campaign') }}
+        </button>
+        {% endif %}
+      </li>
+      {% elif attended and page_name != 'discussion_node' %}
+      <li class="menu__item">
+        <a class="menu__link{% if page_name == 'campaign_attend' %} active{% endif %}" href="{{ reverse_url('campaign_attend', cid=cdoc['_id']) }}">
+          <span class="icon icon-edit"></span> {{ _('Edit Attend Information') }}
+        </a>
+      </li>
+      {% endif %}
+      {% endif %}
+      <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node_document_as_node', doc_type='campaign', doc_id=cdoc['_id']) }}">
+        <span class="icon icon-comment--text"></span> {{ _('Discussion') }}
+      </a></li>
+      {% if handler.has_priv(anubis.model.builtin.PRIV_EDIT_CAMPAIGN) %}
+      <li class="menu__seperator"></li>
+      <li class="menu__item"><a class="menu__link{% if page_name == 'campaign_edit' %} active{% endif %}" href="{{ reverse_url('campaign_edit', cid=cdoc['_id']) }}">
+        <span class="icon icon-edit"></span> {{ _('Edit') }}
+      </a></li>
+      {% endif %}
+    </ol>
+  </div>
+</div>

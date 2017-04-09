@@ -45,7 +45,7 @@ class DiscussionMainHandler(base.Handler):
                     datetime_stamp=self.datetime_stamp)
 
 
-@app.route('/discuss/{doc_type:problem|contest}/{doc_id}', 'discussion_node_document_as_node')
+@app.route('/discuss/{doc_type:problem|contest|campaign}/{doc_id}', 'discussion_node_document_as_node')
 @app.route('/discuss/{doc_id:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
 class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
     DISCUSSIONS_PER_PAGE = 15
