@@ -1,9 +1,19 @@
 {% set header_mini = true %}
 {% extends "layout/basic.html" %}
 {% import "components/contest.html" as contest with context %}
+{% import "components/campaign.html" as campaign with context %}
 {% block content %}
 <div class="row">
   <div class="large-9 columns">
+    {% if cdocs %}
+    {% for cdoc in cdocs %}
+    {% if cdoc['begin_at'] <= utcnow < cdoc['end_at'] %}
+    {{ campaign.render_important_campaign('live', 'Attending...', cdoc) }}
+    {% elif utcnow < cdoc['begin_at'] %}
+    {{ campaign.render_important_campaign('ready', 'Ready (☆▽☆)', cdoc) }}
+    {% endif %}
+    {% endfor %}
+    {% endif %}
     {% if tdocs %}
     <div class="section page--contest_main">
       <div class="section__header">

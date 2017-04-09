@@ -39,7 +39,7 @@
     {% endif %}
     {% if not attended and not handler.is_done(tdoc) and page_name != 'discussion_node' %}
       <li class="menu__item">
-    {% if handler.has_perm(anubis.model.builtin.PERM_ATTEND_CONTEST) and handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) %}
+    {% if handler.has_perm(anubis.model.builtin.PERM_ATTEND_CONTEST) and handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) and not tdoc['private'] %}
         <form action="{{ reverse_url('contest_detail', tid=tdoc['_id']) }}" method="POST">
           <input type="hidden" name="operation" value="attend">
           <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
@@ -47,7 +47,7 @@
             <span class="icon icon-add"></span> {{ _('Attend Contest') }}
           </button>
         </form>
-    {% elif not handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) %}
+    {% elif not handler.has_priv(anubis.model.builtin.PRIV_USER_PROFILE) and not tdoc['private'] %}
         <button class="menu__link" type="submit">
           <span class="icon icon-add"></span> {{ _('Login to Attend Contest') }}
         </button>

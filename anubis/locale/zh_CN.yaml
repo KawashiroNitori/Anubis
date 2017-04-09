@@ -18,6 +18,7 @@ No Permission to Attend Contest: 您没有权限参加比赛
 No Permission to Attend Campaign: 您没有权限报名参赛
 Team Name: 队伍名称
 Team Members: 队伍成员
+Member: 成员
 Class: 班级
 College: 学院
 Attend: 报名
@@ -25,8 +26,9 @@ Student ID: 学号
 Verifying...: 正在验证…
 Student Verify Failed.: 学生验证失败。
 Attend Failed.: 报名失败。
+Attend Successful!: 报名成功！
 Last 6 digits of Citizen ID: 身份证号码末6位
-4-16 chinese, english characters, numbers or spaces.: 4-16位长的汉字、英文字母、数字或空格。
+3-16 chinese, english characters, numbers or spaces.: 3-16位长的汉字、英文字母、数字或空格。
 Begin Date: 开始日期
 Begin Time: 开始时间
 End Date: 结束日期
@@ -239,6 +241,7 @@ contest_balloon: 递送气球
 campaign_attend: 报名参赛
 campaign_create: 创建竞赛
 campaign_edit: 编辑竞赛
+campaign_teams: 参赛队伍
 campaign_main: 竞赛
 All Campaigns: 所有竞赛
 There are no campaigns...: 现在没有竞赛…
@@ -411,6 +414,8 @@ What's domain?: 什么是域？
 Visit: 查看
 owner: 所有者
 delete: 删除
+Domain ID: 域 ID
+Contest ID: 比赛 ID
 User ID: 用户 ID
 '{0}: Users': '{0}: 用户'
 '{0}: Roles': '{0}: 角色'
@@ -628,3 +633,12 @@ Pending Balloon: 待递送气球
 Sent Balloon: 已递送气球
 Balloon information changed.: 气球信息已发生变化。
 This balloon can't be send.: 此气球已被递送。
+Team Manage: 队伍管理
+Select All Newbie: 选择所有入门组
+Select All Normal: 选择所有正常组
+Update User for Selected Teams: 更新选中队伍的用户信息
+Attend Selected Teams to Contest: 将选中队伍添加到比赛
+Get Password List of Team Users: 获取队伍用户的密码表
+Confirm update information for selected users?: 确认更新所选队伍的用户信息？
+Their password will be reseted.: 他们的密码将会被重置。
+

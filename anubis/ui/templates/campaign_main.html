@@ -1,42 +1,15 @@
 {% extends "layout/basic.html" %}
 {% import "components/campaign.html" as campaign with context %}
-{% macro render_important_campaign(view, title, cdoc) %}
-<div class="section immersive--content section--campaign {{ view }}">
-  <div class="media">
-    <div class="media__body middle">
-      <div class="section__body">
-        <div><h2 class="status_title">{{ _(title) }}</h2></div>
-        <h1>{{ cdoc['title'] }}</h1>
-        <ul class="info">
-          <li>
-            <span class="icon icon-calendar"></span>
-            {{ _('Start at') }}: {{ campaign.render_time(cdoc['begin_at']) }}
-          </li>
-          <li>
-            <span class="icon icon-calendar"></span>
-            {{ _('End at') }}: {{ campaign.render_time(cdoc['end_at']) }}
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="media__right middle">
-      <div class="section__body">
-        <a href="{{ reverse_url('campaign_detail', cid=cdoc['_id']) }}" class="detail-button">{{ _('View Details') }}</a>
-      </div>
-    </div>
-  </div>
 
-</div>
-{% endmacro %}
 
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
     {% for cdoc in cdocs %}
     {% if handler.is_live(cdoc) %}
-    {{ render_important_campaign('live', 'Attending...', cdoc) }}
+    {{ campaign.render_important_campaign('live', 'Attending...', cdoc) }}
     {% elif handler.is_ready(cdoc) %}
-    {{ render_important_campaign('ready', 'Ready (☆▽☆)', cdoc) }}
+    {{ campaign.render_important_campaign('ready', 'Ready (☆▽☆)', cdoc) }}
     {% endif %}
     {% endfor %}
     <div class="section">

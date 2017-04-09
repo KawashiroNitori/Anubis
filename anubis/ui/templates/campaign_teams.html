@@ -1,0 +1,112 @@
+{% extends 'layout/basic.html' %}
+{% block content %}
+<div class="dialog__body--attend-team" style="display: none">
+  <div>
+    <div class="row"><div class="columns">
+      <h1>{{ _('Attend Selected Teams to Contest') }}</h1>
+    </div></div>
+    <div class="row">
+      <div class="medium-6 columns">
+        <label>
+          {{ _('Domain ID') }}
+          <input name="domain_id" type="text" class="textbox" data-autofucus>
+        </label>
+      </div>
+      <div class="medium-6 columns">
+        <label>
+          {{ _('Contest ID') }}
+          <input name="tid" type="text" class="textbox" data-autofucus>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="medium-9 columns">
+    <div class="section">
+      <div class="section__body no-padding">
+        <table class="data-table campaign-teams table-responsive">
+          <colgroup>
+            {% if admin %}<col class="col--checkbox">{% endif %}
+            <col class="col--id">
+            <col class="col--name">
+            <col class="col--member">
+            <col class="col--member">
+            <col class="col--member">
+          </colgroup>
+          <thead>
+            <tr>
+              {% if admin %}
+              <th class="col--checkbox">
+                <label class="compact checkbox">
+                  <input type="checkbox" name="select_all" data-checkbox-toggle="team">
+                </label>
+              </th>
+              {% endif %}
+              <th class="col--id">#</th>
+              <th class="col--name">{{ _('Team Name') }}</th>
+              <th class="col--member">{{ _('Member') }}</th>
+              <th class="col--member">{{ _('Member') }}</th>
+              <th class="col--member">{{ _('Member') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for team in teams %}
+            <tr data-id="{{ team['_id'] }}" data-num="{{ loop.index }}">
+              {% if admin %}
+              <td class="col--checkbox">
+                <label class="compact checkbox">
+                  <input type="checkbox" data-checkbox-group="team" data-checkbox-range data-newbie="{{ team['is_newbie'] }}">
+                </label>
+              </td>
+              {% endif %}
+              <td class="col--id">
+                {{ loop.index }}
+              </td>
+              <td class="col--name">
+                {{ team['team_name'] }}
+                {% if team['is_newbie'] %}
+                <span class="badge--newbie">{{ _('Newbie') }}</span>
+                {% endif %}
+              </td>
+              {% for member in team['members'] %}
+              <td class="col--member">
+                {{ sdict[member]['name'] }}
+              </td>
+              {% endfor %}
+              {% for _ in range(3 - team['members']|length) %}
+              <td class="col--member">-</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% if admin %}
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Team Manage') }}</h1>
+      </div>
+      <div class="section__body">
+        <div class="row"><div class="columns">
+          <button class="rounded button" name="select_newbie">{{ _('Select All Newbie') }}</button>
+          <button class="rounded button" name="select_normal">{{ _('Select All Normal') }}</button>
+        </div></div>
+        <div class="row"><div class="columns">
+          <button class="rounded primary button" name="update_user">{{ _('Update User for Selected Teams') }}</button>
+          <button class="rounded primary button" name="attend_team">{{ _('Attend Selected Teams to Contest') }}</button>
+          <a class="rounded primary button" href="{{ reverse_url('campaign_team_password', cid=cdoc['_id']) }}">{{ _('Get Password List of Team Users') }}</a>
+        </div></div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <div class="medium-3 columns">
+    {% with owner_udoc=udoc %}
+    {% include 'partials/campaign_sidebar.html' %}
+    {% endwith %}
+  </div>
+</div>
+{% endblock %}

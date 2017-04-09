@@ -78,7 +78,7 @@ def convert_to_letter(pids: list, pid: int):
 
 
 @argmethod.wrap
-async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: int,
+async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: int, private: bool,
               begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               pids=[], **kwargs):
@@ -98,6 +98,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
         'content': content,
         'owner_uid': owner_uid,
         'rule': rule,
+        'private': private,
         'begin_at': begin_at,
         'end_at': end_at,
         'pids': pids,

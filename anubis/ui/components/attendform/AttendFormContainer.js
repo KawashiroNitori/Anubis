@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import delay from '../../utils/delay';
 import i18n from '../../utils/i18n';
 import Notification from '../notification';
 import * as utils from '../../misc/Util';
@@ -64,11 +65,19 @@ const mapStateToProps = (state, ownProps) => ({
             member_id,
             member_id_number,
         };
+        const attendButton = $('.submit-button');
+        attendButton.attr('disabled', true);
+        attendButton.text(i18n('Attending...'));
         utils
             .post('', data)
-            .then((res) => window.location.replace(res.redirect))
+            .then((res) => {
+                Notification.info(i18n('Attend Successful!'));
+                setTimeout(() => window.location.replace(res.redirect), 2000);
+            })
             .catch(() => {
-                Notification.error('Attend Failed.');
+                attendButton.removeAttr('disabled');
+                attendButton.text(i18n('Attend'));
+                Notification.error(i18n('Attend Failed.'));
             });
     },
 });
@@ -127,6 +136,7 @@ export default class AttendFormContainer extends React.PureComponent {
                         <AttendFormTextboxContainer
                             columns="6"
                             name="tel"
+                            type="tel"
                             labelName="Telephone"
                             constraints={telValidator}
                         />
@@ -136,7 +146,7 @@ export default class AttendFormContainer extends React.PureComponent {
                         row="true"
                         name="team_name"
                         labelName="Team Name"
-                        placeholder="4-16 chinese, english characters, numbers or spaces."
+                        placeholder="3-16 chinese, english characters, numbers or spaces."
                         constraints={teamNameValidator}
                     />
                     <div className="row">

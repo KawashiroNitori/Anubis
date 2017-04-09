@@ -132,6 +132,8 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
     @base.sanitize
     async def post_attend(self, *, tid: int):
         tdoc = await contest.get(self.domain_id, tid)
+        if tdoc['private']:
+            raise error.ContestIsPrivateError(tdoc['_id'])
         if self.is_done(tdoc):
             raise error.ContestNotLiveError(tdoc['_id'])
         await contest.attend(self.domain_id, tdoc['_id'], self.user['_id'])
@@ -419,7 +421,7 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
     @base.post_argument
     @base.require_csrf_token
     @base.sanitize
-    async def post(self, *, tid: int, title: str, content: str, rule: int,
+    async def post(self, *, tid: int, title: str, content: str, rule: int, private: bool=False,
                    begin_at_date: str, begin_at_time: str,
                    duration: float, pids: str):
         tdoc = await contest.get(self.domain_id, tid)
@@ -442,7 +444,7 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
                 if pid not in exist_pids:
                     raise error.ProblemNotFoundError(self.domain_id, pid)
         await contest.edit(domain_id=self.domain_id, tid=tid,
-                           title=title, content=content, rule=rule,
+                           title=title, content=content, rule=rule, private=private,
                            begin_at=begin_at, end_at=end_at, pids=pids)
         for pid in pids:
             await problem.set_hidden(self.domain_id, pid, True)
@@ -469,7 +471,7 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
     @base.post_argument
     @base.require_csrf_token
     @base.sanitize
-    async def post(self, *, title: str, content: str, rule: int,
+    async def post(self, *, title: str, content: str, rule: int, private: bool=False,
                    begin_at_date: str,
                    begin_at_time: str,
                    duration: float,
@@ -493,7 +495,7 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
                 if pid not in exist_pids:
                     raise error.ProblemNotFoundError(self.domain_id, pid)
         tid = await contest.add(self.domain_id, title, content, self.user['_id'],
-                                rule, begin_at, end_at, pids)
+                                rule, private, begin_at, end_at, pids)
         for pid in pids:
             await problem.set_hidden(self.domain_id, pid, True)
         self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))

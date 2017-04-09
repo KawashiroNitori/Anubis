@@ -88,7 +88,7 @@ export default class AttendFormTextboxContainer extends React.PureComponent {
                 </label>
                 <input
                     className={cn}
-                    type="text"
+                    type={this.props.type ? this.props.type : 'text'}
                     placeholder={i18n(this.props.placeholder)}
                     value={this.props.value}
                     onChange={this.props.handleChanged}

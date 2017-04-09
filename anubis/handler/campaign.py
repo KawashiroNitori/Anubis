@@ -1,4 +1,5 @@
-import asyncio
+import io
+import csv
 import functools
 import pytz
 import datetime
@@ -31,7 +32,7 @@ class CampaignStatusMixin(object):
         return cdoc['end_at'] <= self.now
 
     def is_ready(self, cdoc):
-        return self.now < cdoc['end_at']
+        return self.now < cdoc['begin_at']
 
 
 @app.route('/campaign', 'campaign_main')
@@ -136,7 +137,7 @@ class CampaignAttendHandler(base.Handler, CampaignStatusMixin):
                 raise error.StudentIsNotNewbieError(member[0])
         members = [member[0] for member in members]
         await campaign.attend(cid, self.user['_id'], mail, tel, team_name, is_newbie, members)
-        redirect_url = self.reverse_url('campaign_detail', cid=cid)
+        redirect_url = self.reverse_url('campaign_teams', cid=cid)
         self.json_or_redirect(redirect_url, redirect=redirect_url)
 
 
@@ -186,10 +187,73 @@ class CampaignEditHandler(base.Handler, CampaignStatusMixin):
 
 
 @app.route('/campaign/{cid}/teams', 'campaign_teams')
-class CampaignManageHandler(base.OperationHandler):
+class CampaignManageHandler(base.OperationHandler, CampaignStatusMixin):
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, cid: str):
+        cdoc = await campaign.get(cid)
+        teams = await campaign.get_list_team(cid)
+        students = []
+        sdict = {}
+        for team in teams:
+            students += team['members']
+        for sdoc in await student.get_list(students):
+            sdict[sdoc['_id']] = sdoc
+        attended = bool(await campaign.get_team_by_uid(cid, self.user['_id']))
+        admin = self.has_priv(builtin.PRIV_CREATE_CAMPAIGN)
+
+        if self.prefer_json:
+            self.json({'teams': teams})
+        else:
+            path_components = self.build_path(
+                (self.translate('campaign_main'), self.reverse_url('campaign_main')),
+                (cdoc['title'], self.reverse_url('campaign_detail', cid=cid)),
+                (self.translate('campaign_teams'), None)
+            )
+            self.render('campaign_teams.html', page_title=self.translate('campaign_teams'), cdoc=cdoc, admin=admin,
+                        sdict=sdict, udoc=self.user, teams=teams, attended=attended, path_components=path_components)
+
     @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_CAMPAIGN)
-    async def get(self):
-        pass
+    @base.route_argument
+    @base.sanitize
+    @base.require_csrf_token
+    async def post_update_user(self, *, cid: str, team_id: objectid.ObjectId, team_num: int):
+        team_ids = [objectid.ObjectId(team_id) for team_id in self.request.POST.getall('team_id')]
+        team_nums = self.request.POST.getall('team_num')
+        teams = await campaign.get_multi_team(_id={'$in': list(set(team_ids))}).to_list(None)
+        team_tuples = list(zip(['team{0}'.format(i) for i in team_nums], teams))
+        await campaign.update_user_for_teams(team_tuples)
+        self.json_or_redirect(self.reverse_url('campaign_teams', cid=cid))
+
+    @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_CAMPAIGN)
+    @base.route_argument
+    @base.sanitize
+    @base.require_csrf_token
+    async def post_attend_team(self, *, cid: str, domain_id: str, tid: int, team_num: int):
+        team_nums = self.request.POST.getall('team_num')
+        await campaign.attend_contest_for_teams(['team{0}'.format(num) for num in team_nums],
+                                                domain_id, tid)
+        self.json_or_redirect(self.reverse_url('campaign_teams', cid=cid))
+
+
+@app.route('/campaign/{cid}/password', 'campaign_team_password')
+class CampaignTeamPasswordHandler(base.Handler):
+    @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_CAMPAIGN)
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, cid: str):
+        team_count = await campaign.get_team_count(cid)
+        team_unames = ['team{0}'.format(i) for i in range(1, team_count + 1)]
+        udocs = await user.get_multi(uname={'$in': team_unames}, fields={'uname': 1,
+                                                                         'plain_pass': 1,
+                                                                         'nickname': 1}).to_list(None)
+        output_buffer = io.StringIO()
+        reader = csv.writer(output_buffer)
+        for udoc in udocs:
+            reader.writerow([udoc['uname'], udoc['nickname'], udoc['plain_pass']])
+
+        await self.binary(b'\xef\xbb\xbf' + output_buffer.getvalue().encode('utf8'), 'application/csv',
+                          filename='password_{0}.csv'.format(cid))
 
 
 @app.route('/campaign/create', 'campaign_create')

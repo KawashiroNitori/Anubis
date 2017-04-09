@@ -87,6 +87,11 @@ async def get_team(campaign_id: str, team_name: str):
     return team
 
 
+def get_multi_team(*, projection=None, **kwargs):
+    coll = db.Collection('campaign.team')
+    return coll.find(kwargs, projection)
+
+
 @argmethod.wrap
 async def get_team_by_uid(campaign_id: str, uid: int):
     coll = db.Collection('campaign.team')
@@ -101,9 +106,14 @@ async def get_team_by_member(campaign_id: str, student_id: str):
 
 
 @argmethod.wrap
-async def get_list_teams(campaign_id: str):
+async def get_list_team(campaign_id: str):
     coll = db.Collection('campaign.team')
     return await coll.find({'cid': campaign_id}).to_list(None)
+
+
+@argmethod.wrap
+async def get_team_count(campaign_id: str):
+    return await get_multi_team(cid=campaign_id).count()
 
 
 @argmethod.wrap
@@ -127,24 +137,31 @@ async def attend(campaign_id: str, uid: int, mail: str, tel: str, team_name: str
         raise error.CampaignTeamAlreadyExistError(members, team_name)
 
 
-async def create_user_for_teams(teams: list):
-    for index, team in enumerate(teams, 1):
-        del team['uid'], team['_id']
-        team_uname = 'team{0}'.format(index)
-        udoc = await user.get_by_uname(team_uname)
-        if not udoc:
-            await user.add(team_uname, pwhash.gen_password(), team['mail'], **team)
+async def update_user_for_teams(teams_list_or_tuple):
+    for index, team in enumerate(teams_list_or_tuple, 1):
+        if isinstance(team, tuple):
+            team_uname = team[0]
+            team_doc = team[1]
         else:
-            await user.update(udoc['_id'], **team)
+            team_uname = 'team{0}'.format(index)
+            team_doc = team
+        udoc = await user.get_by_uname(team_uname)
+        plain_pass = pwhash.gen_password()
+        extra_info = {'plain_pass': plain_pass,
+                      'nickname': team_doc['team_name']}
+        if not udoc:
+            await user.add(team_uname, plain_pass, team_doc['mail'], **extra_info)
+        else:
+            await user.update(udoc['_id'], **extra_info)
+            await user.set_password(udoc['_id'], plain_pass)
 
 
-async def attend_contest_for_teams(teams: list, domain_id: str, tid: int):
+async def attend_contest_for_teams(team_unames, domain_id: str, tid: int):
     await contest.get(domain_id, tid)
-    for index, team in enumerate(teams, 1):
-        team_uname = team.get('team_id', 'team{0}'.format(index))
+    for team_uname in team_unames:
         udoc = await user.get_by_uname(team_uname)
         if not udoc:
-            await user.add(team_uname, pwhash.gen_password(), team['mail'], **team)
+            raise error.UserNotFoundError(team_uname)
         await domain.set_user_role(domain_id, udoc['_id'], builtin.ROLE_DEFAULT)
         await contest.attend(domain_id, tid, udoc['_id'])
 

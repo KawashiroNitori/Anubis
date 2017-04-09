@@ -6,8 +6,17 @@
       <div class="section__body">
         <form method="post">
           <div class="row">
-            {{ form.form_select(columns=4, label='Rule', name='rule', value=tdoc['rule']|default(None), options=anubis.constant.contest.RULE_TEXTS.items(), row=False) }}
             {{ form.form_text(columns=8, label='Title', name='title', value=tdoc['title']|default(''), placeholder=_('title'), autofocus=True, row=False) }}
+            {{ form.form_select(columns=2, label='Rule', name='rule', value=tdoc['rule']|default(None), options=anubis.constant.contest.RULE_TEXTS.items(), row=False) }}
+            <div class="medium-2 columns">
+              <label>
+                {{ _('Settings') }}
+                <br>
+                <label class="checkbox">
+                  <input type="checkbox" name="private" value="on"{% if tdoc['private'] %} checked{% endif %}>{{ _('Private') }}
+                </label>
+              </label>
+            </div>
           </div><div class="row">
             {{ form.form_text(columns=4, label='Begin Date', name='begin_at_date', placeholder='YYYY-mm-dd', value=date_text, date=True, row=False) }}
             {{ form.form_text(columns=4, label='Begin Time', name='begin_at_time', placeholder='HH:MM', value=time_text, time=True, row=False) }}

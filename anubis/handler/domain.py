@@ -1,5 +1,6 @@
 import collections
 import asyncio
+import datetime
 
 from anubis import app
 from anubis import error
@@ -8,12 +9,14 @@ from anubis.model import domain
 from anubis.model import user
 from anubis.model import contest
 from anubis.model import discussion
+from anubis.model import campaign
 from anubis.handler import base
 
 
 @app.route('/', 'domain_main')
 class DomainMainHandler(base.Handler):
     CONTESTS_ON_MAIN = 5
+    CAMPAIGNS_ON_MAIN = 5
     DISCUSSIONS_ON_MAIN = 20
 
     async def prepare_contest(self):
@@ -39,13 +42,23 @@ class DomainMainHandler(base.Handler):
             vndict = {}
         return ddocs, vndict
 
+    async def prepare_campaign(self):
+        if self.has_perm(builtin.PERM_VIEW_CAMPAIGN):
+            cdocs = await campaign.get_multi() \
+                                  .limit(self.CAMPAIGNS_ON_MAIN) \
+                                  .to_list(None)
+        else:
+            cdocs = []
+        return cdocs
+
     async def get(self):
-        (tdocs, tsdict), (ddocs, vndict) = await asyncio.gather(
-            self.prepare_contest(), self.prepare_discussion())
+        (tdocs, tsdict), (ddocs, vndict), cdocs = await asyncio.gather(
+            self.prepare_contest(), self.prepare_discussion(), self.prepare_campaign())
         udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
         nodes = await discussion.get_nodes(self.domain_id)
-        self.render('domain_main.html', discussion_nodes=nodes, tdocs=tdocs, tsdict=tsdict,
-                    ddocs=ddocs, vndict=vndict, udict=udict, datetime_stamp=self.datetime_stamp)
+        utcnow = datetime.datetime.utcnow()
+        self.render('domain_main.html', discussion_nodes=nodes, tdocs=tdocs, tsdict=tsdict, cdocs=cdocs,
+                    ddocs=ddocs, vndict=vndict, udict=udict, datetime_stamp=self.datetime_stamp, utcnow=utcnow)
 
 
 @app.route('/manage', 'domain_manage')

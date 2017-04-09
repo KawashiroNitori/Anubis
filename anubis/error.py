@@ -258,6 +258,12 @@ class ContestNotLiveError(ForbiddenError):
         return "This contest is not live."
 
 
+class ContestIsPrivateError(ForbiddenError):
+    @property
+    def message(self):
+        return 'This contest is private.'
+
+
 class UserFileNotFoundError(NotFoundError):
     @property
     def message(self):

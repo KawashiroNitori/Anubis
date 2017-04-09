@@ -47,6 +47,11 @@
       <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node_document_as_node', doc_type='campaign', doc_id=cdoc['_id']) }}">
         <span class="icon icon-comment--text"></span> {{ _('Discussion') }}
       </a></li>
+      {% if not handler.is_ready(cdoc) %}
+      <li class="menu__item"><a class="menu__link{% if page_name == 'campaign_teams' %} active{% endif %}" href="{{ reverse_url('campaign_teams', cid=cdoc['_id']) }}">
+        <span class="icon icon-user--multiple"></span> {{ _('campaign_teams') }}
+      </a></li>
+      {% endif %}
       {% if handler.has_priv(anubis.model.builtin.PRIV_EDIT_CAMPAIGN) %}
       <li class="menu__seperator"></li>
       <li class="menu__item"><a class="menu__link{% if page_name == 'campaign_edit' %} active{% endif %}" href="{{ reverse_url('campaign_edit', cid=cdoc['_id']) }}">

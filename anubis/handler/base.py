@@ -229,10 +229,12 @@ class Handler(web.View, HandlerBase):
         self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
         self.response.text = json.encode(obj)
 
-    async def binary(self, data, type='application/octet-stream'):
+    async def binary(self, data, type='application/octet-stream', *, filename: str=None):
         self.response = web.StreamResponse()
         self.response.content_length = len(data)
         self.response.content_type = type
+        if filename:
+            self.response.headers['Content-Disposition'] = 'attachment; filename="{0}"'.format(filename)
         await self.response.prepare(self.request)
         self.response.write(data)
 
