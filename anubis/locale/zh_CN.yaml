@@ -625,6 +625,17 @@ By Username / UID: 由用户名或 UID
 By Problem: 由题目
 By Contest: 由比赛
 Reset: 重置
+My Files: 我的文件
+home_file: 我的文件
+"What's file?": 什么是文件？
+Upload File: 上传文件
+fs_upload: 上传文件
+New file: 新文件
+Size: 大小
+Hash: 散列
+This type of files are not allowed to be uploaded.: 不允许上传这种文件。
+Usage exceeded.: 用量超限。
+The uploaded file is too long.: 上传的文件太长。
 Answer: 答案
 Submit Answer: 直接提交答案
 For this problem, you have to put your answer here.: 请在此处直接提交本题的答案。
