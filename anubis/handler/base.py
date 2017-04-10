@@ -240,7 +240,7 @@ class Handler(web.View, HandlerBase):
 
     async def send_mail(self, mail, title, template_name, **kwargs):
         content = self.render_html(template_name, url_prefix=options.options.url_prefix, **kwargs)
-        await mailer.send_mail(mail, '{0} - Anubis Online Judge'.format(self.translate(title)), content)
+        await mailer.send_mail(mail, '{0} - SUT Online Judge'.format(self.translate(title)), content)
 
     @property
     def prefer_json(self):

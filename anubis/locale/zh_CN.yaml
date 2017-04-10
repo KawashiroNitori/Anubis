@@ -89,11 +89,9 @@ Forgot password or username?: 忘记密码或者用户名？
 Gender: 性别
 Gender Visibility: 性别可见性
 Gravatar Email: Gravatar Email 地址
-'Hello! You can click following link to sign up your Vijos account:': 您好！您可以点击以下链接来注册您的 Vijos 账户：
-'Hello, {0}! You can click following link to reset the password of your Vijos account:': 您好，{0}！您可以点击以下链接来重置您
-  Vijos 账户的密码：
-'Hello, {0}! You can click following link to active your new email of your Vijos account:': 您好，{0}！您可以点击以下链接来激活您
-  Vijos 账户的新电子邮件地址：
+'Hello! You can click following link to sign up your account:': 您好！您可以点击以下链接来注册您的账户：
+'Hello, {0}! You can click following link to reset the password of your account:': 您好，{0}！您可以点击以下链接来重置您账户的密码：
+'Hello, {0}! You can click following link to active your new email of your account:': 您好，{0}！您可以点击以下链接来激活您账户的新电子邮件地址：
 Confirmation mail has been sent to your new email.: 确认邮件已经发送到您的新电子邮箱。
 Help: 帮助
 Hide all tags: 隐藏所有标签
@@ -132,6 +130,7 @@ Password reset mail has been sent to your email.: 密码重置邮件已发送到
 Peak Memory: 峰值内存
 Pretest?: 自测?
 Privacy: 隐私
+Private: 私有
 Problem: 题目
 Problem Set: 题库
 Problem Settings: 题目设置

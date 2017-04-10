@@ -77,7 +77,7 @@ class HomeSecurityHandler(base.OperationHandler):
         await self.send_mail(mail, 'Change Email', 'user_changemail_mail.html',
                              url=self.reverse_url('user_changemail_with_code', code=rid),
                              uname=udoc['uname'])
-        self.render('user_changemail_mail_send.html')
+        self.render('user_changemail_mail_sent.html')
 
 
 @app.route('/home/security/changemail/{code}', 'user_changemail_with_code')

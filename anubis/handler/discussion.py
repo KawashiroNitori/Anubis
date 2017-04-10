@@ -226,6 +226,22 @@ class DiscussionDetailHandler(base.OperationHandler):
         self.json_or_redirect(self.url)
 
     @base.require_priv(builtin.PRIV_USER_PROFILE)
+    @base.route_argument
+    @base.require_csrf_token
+    @base.sanitize
+    async def post_delete_tail_reply(self, *, did: objectid.ObjectId,
+                                     drid: objectid.ObjectId, drrid: objectid.ObjectId):
+        ddoc = await discussion.get(self.domain_id, did)
+        drdoc, drrdoc = await discussion.get_tail_reply(self.domain_id, drid, drrid)
+        if not drdoc or drdoc['parent_id'] != ddoc['_id']:
+            raise error.DiscussionNotFoundError(self.domain_id, drid)
+        if (not self.own(ddoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION)
+            and not self.own(drrdoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF)):
+            self.check_perm(builtin.PERM_DELETE_DISCUSSION_REPLY)
+        await discussion.delete_tail_reply(self.domain_id, drid, drrid)
+        self.json_or_redirect(self.url)
+
+    @base.require_priv(builtin.PRIV_USER_PROFILE)
     @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
     @base.route_argument
     @base.require_csrf_token

@@ -8,7 +8,7 @@ pytz
 colorlog
 aioredis
 misaka
-aiohttp
+aiohttp==1.2.0
 sockjs
 GitPython
 geoip2
