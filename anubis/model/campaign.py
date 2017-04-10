@@ -162,7 +162,10 @@ async def attend_contest_for_teams(team_unames, domain_id: str, tid: int):
         if not udoc:
             raise error.UserNotFoundError(team_uname)
         await domain.set_user_role(domain_id, udoc['_id'], builtin.ROLE_DEFAULT)
-        await contest.attend(domain_id, tid, udoc['_id'])
+        try:
+            await contest.attend(domain_id, tid, udoc['_id'])
+        except error.ContestAlreadyAttendedError:
+            pass
 
 
 @argmethod.wrap
