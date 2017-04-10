@@ -1,5 +1,4 @@
 PyYAML
-bson
 jinja2
 motor
 aioamqp
