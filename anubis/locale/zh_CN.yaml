@@ -324,6 +324,7 @@ Share: 分享
 Delete: 删除
 Highlight: 高亮讨论
 End at: 结束于
+Attend End at: 报名结束于
 Action: 动作
 Rejudge: 重测
 Oops, there are no results.: 呀，没有结果。
@@ -389,6 +390,7 @@ Without slashes or backslashes: 不含斜杠和反斜杠
 Username / UID: 用户名或 UID
 Last Submit At: 最后递交于
 Start at: 开始于
+Attend Start at: 报名开始于
 Duration: 持续时间
 hour(s): 小时
 Not Attended: 未参加
