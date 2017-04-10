@@ -11,6 +11,8 @@ options.define('smtp_user', default='acm_mail@ikazuchi.cn', help='SMTP username'
 options.define('smtp_password', default='emymknobimmlbbnb', help='SMTP password')
 options.define('mail_from', default='acm@sut.edu.cn', help='Mail from')
 
+_server = asmtp.SMTP_SSL(host=options.options.smtp_host, port=options.options.smtp_port)
+
 
 @argmethod.wrap
 async def send_mail(to: str, subject: str, content: str):
@@ -19,10 +21,9 @@ async def send_mail(to: str, subject: str, content: str):
     msg['From'] = options.options.mail_from
     msg['To'] = to
 
-    with asmtp.SMTP_SSL(host=options.options.smtp_host, port=options.options.smtp_port) as server:
-        server.ehlo()
-        server.login(options.options.smtp_user, options.options.smtp_password)
-        server.sendmail(options.options.mail_from, to, msg.as_string())
+    _server.ehlo()
+    _server.login(options.options.smtp_user, options.options.smtp_password)
+    _server.sendmail(options.options.mail_from, to, msg.as_string())
 
 
 if __name__ == '__main__':
