@@ -199,6 +199,7 @@ class CampaignManageHandler(base.OperationHandler, CampaignStatusMixin):
             students += team['members']
         for sdoc in await student.get_list(students):
             sdict[sdoc['_id']] = sdoc
+            sdict[sdoc['_id']]['id_number'] = sdoc['id_number'][-6:]
         attended = bool(await campaign.get_team_by_uid(cid, self.user['_id']))
         admin = self.has_priv(builtin.PRIV_CREATE_CAMPAIGN)
 
@@ -242,15 +243,15 @@ class CampaignTeamPasswordHandler(base.Handler):
     @base.route_argument
     @base.sanitize
     async def get(self, *, cid: str):
-        team_count = await campaign.get_team_count(cid)
-        team_unames = ['team{0}'.format(i) for i in range(1, team_count + 1)]
+        teams = await campaign.get_list_team(cid)
+        team_unames = ['team{0}'.format(i) for i in range(1, len(teams) + 1)]
         udocs = await user.get_multi(uname={'$in': team_unames}, fields={'uname': 1,
                                                                          'plain_pass': 1,
                                                                          'nickname': 1}).to_list(None)
         output_buffer = io.StringIO()
         reader = csv.writer(output_buffer)
-        for udoc in udocs:
-            reader.writerow([udoc['uname'], udoc['nickname'], udoc['plain_pass']])
+        for index, udoc in enumerate(udocs):
+            reader.writerow([udoc['uname'], teams[index]['team_name'], udoc['plain_pass']])
 
         await self.binary(b'\xef\xbb\xbf' + output_buffer.getvalue().encode('utf8'), 'application/csv',
                           filename='password_{0}.csv'.format(cid))

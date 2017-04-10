@@ -56,7 +56,7 @@ def get_multi(*, projection=None, **kwargs):
 @argmethod.wrap
 async def get_list(projection=None, limit: int=None, **kwargs):
     coll = db.Collection('campaign')
-    return await coll.find(kwargs, projection).limit(limit).to_list(None)
+    return await coll.find(kwargs, projection).sort('_id', -1).limit(limit).to_list(None)
 
 
 @argmethod.wrap
@@ -107,8 +107,7 @@ async def get_team_by_member(campaign_id: str, student_id: str):
 
 @argmethod.wrap
 async def get_list_team(campaign_id: str):
-    coll = db.Collection('campaign.team')
-    return await coll.find({'cid': campaign_id}).to_list(None)
+    return await get_multi_team(cid=campaign_id).sort('_id', 1).to_list(None)
 
 
 @argmethod.wrap

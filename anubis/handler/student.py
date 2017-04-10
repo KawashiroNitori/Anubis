@@ -12,4 +12,5 @@ class StudentSearchHandler(base.Handler):
     @base.sanitize
     async def get(self, sid: str, id_num: str):
         sdoc = await student.check_student_by_id(sid, id_num)
+        sdoc['id_number'] = sdoc['id_number'][-6:]
         self.json(sdoc)
