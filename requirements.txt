@@ -17,3 +17,4 @@ httpagentparser
 bs4
 Pillow
 pyocr
+reportlab
