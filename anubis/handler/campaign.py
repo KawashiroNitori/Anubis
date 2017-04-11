@@ -264,7 +264,7 @@ class CampaignTeamCardHandler(base.Handler):
     @base.sanitize
     async def get(self, *, cid: str):
         teams = await campaign.get_list_team(cid)
-        buf = gen_pdf.gen_team_pdf(list(enumerate(teams, 1))
+        buf = gen_pdf.gen_team_pdf(list(enumerate(teams, 1)))
         await self.binary(buf, 'application/pdf', filename='cards_{0}.pdf'.format(cid))
 
 

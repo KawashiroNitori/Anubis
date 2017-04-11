@@ -98,6 +98,7 @@
           <button class="rounded primary button" name="update_user">{{ _('Update User for Selected Teams') }}</button>
           <button class="rounded primary button" name="attend_team">{{ _('Attend Selected Teams to Contest') }}</button>
           <a class="rounded primary button" href="{{ reverse_url('campaign_team_password', cid=cdoc['_id']) }}">{{ _('Get Password List of Team Users') }}</a>
+          <a class="rounded primary button" href="{{ reverse_url('campaign_team_card', cid=cdoc['_id']) }}">{{ _('Get Team Card') }}</a>
         </div></div>
       </div>
     </div>
