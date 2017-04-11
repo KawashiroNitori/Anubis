@@ -17,6 +17,7 @@ from anubis.model import discussion
 from anubis.handler import base
 from anubis.util import pagination
 from anubis.util import validator
+from anubis.service import gen_pdf
 
 
 class CampaignStatusMixin(object):
@@ -255,6 +256,16 @@ class CampaignTeamPasswordHandler(base.Handler):
 
         await self.binary(b'\xef\xbb\xbf' + output_buffer.getvalue().encode('utf8'), 'application/csv',
                           filename='password_{0}.csv'.format(cid))
+
+
+@app.route('/campaign/{cid}/card', 'campaign_team_card')
+class CampaignTeamCardHandler(base.Handler):
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, cid: str):
+        teams = await campaign.get_list_team(cid)
+        buf = gen_pdf.gen_team_pdf(list(enumerate(teams, 1))
+        await self.binary(buf, 'application/pdf', filename='cards_{0}.pdf'.format(cid))
 
 
 @app.route('/campaign/create', 'campaign_create')
