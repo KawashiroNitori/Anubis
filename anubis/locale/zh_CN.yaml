@@ -28,7 +28,7 @@ Student Verify Failed.: 学生验证失败。
 Attend Failed.: 报名失败。
 Attend Successful!: 报名成功！
 Last 6 digits of Citizen ID: 身份证号码末6位
-3-16 chinese, english characters, numbers or spaces.: 3-16位长的汉字、英文字母、数字或空格。
+3-10 chinese, english characters, numbers or spaces.: 3-10位长的汉字、英文字母、数字或空格。
 Begin Date: 开始日期
 Begin Time: 开始时间
 End Date: 结束日期

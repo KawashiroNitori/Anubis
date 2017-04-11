@@ -146,7 +146,7 @@ def check_tel(s):
 
 
 def is_team_name(s):
-    return bool(re.fullmatch(r'^[a-zA-Z0-9\u4e00-\u9fa5][a-zA-Z0-9 \u4e00-\u9fa5]{1,14}[a-zA-Z0-9\u4e00-\u9fa5]$', s))
+    return bool(re.fullmatch(r'^[a-zA-Z0-9\u4e00-\u9fa5][a-zA-Z0-9 \u4e00-\u9fa5]{1,8}[a-zA-Z0-9\u4e00-\u9fa5]$', s))
 
 
 def check_team_name(s):

@@ -36,7 +36,7 @@ const teamNameValidator = {
     team_name: {
         presence: true,
         format: {
-            pattern: /^[a-zA-Z0-9\u4e00-\u9fa5][a-zA-Z0-9 \u4e00-\u9fa5]{1,14}[a-zA-Z0-9\u4e00-\u9fa5]$/,
+            pattern: /^[a-zA-Z0-9\u4e00-\u9fa5][a-zA-Z0-9 \u4e00-\u9fa5]{1,8}[a-zA-Z0-9\u4e00-\u9fa5]$/,
             message: '{0} is invalid.',
         },
     },
@@ -146,7 +146,7 @@ export default class AttendFormContainer extends React.PureComponent {
                         row="true"
                         name="team_name"
                         labelName="Team Name"
-                        placeholder="3-16 chinese, english characters, numbers or spaces."
+                        placeholder="3-10 chinese, english characters, numbers or spaces."
                         constraints={teamNameValidator}
                     />
                     <div className="row">
