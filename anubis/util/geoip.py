@@ -36,5 +36,5 @@ def ip2geo(ip: str, locale: str='en'):
             return 'Unknown'
         else:
             return ', '.join(geo)
-    except ValueError:
+    except Exception:
         return 'Unknown'
