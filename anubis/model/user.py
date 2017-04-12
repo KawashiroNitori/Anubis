@@ -192,7 +192,7 @@ async def set_priv(uid: int, priv: int):
 
 @argmethod.wrap
 async def set_judge(uid: int):
-    return await set_priv(uid, builtin.JUDGE_PRIV)
+    return await set_priv(uid, builtin.JUDGE_PRIV | builtin.DEFAULT_PRIV)
 
 
 @argmethod.wrap
