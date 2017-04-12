@@ -11,10 +11,14 @@ from anubis.util import options
 options.define('ttf_font_name', 'fzyh.ttf', 'Name of TTF Font')
 
 A4_TRANSVERSE = A4[::-1]
-pdfmetrics.registerFont(TTFont('my_font', options.options.ttf_font_name))
+_reged = False
 
 
 def gen_team_pdf(team_tuples: list, fontsize: int=72):
+    global _reged
+    if not _reged:
+        pdfmetrics.registerFont(TTFont('my_font', options.options.ttf_font_name))
+        _reged = True
     buf = io.BytesIO()
     canv = canvas.Canvas(buf, pagesize=A4_TRANSVERSE)
     style = ParagraphStyle(name='default', fontName='my_font', fontSize=fontsize,

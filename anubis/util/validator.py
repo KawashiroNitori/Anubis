@@ -14,7 +14,7 @@ def check_uid(s):
 
 
 def is_uname(s):
-    return bool(re.fullmatch(r'[^\s\u3000](.*[^\s\u3000])?', s))
+    return bool(re.fullmatch(r'[^\s\u3000](.{,16}[^\s\u3000])?', s))
 
 
 def check_uname(s):
