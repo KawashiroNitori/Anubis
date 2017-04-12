@@ -100,6 +100,6 @@ def paginate(page, num_pages):
 
 def to_size(size_kb, threshold=2048, ndigits=3):
     if size_kb < threshold:
-        return '{0}KiB'.format(size_kb)
+        return '{0}KiB'.format(round(size_kb))
     else:
         return '{0}MiB'.format(round(size_kb / 1024, ndigits=ndigits))

@@ -21,7 +21,7 @@
   <tbody>
   {% for rank, tsdoc in ranked_tsdocs %}
     <tr{% if tsdoc['uid'] == handler.user['_id'] %} class="highlight"{% endif %}>
-      <td class="col--rank">
+      <td class="col--rank{% if tsdoc['prize'] %} back-{{ tsdoc['prize'] }}{% endif %}">
         {{ rank }}
       </td>
       <td class="col--user">

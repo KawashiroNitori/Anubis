@@ -2,13 +2,13 @@ import collections
 import datetime
 import itertools
 
-import functools
 from bson import objectid
 from pymongo import errors
 from pymongo import ReturnDocument
 
 from anubis import error
 from anubis import db
+from anubis.constant import contest
 from anubis.util import argmethod
 from anubis.util import validator
 from anubis.util import json
@@ -56,10 +56,33 @@ def _acm_stat(tdoc, journal):
             'detail': detail}
 
 
+def _acm_rank(tsdocs):
+    now = 1
+    gold = contest.COUNT_GOLD
+    silver = gold + contest.COUNT_SILVER
+    bronze = silver + contest.COUNT_BRONZE
+    for tsdoc in tsdocs:
+        prize = None
+        if now <= gold:
+            prize = 'gold'
+        elif gold < now <= silver:
+            prize = 'silver'
+        elif silver < now <= bronze:
+            prize = 'bronze'
+        if prize:
+            tsdoc['prize'] = prize
+        ranked = tsdoc.get('ranked', True)
+        if ranked:
+            rank = now
+            now += 1
+        else:
+            rank = '*'
+        yield (rank, tsdoc)
+
+
 RULES = {
     RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
-                   _acm_stat, [('accept', -1), ('time', 1)], functools.partial(enumerate,
-                                                                               start=1)),
+                   _acm_stat, [('accept', -1), ('time', 1)], _acm_rank),
 }
 
 
