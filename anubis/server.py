@@ -63,7 +63,10 @@ def main():
         if not pid:
             break
         else:
-            atexit.register(lambda: os.kill(pid, signal.SIGTERM))
+            def kill():
+                os.kill(pid, signal.SIGTERM)
+            atexit.register(kill)
+            signal.signal(signal.SIGTERM, kill)
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
