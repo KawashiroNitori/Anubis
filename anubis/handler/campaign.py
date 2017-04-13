@@ -1,5 +1,6 @@
 import io
 import csv
+import math
 import functools
 import pytz
 import datetime
@@ -198,9 +199,13 @@ class CampaignManageHandler(base.OperationHandler, CampaignStatusMixin):
         sdict = {}
         for team in teams:
             students += team['members']
+        now = datetime.datetime.utcnow()
         for sdoc in await student.get_list(students):
-            sdict[sdoc['_id']] = sdoc
-            sdict[sdoc['_id']]['id_number'] = sdoc['id_number'][-6:]
+            sdict[sdoc['_id']] = {**sdoc,
+                                  'id_number': sdoc['id_number'][-6:]}
+            grade = int(math.ceil((now - datetime.datetime(sdoc['grade'], 8, 1)).days / 365.25))
+            if 1 <= grade <= 4:
+                sdict[sdoc['_id']]['grade_name'] = grade
         attended = bool(await campaign.get_team_by_uid(cid, self.user['_id']))
         admin = self.has_priv(builtin.PRIV_CREATE_CAMPAIGN)
 

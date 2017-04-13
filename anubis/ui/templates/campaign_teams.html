@@ -72,7 +72,13 @@
               </td>
               {% for member in team['members'] %}
               <td class="col--member">
+                {% if sdict[member]['grade_name'] %}
+                {% with grade = sdict[member]['grade_name'] %}
+                <span class="badge--{{ anubis.constant.campaign.GRADE_ID[grade] }}" >{{ _(anubis.constant.campaign.GRADE_NAME[grade]) }}</span>
+                {% endwith %}
+                {% endif %}
                 {{ sdict[member]['name'] }}
+
               </td>
               {% endfor %}
               {% for _ in range(3 - team['members']|length) %}

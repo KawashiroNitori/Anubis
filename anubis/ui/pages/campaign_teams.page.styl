@@ -1,19 +1,27 @@
 .page--campaign_teams
-  .badge--newbie
-    display: inline-block
-    font-size: rem(12px)
-    padding: rem(3px 4px)
-    line-height: 1
-    background-color: lightpink !important
-    color: white !important
+
+  for key, value in $badge-grade-color
+    .badge--{key}
+      display: inline-block
+      font-size: rem(12px)
+      padding: rem(3px 4px)
+      line-height: 1
+      background-color: value !important
+      color: white !important
+      
+      +mobile()
+        display: none
 
   .campaign-teams
     .col--checkbox
       width: 5%
 
     .col--id
-      width: 10%
+      width: rem(50px)
       text-align: right
+
+      +mobile()
+        display: none
 
     .col--name
       width: 35%
