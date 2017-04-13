@@ -149,7 +149,7 @@ async def update_user_for_teams(teams_list_or_tuple):
         extra_info = {'plain_pass': plain_pass,
                       'nickname': team_doc['team_name']}
         if not udoc:
-            await user.add(team_uname, plain_pass, '{0}@sut.edu.cn'.format(team_uname), **extra_info)
+            await user.add(team_uname, plain_pass, '{0}@acm.lab'.format(team_uname), **extra_info)
         else:
             await user.update(udoc['_id'], **extra_info)
             await user.set_password(udoc['_id'], plain_pass)
