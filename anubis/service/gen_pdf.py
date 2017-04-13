@@ -22,8 +22,8 @@ def gen_team_pdf(team_tuples: list):
         _reged = True
     buf = io.BytesIO()
     canv = canvas.Canvas(buf, pagesize=A4_TRANSVERSE)
-    style = ParagraphStyle(name='default', fontName='my_font', fontSize=options.options.fontsize,
-                           alignment=1, leading=options.options.fontsize * 1.2)
+    style = ParagraphStyle(name='default', fontName='my_font', fontSize=options.options.pdf_font_size,
+                           alignment=1, leading=options.options.pdf_font_size * 1.2)
     for index, team in team_tuples:
         paragraph = Paragraph('Team {0}<br />{1}'.format(index, team['team_name']), style)
         w, h = paragraph.wrap(A4_TRANSVERSE[0] - 100, A4_TRANSVERSE[1] - 100)
