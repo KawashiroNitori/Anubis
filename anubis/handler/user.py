@@ -47,21 +47,48 @@ class UserRegisterHandler(base.Handler):
     @base.require_priv(builtin.PRIV_REGISTER_USER)
     @base.limit_rate('user_register', 3600, 60)
     @base.post_argument
-    @base.require_csrf_token
     @base.sanitize
-    async def post(self, *, mail: str, uname: str, password: str, verify_password: str):
+    async def post(self, *, mail: str):
         validator.check_mail(mail)
-        validator.check_name(uname)
-        if re.fullmatch(r'^team\d+$', uname):
-            raise error.UserAlreadyExistError(uname)
         if await user.get_by_mail(mail):
             raise error.UserAlreadyExistError(mail)
-        if await user.get_by_uname(uname):
+        rid, _ = await token.add(token.TYPE_REGISTRATION,
+                                 options.options.registration_token_expire_seconds,
+                                 mail=mail)
+        await self.send_mail(mail, 'Sign Up', 'user_register_mail.html',
+                             url=self.reverse_url('user_register_with_code', code=rid))
+        self.render('user_register_mail_sent.html')
+
+
+@app.route('/register/{code}', 'user_register_with_code')
+class UserRegisterWithCodeHandler(base.Handler):
+    TITLE = 'user_register'
+
+    @base.require_priv(builtin.PRIV_REGISTER_USER)
+    @base.route_argument
+    @base.sanitize
+    async def get(self, *, code: str):
+        doc = await token.get(code, token.TYPE_REGISTRATION)
+        if not doc:
+            raise error.InvalidTokenError(token.TYPE_REGISTRATION, code)
+        self.render('user_register_with_code.html', mail=doc['mail'])
+
+    @base.require_priv(builtin.PRIV_REGISTER_USER)
+    @base.route_argument
+    @base.post_argument
+    @base.sanitize
+    async def post(self, *, code: str, uname: str, password: str, verify_password: str):
+        validator.check_uname(uname)
+        doc = await token.get(code, token.TYPE_REGISTRATION)
+        if not doc:
+            raise error.InvalidTokenError(token.TYPE_REGISTRATION, code)
+        if re.fullmatch(r'^team\d+$', uname) or await user.get_by_uname(uname):
             raise error.UserAlreadyExistError(uname)
         if password != verify_password:
             raise error.VerifyPasswordError()
-        uid = await user.add(uname, password, mail, self.remote_ip)
+        uid = await user.add(uname, password, doc['mail'], self.remote_ip)
         await domain.set_user_role(builtin.DOMAIN_ID_SYSTEM, uid, builtin.ROLE_DEFAULT)
+        await token.delete(code, token.TYPE_REGISTRATION)
         await self.update_session(new_saved=False, uid=uid)
         self.json_or_redirect(self.reverse_url('domain_main'))
 
