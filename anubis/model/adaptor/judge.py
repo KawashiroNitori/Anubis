@@ -25,8 +25,9 @@ async def post_judge(rdoc):
         if not rdoc.get('rejudged'):
             if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
                                            rdoc['_id'], rdoc['status']):
-                post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))
-                post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'], num_accept=1))
+                if accept:
+                    post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))
+                    post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'], num_accept=1))
         else:
             await job.record.user_in_problem(rdoc['uid'], rdoc['domain_id'], rdoc['pid'])
     await asyncio.gather(*post_coros)
