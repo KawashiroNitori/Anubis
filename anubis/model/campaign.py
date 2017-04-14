@@ -1,4 +1,5 @@
 import datetime
+import asyncio
 
 from pymongo import errors
 from pymongo import ReturnDocument
@@ -136,7 +137,21 @@ async def attend(campaign_id: str, uid: int, mail: str, tel: str, team_name: str
         raise error.CampaignTeamAlreadyExistError(members, team_name)
 
 
+async def update_user_for_team(team_uname: str, team_name: str):
+    udoc = await user.get_by_uname(team_uname)
+    plain_pass = pwhash.gen_password()
+    extra_info = {'plain_pass': plain_pass,
+                  'nickname': team_name,
+                  'reg_at': datetime.datetime.utcnow()}
+    if not udoc:
+        await user.add(team_uname, plain_pass, '{0}@acm.lab'.format(team_uname), **extra_info)
+    else:
+        await user.update(udoc['_id'], **extra_info)
+        await user.set_password(udoc['_id'], plain_pass)
+
+
 async def update_user_for_teams(teams_list_or_tuple):
+    coros = []
     for index, team in enumerate(teams_list_or_tuple, 1):
         if isinstance(team, tuple):
             team_uname = team[0]
@@ -144,15 +159,9 @@ async def update_user_for_teams(teams_list_or_tuple):
         else:
             team_uname = 'team{0}'.format(index)
             team_doc = team
-        udoc = await user.get_by_uname(team_uname)
-        plain_pass = pwhash.gen_password()
-        extra_info = {'plain_pass': plain_pass,
-                      'nickname': team_doc['team_name']}
-        if not udoc:
-            await user.add(team_uname, plain_pass, '{0}@acm.lab'.format(team_uname), **extra_info)
-        else:
-            await user.update(udoc['_id'], **extra_info)
-            await user.set_password(udoc['_id'], plain_pass)
+        coros.append(update_user_for_team(team_uname, team_doc['team_name']))
+
+    await asyncio.gather(*coros)
 
 
 async def attend_contest_for_teams(team_unames, domain_id: str, tid: int):
