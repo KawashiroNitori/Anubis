@@ -265,7 +265,10 @@ class ProblemDataHandler(base.Handler):
             and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
             self.check_priv(builtin.PERM_READ_PROBLEM_DATA)
         grid_out = await problem.get_data(self.domain_id, pid)
+        await self.binary(json.encode(grid_out).encode('utf8'), 'application/json',
+                          filename='data_{0}.json'.format(pid))
 
+        """
         self.response.content_type = grid_out.content_type or 'application/zip'
         self.response.last_modified = grid_out.update_date
         self.response.headers['Etag'] = '"{0}"'.format(grid_out.md5)
@@ -285,6 +288,7 @@ class ProblemDataHandler(base.Handler):
                 self.response.write(chunk[:remaining])
                 await self.response.drain()
             await self.response.write_eof()
+        """
     head = functools.partialmethod(stream_data, headers_only=True)
     get = stream_data
 
