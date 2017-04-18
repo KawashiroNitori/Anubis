@@ -265,7 +265,7 @@ class ProblemDataHandler(base.Handler):
             and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
             self.check_priv(builtin.PERM_READ_PROBLEM_DATA)
         grid_out = await problem.get_data(self.domain_id, pid)
-        await self.binary(json.encode(grid_out).encode('utf8'), 'application/json',
+        await self.binary(json.encode(grid_out['data']).encode('utf8'), 'application/json',
                           filename='data_{0}.json'.format(pid))
 
         """
