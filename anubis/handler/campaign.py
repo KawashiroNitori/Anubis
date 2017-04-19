@@ -250,14 +250,20 @@ class CampaignTeamPasswordHandler(base.Handler):
     @base.sanitize
     async def get(self, *, cid: str):
         teams = await campaign.get_list_team(cid)
+
         team_unames = ['team{0}'.format(i) for i in range(1, len(teams) + 1)]
         udocs = await user.get_multi(uname={'$in': team_unames}, fields={'uname': 1,
                                                                          'plain_pass': 1,
                                                                          'nickname': 1}).to_list(None)
+        udict = {}
+        for udoc in udocs:
+            udict[udoc['uname']] = udoc
         output_buffer = io.StringIO()
         reader = csv.writer(output_buffer)
-        for index, udoc in enumerate(udocs):
-            reader.writerow([udoc['uname'], teams[index]['team_name'], udoc['plain_pass']])
+        for index, team_uname in enumerate(team_unames):
+            reader.writerow([udict[team_uname]['uname'],
+                             teams[index]['team_name'],
+                             udict[team_uname]['plain_pass']])
 
         await self.binary(b'\xef\xbb\xbf' + output_buffer.getvalue().encode('utf8'), 'application/csv',
                           filename='password_{0}.csv'.format(cid))
