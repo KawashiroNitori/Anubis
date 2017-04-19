@@ -270,7 +270,7 @@ async def update_status(domain_id: str, tid: int, uid: int, rid: objectid.Object
     for detail in tsdoc.get('detail', []):
         psdict[detail['pid']] = detail
     for detail in tsdoc.get('detail', []):
-        detail['balloon'] = psdict.get(detail['pid'], {'balloon': False})['balloon']
+        detail['balloon'] = psdict.get(detail['pid'], {'balloon': False}).get('balloon', False)
     tsdoc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                    'tid': tid,
                                                    'uid': uid},
