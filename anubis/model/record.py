@@ -101,7 +101,7 @@ async def rejudge_all():
 
 @argmethod.wrap
 async def rejudge_for_contest(domain_id: str, tid: int):
-    async for rdoc in get_multi(domain_id=domain_id, tid=tid):
+    async for rdoc in get_multi(domain_id=domain_id, tid=tid, type=constant.record.TYPE_SUBMISSION):
         await rejudge(rdoc['_id'])
 
 
