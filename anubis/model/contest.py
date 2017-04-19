@@ -269,12 +269,12 @@ async def update_status(domain_id: str, tid: int, uid: int, rid: objectid.Object
     psdict = {}
     for detail in tsdoc.get('detail', []):
         psdict[detail['pid']] = detail
-    for detail in tsdoc.get('detail', []):
+    for detail in stats.get('detail', []):
         detail['balloon'] = psdict.get(detail['pid'], {'balloon': False}).get('balloon', False)
     tsdoc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                    'tid': tid,
                                                    'uid': uid},
-                                           update={'$set': {'journal': journal, **stats, **tsdoc},
+                                           update={'$set': {'journal': journal, **stats},
                                                    '$inc': {'rev': 1}},
                                            return_document=ReturnDocument.AFTER)
     if accept and not psdict.get(pid, {'accept': False})['accept']:
