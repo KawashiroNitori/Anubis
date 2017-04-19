@@ -32,8 +32,9 @@ def gen_salt(byte_length: int=20):
 
 
 @argmethod.wrap
-def gen_password(length: int=16):
-    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
+def gen_password(length: int=10):
+    seq = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ1234567890'
+    return ''.join(random.choice(seq) for _ in range(length))
 
 
 @argmethod.wrap
