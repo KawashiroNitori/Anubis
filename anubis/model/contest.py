@@ -267,9 +267,9 @@ async def update_status(domain_id: str, tid: int, uid: int, rid: objectid.Object
                for _, g in itertools.groupby(sorted(tsdoc['journal'], key=key_func), key=key_func)]
     stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
     psdict = {}
-    for detail in tsdoc['detail']:
+    for detail in tsdoc.get('detail', []):
         psdict[detail['pid']] = detail
-    for detail in stats['detail']:
+    for detail in tsdoc.get('detail', []):
         detail['balloon'] = psdict.get(detail['pid'], {'balloon': False})['balloon']
     tsdoc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                    'tid': tid,

@@ -357,6 +357,8 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
         rid = await record.add(self.domain_id, pdoc['_id'], constant.record.TYPE_SUBMISSION,
                                self.user['_id'], lang, code, tid=tdoc['_id'], hidden=True)
         # here is a update status.
+        # await contest.update_status(self.domain_id, tdoc['_id'], self.user['_id'],
+        #                             rid, pdoc['_id'], False, 0)
         if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
                 and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
             self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['_id']))

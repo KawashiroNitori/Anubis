@@ -5,6 +5,7 @@ from bson import objectid
 from anubis import db
 from anubis import constant
 from anubis.model import problem
+from anubis.model import contest
 from anubis.model import domain
 from anubis.model import queue
 from anubis.service import bus
@@ -96,6 +97,12 @@ async def rejudge_all():
     records = await coll.find().to_list(None)
     for record in records:
         await rejudge(record['_id'])
+
+
+@argmethod.wrap
+async def rejudge_for_contest(domain_id: str, tid: int):
+    async for rdoc in get_multi(domain_id=domain_id, tid=tid):
+        await rejudge(rdoc['_id'])
 
 
 @argmethod.wrap
