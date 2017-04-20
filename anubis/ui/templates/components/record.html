@@ -2,7 +2,7 @@
 <td class="col--status record-status--border {{ anubis.constant.record.STATUS_CODES[rdoc['status']] }}">
   <div class="col--status__text">
     <span class="icon record-status--icon {{ anubis.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
-    <a href="{{ reverse_url('record_detail', rid=rdoc[rid_key], domain_id=rdoc['domain_id']) }}" class="record-status--text {{ anubis.constant.record.STATUS_CODES[rdoc['status']] }}">
+    <a href="{{ reverse_url('record_detail', rid=rdoc[rid_key], domain_id=rdoc['domain_id']) }}" class="record-status--text {{ anubis.constant.record.STATUS_CODES[rdoc['status']] }}" target="_blank">
       {{ anubis.constant.record.STATUS_TEXTS[rdoc['status']] }}
     </a>
   </div>
