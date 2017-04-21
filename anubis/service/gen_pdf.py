@@ -26,7 +26,7 @@ def gen_team_pdf(team_tuples: list):
                            alignment=1, leading=options.options.pdf_font_size * 1.2)
     for index, team in team_tuples:
         paragraph = Paragraph('Team {0}<br />{1}'.format(index, team['team_name']), style)
-        w, h = paragraph.wrap(A4_TRANSVERSE[0] - 100, A4_TRANSVERSE[1] - 100)
+        w, h = paragraph.wrap(A4_TRANSVERSE[0] - 50, A4_TRANSVERSE[1] - 50)
         paragraph.drawOn(canv, (A4_TRANSVERSE[0] - w) / 2, (A4_TRANSVERSE[1] - h) / 2)
         canv.showPage()
 
