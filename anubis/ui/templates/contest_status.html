@@ -1,5 +1,10 @@
 {% extends "layout/basic.html" %}
 {% block content %}
+<script>
+  var Context = {{ {
+    'tid': tdoc['_id'],
+  }|json|safe }};
+</script>
 <div class="row"><div class="medium-12 columns">
   <div class="section">
     <div class="section__body no-padding">

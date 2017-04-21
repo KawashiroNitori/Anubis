@@ -292,7 +292,7 @@ class ContestNotificationConnection(base.Connection, ContestStatusMixin):
         bus.subscribe(self.on_notification, ['contest_notification-' + str(tid)])
 
     async def on_notification(self, e):
-        self.send(**e['value'])
+        self.send(**json.decode(e['value']))
 
     async def on_close(self):
         bus.unsubscribe(self.on_notification)

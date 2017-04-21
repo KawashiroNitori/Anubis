@@ -277,6 +277,7 @@ async def update_status(domain_id: str, tid: int, uid: int, rid: objectid.Object
                                            update={'$set': {'journal': journal, **stats},
                                                    '$inc': {'rev': 1}},
                                            return_document=ReturnDocument.AFTER)
+    await bus.publish('contest_notification-' + str(tid), json.encode({'type': 'rank_changed'}))
     if accept and not psdict.get(pid, {'accept': False})['accept']:
         await set_status_balloon(domain_id, tid, uid, pid, False)
     return tsdoc
