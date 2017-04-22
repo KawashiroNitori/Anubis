@@ -287,8 +287,6 @@ class ContestNotificationConnection(base.Connection, ContestStatusMixin):
         if self.is_done(tdoc):
             raise error.ContestNotLiveError(tid)
         tsdoc = await contest.get_status(self.domain_id, tid, self.user['_id'])
-        if not tsdoc or tsdoc.get('attend') != 1:
-            raise error.ContestNotAttendedError(tid)
         bus.subscribe(self.on_notification, ['contest_notification-' + str(tid)])
 
     async def on_notification(self, e):
