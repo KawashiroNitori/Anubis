@@ -85,7 +85,7 @@
         <span class="icon icon-edit"></span> {{ _('Edit') }}
       </a></li>
       {% endif %}
-      {% if handler.has_perm(anubis.model.builtin.PERM_SEND_CONTEST_BALLOON) %}
+      {% if handler.has_perm(anubis.model.builtin.PERM_SEND_CONTEST_BALLOON) or handler.has_priv(anubis.model.builtin.PRIV_SEND_CONTEST_BALLOON) %}
       <li class="menu__item"><a class="menu__link{% if page_name == 'contest_balloon' %} active{% endif %}" href="{{ reverse_url('contest_balloon', tid=tdoc['_id']) }}">
         <span class="icon icon-balloon"></span> {{ _('Balloon') }}
       </a></li>
