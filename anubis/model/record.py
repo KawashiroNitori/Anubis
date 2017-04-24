@@ -106,6 +106,12 @@ async def rejudge_for_contest(domain_id: str, tid: int):
 
 
 @argmethod.wrap
+async def rejudge_problem_for_contest(domain_id: str, tid: int, pid: int):
+    async for rdoc in get_multi(domain_id=domain_id, tid=tid, pid=pid, type=constant.record.TYPE_SUBMISSION):
+        await rejudge(rdoc['_id'])
+
+
+@argmethod.wrap
 def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, projection=None, **kwargs):
     coll = db.Collection('record')
     query = {**kwargs, 'hidden': False if not get_hidden else {'$gte': False}}
