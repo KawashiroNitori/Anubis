@@ -99,4 +99,4 @@ pm anubis.model.user add 2 judge 123456 judge@example.org
 pm anubis.model.user set_judge 2
 ```
 
-* See https://github.com/KawashiroNitori/YamaJudge for more details about the judge daemon.
+* See [YamaJudge](https://github.com/KawashiroNitori/YamaJudge) for more details about the judge daemon.
