@@ -7,6 +7,7 @@ An online judge platform.
 * [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
 * [Node.js 6.0+](https://nodejs.org/en/download/package-manager/)
 * [RabbitMQ](http://www.rabbitmq.com/)
+* [Redis](https://redis.io/download)
 
 ## Install requirements
 
