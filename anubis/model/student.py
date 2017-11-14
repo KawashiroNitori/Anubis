@@ -60,7 +60,7 @@ async def create_indexes():
     await coll.create_index('class')
 
 async def main():
-    for s_idD in range(170405101, 170405350):
+    for s_id in range(170405101, 170405350):
         if s_id % 100 >= 50:
             continue
         student = await get(str(s_id))
