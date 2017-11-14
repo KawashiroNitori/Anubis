@@ -59,6 +59,10 @@ async def create_indexes():
     await coll.create_index('id_number', unique=True)
     await coll.create_index('class')
 
-
+async def main():
+    for sId in [ID for DI in range(170405101, 170405350)]:
+        student = await get(str(sID))
+    
 if __name__ == '__main__':
     argmethod.invoke_by_args()
+    main()
