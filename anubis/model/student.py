@@ -60,17 +60,19 @@ async def create_indexes():
     await coll.create_index('class')
 
 async def main():
-    # 计算机
-    for sId in (ID for ID in range(170405101, 170405350)):
-        student = await get(str(sID))
-    # 软工
-    for sID in (ID  for ID in range(171203101, 171203850)):
-        student = await get(str(sId))
-    # 软件
-    for sId in (ID for ID in range(171201101, 171201650)):
-        student = await get(str(sId))
+    for s_id in (ID for ID in range(170405101, 170405350)):
+        if s_id % 100 >= 50:
+            continue
+        student = await get(str(s_id))
+    for s_id in (ID  for ID in range(171203101, 171203850)):
+        if s_id % 100 >= 50:
+            continue
+        student = await get(str(s_id))
+    for s_id in (ID for ID in range(171201101, 171201650)):
+        if s_id % 100 >= 50:
+            continue
+        student = await get(str(s_id))
 
     
 if __name__ == '__main__':
     argmethod.invoke_by_args()
-    main()
