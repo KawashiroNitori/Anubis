@@ -207,8 +207,8 @@ class ContestBalloonHandler(base.OperationHandler, ContestStatusMixin):
     @base.sanitize
     async def get(self, *, tid: int):
         tdocs = await contest.get_multi(self.domain_id, **{'begin_at': {'$lte': self.now},
-                                                           'end_at': {'$gt': self.now}},
-                                        projection={'_id': True}).to_list(None)
+                                                           'end_at': {'$gt': self.now}}).to_list(None)
+        tdocs_dict = {tdoc['_id']: tdoc for tdoc in tdocs}
         tids = [tdoc['_id'] for tdoc in tdocs]
         query = {'domain_id': self.domain_id,
                  'tid': {'$in': list(set(tids))},
@@ -230,7 +230,7 @@ class ContestBalloonHandler(base.OperationHandler, ContestStatusMixin):
         for balloon in balloons:
             balloon.update({'uname': udict[balloon['uid']]['uname'],
                             'nickname': udict[balloon['uid']].get('nickname', ''),
-                            'letter': contest.convert_to_letter(tdoc['pids'], balloon['pid'])})
+                            'letter': contest.convert_to_letter(tdocs_dict[balloon['tid']]['pids'], balloon['pid'])})
         if not self.prefer_json:
             path_components = self.build_path(
                 (self.translate('contest_main'), self.reverse_url('contest_main')),
