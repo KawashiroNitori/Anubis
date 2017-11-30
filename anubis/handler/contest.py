@@ -160,14 +160,14 @@ class ContestCodeHandler(base.OperationHandler):
         zip_file = zipfile.ZipFile(output_buffer, 'w', zipfile.ZIP_DEFLATED)
         rdocs = record.get_multi(get_hidden=True, _id={'$in': list(rnames.keys())})
         async for rdoc in rdocs:
-            zip_file.writestr(rnames[rdoc['_id']] + '.' + rdoc['lang'], rdoc['code'])
+            zip_file.writestr('{}.{}'.format(rnames[rdoc['_id']], rdoc['lang']), rdoc['code'])
         for zfile in zip_file.filelist:
             zfile.create_system = 0
         zip_file.close()
 
         await self.binary(output_buffer.getvalue(),
                           'application/zip',
-                          filename='{0}_{1}.zip'.format(tdoc['_id'], tdoc['title']))
+                          filename='{}_{}.zip'.format(tdoc['_id'], tdoc['title']))
 
 
 @app.route('/contest/{tid:\d{4,}}/{letter:[A-Z]}', 'contest_detail_problem')
