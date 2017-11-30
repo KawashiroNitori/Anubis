@@ -152,7 +152,10 @@ class ContestCodeHandler(base.OperationHandler):
         rnames = {}
         for tsdoc in tsdocs:
             for pdetail in tsdoc.get('detail', []):
-                rnames[pdetail['rid']] = 'U{}_P{}_R{}'.format(tsdoc['uid'], pdetail['pid'], pdetail['rid'])
+                udoc = await user.get_by_uid(tsdoc['uid'])
+                rnames[pdetail['rid']] = '{}/{}_{}'.format(contest.convert_to_letter(tdoc['pids'], pdetail['pid']),
+                                                           udoc['uname'],
+                                                           pdetail['rid'])
         output_buffer = io.BytesIO()
         zip_file = zipfile.ZipFile(output_buffer, 'w', zipfile.ZIP_DEFLATED)
         rdocs = record.get_multi(get_hidden=True, _id={'$in': list(rnames.keys())})
@@ -162,7 +165,9 @@ class ContestCodeHandler(base.OperationHandler):
             zfile.create_system = 0
         zip_file.close()
 
-        await self.binary(output_buffer.getvalue(), 'application/zip')
+        await self.binary(output_buffer.getvalue(),
+                          'application/zip',
+                          filename='{0}_{1}.zip'.format(tdoc['_id'], tdoc['title']))
 
 
 @app.route('/contest/{tid:\d{4,}}/{letter:[A-Z]}', 'contest_detail_problem')
