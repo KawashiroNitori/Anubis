@@ -154,7 +154,7 @@ class ContestCodeHandler(base.OperationHandler):
             for pdetail in tsdoc.get('detail', []):
                 rnames[pdetail['rid']] = 'U{}_P{}_R{}'.format(tsdoc['uid'], pdetail['pid'], pdetail['rid'])
         output_buffer = io.BytesIO()
-        zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
+        zip_file = zipfile.ZipFile(output_buffer, 'w', zipfile.ZIP_DEFLATED)
         rdocs = record.get_multi(get_hidden=True, _id={'$in': list(rnames.keys())})
         async for rdoc in rdocs:
             zip_file.writestr(rnames[rdoc['_id']] + '.' + rdoc['lang'], rdoc['code'])

@@ -121,8 +121,9 @@ def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, pro
 
 
 @argmethod.wrap
-def get_multi(projection=None, **kwargs):
+def get_multi(get_hidden: bool=False, projection=None, **kwargs):
     coll = db.Collection('record')
+    kwargs['hidden'] = False if not get_hidden else {'$gte': False}
     return coll.find(kwargs, projection=projection)
 
 
