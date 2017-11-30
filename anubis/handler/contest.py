@@ -151,8 +151,8 @@ class ContestCodeHandler(base.OperationHandler):
         tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
         rnames = {}
         for tsdoc in tsdocs:
+            udoc = await user.get_by_uid(tsdoc['uid'])
             for pdetail in tsdoc.get('detail', []):
-                udoc = await user.get_by_uid(tsdoc['uid'])
                 rnames[pdetail['rid']] = '{}/{}_{}'.format(contest.convert_to_letter(tdoc['pids'], pdetail['pid']),
                                                            udoc['uname'],
                                                            pdetail['rid'])
