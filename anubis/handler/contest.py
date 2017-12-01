@@ -3,7 +3,6 @@ import calendar
 import datetime
 import functools
 import io
-import logging
 import pytz
 import zipfile
 from bson import objectid
@@ -23,8 +22,6 @@ from anubis.util import pagination
 from anubis.util import json
 from anubis.util.orderedset import OrderedSet
 from anubis.service import bus
-
-_logger = logging.getLogger(__name__)
 
 
 class ContestStatusMixin(object):
@@ -105,7 +102,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
             attended = tsdoc.get('attend') == 1
             for pdetail in tsdoc.get('detail', []):
                 psdict[pdetail['pid']] = pdetail
-            rdict = await record.get_dict(psdoc['rid'] for psdoc in psdict.values())
+            rdict = await record.get_dict([psdoc['rid'] for psdoc in psdict.values()], get_hidden=True)
         else:
             attended = False
         # discussion
@@ -122,7 +119,6 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
             (self.translate('contest_main'), self.reverse_url('contest_main')),
             (tdoc['title'], None)
         )
-        _logger.info(json.encode(rdict))
         self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udict=udict,
                     pdict=pdict, psdict=psdict, rdict=rdict,
                     ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount,
