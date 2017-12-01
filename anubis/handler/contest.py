@@ -102,7 +102,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
             attended = tsdoc.get('attend') == 1
             for pdetail in tsdoc.get('detail', []):
                 psdict[pdetail['pid']] = pdetail
-            rdict = await record.get_dict(psdoc['rid'] for psdoc in psdict.values())
+            rdict = await record.get_dict([psdoc['rid'] for psdoc in psdict.values()], get_hidden=True)
         else:
             attended = False
         # discussion
