@@ -119,6 +119,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
             (self.translate('contest_main'), self.reverse_url('contest_main')),
             (tdoc['title'], None)
         )
+        print(rdict)
         self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udict=udict,
                     pdict=pdict, psdict=psdict, rdict=rdict,
                     ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount,
