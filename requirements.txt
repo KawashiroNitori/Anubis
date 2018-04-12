@@ -16,5 +16,6 @@ hoedown
 httpagentparser
 bs4
 Pillow
+pycrypto
 pyocr
 reportlab

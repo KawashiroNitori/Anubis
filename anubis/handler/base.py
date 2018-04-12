@@ -1,3 +1,5 @@
+import base64
+
 import accept
 import asyncio
 import calendar
@@ -7,6 +9,8 @@ import logging
 import markupsafe
 import pytz
 import sockjs
+import time
+import traceback
 from aiohttp import web
 from email import utils
 
@@ -20,6 +24,7 @@ from anubis.model import domain
 from anubis.model import opcount
 from anubis.model.adaptor import setting
 from anubis.service import mailer
+from anubis.util import cipher
 from anubis.util import json
 from anubis.util import locale
 from anubis.util import options
@@ -217,7 +222,22 @@ class Handler(web.View, HandlerBase):
         except Exception as e:
             _logger.error('Unexpected exception occurred when handling %s (IP = %s, UID = %d): %s',
                           self.url, self.remote_ip, self.user['_id'] or None, repr(e))
-            raise
+            if options.options.debug:
+                raise
+            body = yield from self.request.read()
+            error_info = dict(
+                url=self.url,
+                method=self.request.method,
+                remote_ip=self.remote_ip,
+                uid=self.user['_id'],
+                time=int(time.time()),
+                headers=list(self.request.headers.items()),
+                body=base64.b64encode(body).decode('utf8'),
+                exc_stack=traceback.format_exc(),
+            )
+            error_json = json.encode(error_info)
+            error_message = cipher.encrypt(error_json.encode('utf8'))
+            self.render('500.html', error_message=error_message)
         return self.response
 
     def render(self, template_name, **kwargs):
