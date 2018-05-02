@@ -11,10 +11,10 @@ An online judge platform.
 
 ## Install requirements
 
-In the root of the repository, where `requirements.txt` and `package.json` locates:
+In the root of the repository, where `Pipfile` and `package.json` locates:
 
 ```bash
-python3 -m pip install -r requirements.txt
+pipenv install  # You may have to install pipenv
 npm install   # cnpm install
 ```
 

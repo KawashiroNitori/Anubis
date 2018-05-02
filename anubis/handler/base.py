@@ -203,12 +203,12 @@ class HandlerBase(setting.SettingMixin):
 
 
 class Handler(web.View, HandlerBase):
-    @asyncio.coroutine
-    def __iter__(self):
+
+    async def _iter(self):
         try:
             self.response = web.Response()
-            yield from HandlerBase.prepare(self)
-            yield from super(Handler, self).__iter__()
+            await HandlerBase.prepare(self)
+            await super(Handler, self)._iter()
         except error.UserFacingError as e:
             _logger.warning('User facing error: %s', repr(e))
             self.response.set_status(e.http_status, None)
@@ -224,7 +224,7 @@ class Handler(web.View, HandlerBase):
                           self.url, self.remote_ip, self.user['_id'] or None, repr(e))
             if options.options.debug:
                 raise
-            body = yield from self.request.read()
+            body = await self.request.read()
             error_info = dict(
                 url=self.url,
                 method=self.request.method,
@@ -347,10 +347,12 @@ def _reverse_url(name, *, domain_id, **kwargs):
     if domain_id != builtin.DOMAIN_ID_SYSTEM:
         name += '_with_domain_id'
         kwargs['domain_id'] = domain_id
+    for k, v in kwargs.items():
+        kwargs[k] = str(v)
     if kwargs:
-        return app.Application().router[name].url(parts=kwargs)
+        return str(app.Application().router[name].url_for(**kwargs))
     else:
-        return app.Application().router[name].url()
+        return str(app.Application().router[name].url_for())
 
 
 @functools.lru_cache()
@@ -419,14 +421,14 @@ def route_argument(func):
 def get_argument(func):
     @functools.wraps(func)
     def wrapped(self, **kwargs):
-        return func(self, **kwargs, **self.request.GET)
+        return func(self, **kwargs, **self.request.query)
     return wrapped
 
 
 def post_argument(func):
     @functools.wraps(func)
     async def wrapped(self, **kwargs):
-        return await func(self, **kwargs, **dict(await self.request.post()))
+        return await func(self, **kwargs, **await self.request.post())
     return wrapped
 
 

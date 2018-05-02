@@ -1,5 +1,4 @@
 import logging
-import asyncio
 import logging.config
 import os
 import sys
@@ -7,6 +6,7 @@ import socket
 import urllib.parse
 import atexit
 import signal
+from aiohttp import web
 
 from anubis.util import options
 from anubis import app
@@ -68,10 +68,8 @@ def main():
             atexit.register(kill)
             signal.signal(signal.SIGTERM, kill)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
-    _logger.info('Server listening on %s', options.options.listen)
-    loop.run_forever()
+    web.run_app(app.Application(), sock=sock, access_log=None, shutdown_timeout=0)
+
 
 if __name__ == '__main__':
     sys.exit(main())

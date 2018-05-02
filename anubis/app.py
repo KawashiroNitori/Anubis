@@ -41,10 +41,8 @@ class Application(web.Application):
         locale.load_translations(translation_path)
         # TODO: Add small cache.
         # TODO: Add Message Queue Register.
-        self.loop.run_until_complete(asyncio.gather(
-            tools.create_all_indexes(),
-            bus.init()
-        ))
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(asyncio.gather(tools.create_all_indexes(), bus.init()))
 
         from anubis.handler import domain
         from anubis.handler import user
@@ -95,8 +93,11 @@ def connection_route(prefix, name):
                                               timeout=self.timeout, loop=self.loop, debug=self.debug))
                 return self[id]
 
+        loop = asyncio.get_event_loop()
         sockjs.add_endpoint(Application(), handler, name=name, prefix=prefix,
-                            manager=Manager(name, Application(), handler, Application().loop))
+                            manager=Manager(name, Application(), handler, loop))
+        sockjs.add_endpoint(Application(), handler, name=name + '_with_domain_id', prefix='/d/{domain_id}' + prefix,
+                            manager=Manager(name + '_with_domain_id', Application(), handler, loop))
 
         return conn
     return decorate
