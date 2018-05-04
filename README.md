@@ -46,6 +46,7 @@ You may also want to install [libmaxminddb](https://github.com/maxmind/libmaxmin
 In the root of the repository:
 
 ```bash
+npm run generate
 npm run build   # or: npm run build:watch
 python3 -m anubis.server --debug
 ```
