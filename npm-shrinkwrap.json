@@ -1086,8 +1086,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -3021,7 +3021,7 @@
       "dependencies": {
         "graceful-fs": {
           "version": "4.1.11",
-          "from": "graceful-fs@>=4.1.2 <5.0.0",
+          "from": "graceful-fs@^4.1.2",
           "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.1.11.tgz",
           "dev": true
         }
@@ -3269,7 +3269,7 @@
     },
     "gulp-iconfont": {
       "version": "8.0.1",
-      "from": "gulp-iconfont@>=8.0.1 <9.0.0",
+      "from": "gulp-iconfont@8.0.1",
       "resolved": "https://registry.npm.taobao.org/gulp-iconfont/download/gulp-iconfont-8.0.1.tgz",
       "dev": true
     },
@@ -3409,8 +3409,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -3429,8 +3429,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -3455,8 +3455,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -3475,8 +3475,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -3495,8 +3495,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -4296,8 +4296,8 @@
       "dependencies": {
         "lodash.keys": {
           "version": "2.4.1",
-          "from": "lodash.keys@>=2.4.1 <2.5.0",
-          "resolved": "https://registry.npm.taobao.org/lodash.keys/download/lodash.keys-2.4.1.tgz",
+          "from": "lodash.keys@~2.4.1",
+          "resolved": "https://registry.npmjs.org/lodash.keys/-/lodash.keys-2.4.1.tgz",
           "dev": true
         }
       }
@@ -4357,8 +4357,8 @@
       "dependencies": {
         "lodash.keys": {
           "version": "2.4.1",
-          "from": "lodash.keys@>=2.4.1 <2.5.0",
-          "resolved": "https://registry.npm.taobao.org/lodash.keys/download/lodash.keys-2.4.1.tgz",
+          "from": "lodash.keys@~2.4.1",
+          "resolved": "https://registry.npmjs.org/lodash.keys/-/lodash.keys-2.4.1.tgz",
           "dev": true
         }
       }
@@ -4497,8 +4497,8 @@
       "dependencies": {
         "lodash.keys": {
           "version": "2.4.1",
-          "from": "lodash.keys@>=2.4.1 <2.5.0",
-          "resolved": "https://registry.npm.taobao.org/lodash.keys/download/lodash.keys-2.4.1.tgz",
+          "from": "lodash.keys@~2.4.1",
+          "resolved": "https://registry.npmjs.org/lodash.keys/-/lodash.keys-2.4.1.tgz",
           "dev": true
         }
       }
@@ -4715,9 +4715,9 @@
       "dev": true
     },
     "nan": {
-      "version": "2.5.1",
+      "version": "2.10.0",
       "from": "nan@>=2.4.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/nan/-/nan-2.5.1.tgz",
+      "resolved": "https://registry.npmjs.org/nan/-/nan-2.10.0.tgz",
       "dev": true
     },
     "natives": {
@@ -4866,7 +4866,7 @@
     },
     "oauth-sign": {
       "version": "0.8.2",
-      "from": "oauth-sign@>=0.8.1 <0.9.0",
+      "from": "oauth-sign@>=0.8.2 <0.9.0",
       "resolved": "https://registry.npm.taobao.org/oauth-sign/download/oauth-sign-0.8.2.tgz",
       "dev": true
     },
@@ -5108,8 +5108,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -6025,8 +6025,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -6069,7 +6069,7 @@
     },
     "stringstream": {
       "version": "0.0.5",
-      "from": "stringstream@>=0.0.4 <0.1.0",
+      "from": "stringstream@>=0.0.5 <0.1.0",
       "resolved": "https://registry.npm.taobao.org/stringstream/download/stringstream-0.0.5.tgz",
       "dev": true
     },
@@ -6149,14 +6149,14 @@
     },
     "svg-pathdata": {
       "version": "1.0.4",
-      "from": "svg-pathdata@>=1.0.3 <2.0.0",
+      "from": "svg-pathdata@>=1.0.4 <2.0.0",
       "resolved": "https://registry.npmjs.org/svg-pathdata/-/svg-pathdata-1.0.4.tgz",
       "dev": true,
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
@@ -6181,8 +6181,8 @@
       "dependencies": {
         "isarray": {
           "version": "1.0.0",
-          "from": "isarray@>=1.0.0 <1.1.0",
-          "resolved": "https://registry.npm.taobao.org/isarray/download/isarray-1.0.0.tgz",
+          "from": "isarray@~1.0.0",
+          "resolved": "https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz",
           "dev": true
         },
         "readable-stream": {
