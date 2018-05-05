@@ -1,5 +1,9 @@
 import base64
+import json
 import os
+import pprint
+import sys
+import traceback
 
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -35,3 +39,37 @@ def encrypt(plain: bytes):
 
     result = base64.b64encode(encrypted_aes + encrypted_plain).decode('utf8')
     return result
+
+
+def decrypt(b64_cipher: str, priv_key: str):
+    priv_key = RSA.importKey(priv_key)
+    cipher = base64.b64decode(b64_cipher)
+    encrypted_aes_iv = cipher[:256]
+    encrypted_plain = cipher[256:]
+
+    aes_iv = priv_key.decrypt(encrypted_aes_iv)
+    iv = aes_iv[:AES.block_size]
+    aes_key = aes_iv[AES.block_size:]
+    aes = AES.new(aes_key, AES.MODE_CBC, iv)
+    plain = aes.decrypt(encrypted_plain)
+    # remove padding
+    plain = plain[:-plain[-1]].decode('utf8')
+    return plain
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print('{0}: Need private key file.'.format(sys.argv[0]))
+        exit(1)
+    priv_file = open(sys.argv[1])
+    priv_key = priv_file.read()
+    priv_file.close()
+    try:
+        cipher = input()
+        plain = decrypt(cipher, priv_key)
+        info = json.loads(plain)
+        pprint.pprint(info)
+        print('\nTrackback:')
+        print(info['exc_stack'])
+    except Exception as e:
+        traceback.print_exc()
