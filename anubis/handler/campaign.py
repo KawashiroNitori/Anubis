@@ -123,8 +123,9 @@ class CampaignAttendHandler(base.Handler, CampaignStatusMixin):
         validator.check_mail(mail)
         validator.check_tel(tel)
         validator.check_team_name(team_name)
-        members = list(zip(self.request.POST.getall('member_id'),
-                           self.request.POST.getall('member_id_number')))
+        data = await self.request.post()
+        members = list(zip(data.getall('member_id'),
+                           data.getall('member_id_number')))
         if len(members) > 3 or len(members) < 1:
             raise error.ValidationError('members')
         cdoc = await campaign.get(cid)
@@ -225,8 +226,9 @@ class CampaignManageHandler(base.OperationHandler, CampaignStatusMixin):
     @base.sanitize
     @base.require_csrf_token
     async def post_update_user(self, *, cid: str, team_id: objectid.ObjectId, team_num: int):
-        team_ids = [objectid.ObjectId(team_id) for team_id in self.request.POST.getall('team_id')]
-        team_nums = self.request.POST.getall('team_num')
+        data = await self.request.post()
+        team_ids = [objectid.ObjectId(team_id) for team_id in data.getall('team_id')]
+        team_nums = data.getall('team_num')
         teams = await campaign.get_multi_team(_id={'$in': list(set(team_ids))}).to_list(None)
         team_tuples = list(zip(['team{0}'.format(i) for i in team_nums], teams))
         await campaign.update_user_for_teams(team_tuples)
@@ -237,7 +239,8 @@ class CampaignManageHandler(base.OperationHandler, CampaignStatusMixin):
     @base.sanitize
     @base.require_csrf_token
     async def post_attend_team(self, *, cid: str, domain_id: str, tid: int, team_num: int):
-        team_nums = self.request.POST.getall('team_num')
+        data = await self.request.post()
+        team_nums = data.getall('team_num')
         await campaign.attend_contest_for_teams(['team{0}'.format(num) for num in team_nums],
                                                 domain_id, tid)
         self.json_or_redirect(self.reverse_url('campaign_teams', cid=cid))

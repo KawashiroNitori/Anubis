@@ -211,8 +211,9 @@ class ProblemPretestHandler(base.Handler):
         if pdoc['judge_mode'] == constant.record.MODE_SUBMIT_ANSWER:
             raise error.ProblemCannotPretestError(pid)
         # Don't need to check hidden status
-        data = list(zip(self.request.POST.getall('data_input'),
-                        self.request.POST.getall('data_output')))
+        post_data = await self.request.post()
+        data = list(zip(post_data.getall('data_input'),
+                        post_data.getall('data_output')))
         did = await testdata.add(self.domain_id, data, self.user['_id'], testdata.TYPE_PRETEST_DATA,
                                  pid=pdoc['_id'])
         rid = await record.add(self.domain_id, pdoc['_id'], constant.record.TYPE_PRETEST,
