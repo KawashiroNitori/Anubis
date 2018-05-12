@@ -256,7 +256,7 @@ class Handler(web.View, HandlerBase):
         if filename:
             self.response.headers['Content-Disposition'] = 'attachment; filename="{0}"'.format(filename)
         await self.response.prepare(self.request)
-        self.response.write(data)
+        await self.response.write(data)
 
     async def send_mail(self, mail, title, template_name, **kwargs):
         content = self.render_html(template_name, url_prefix=options.options.url_prefix, **kwargs)
