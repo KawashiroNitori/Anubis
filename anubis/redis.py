@@ -19,5 +19,6 @@ async def _create_connect():
         )
     return _connection
 
+
 async def database():
     return await _create_connect()

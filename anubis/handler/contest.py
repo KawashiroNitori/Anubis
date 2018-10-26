@@ -410,14 +410,15 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
         attended = tsdoc and tsdoc.get('attend') == 1
         duration = (tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600  # Seconds to hours
         pids = ','.join(list(map(str, tdoc['pids'])))
+        dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
         path_components = self.build_path(
             (self.translate('contest_main'), self.reverse_url('contest_main')),
             (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['_id'])),
             (self.translate('contest_edit'), None))
         self.render('contest_edit.html', tdoc=tdoc, udoc=udoc,
                     duration=duration, pids=pids, attended=attended,
-                    date_text=tdoc['begin_at'].strftime('%Y-%m-%d'),
-                    time_text=tdoc['begin_at'].strftime('%H:%M'),
+                    date_text=dt.strftime('%Y-%m-%d'),
+                    time_text=dt.strftime('%H:%M'),
                     page_title=tdoc['title'], path_components=path_components)
 
     @base.require_priv(builtin.PRIV_USER_PROFILE)
