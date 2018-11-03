@@ -250,7 +250,9 @@ FOOTER_EXTRA_HTML = [
     '© 2010 - {0} <a href="http://acm.sut.edu.cn">ACM Laboratory DevTeam of SUT</a>'.format(
         datetime.datetime.now().year
     ),
-    version.get(),
+    '<a href="https://github.com/KawashiroNitori/Anubis" target="_blank" rel="nofollow">{}</a>'.format(
+        version.get()
+    ),
     ('<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">'
-     '辽ICP备16010557号</a>')
+     '辽ICP备16010557号</a>'),
 ]
