@@ -250,5 +250,7 @@ FOOTER_EXTRA_HTML = [
     '© 2010 - {0} <a href="http://acm.sut.edu.cn">ACM Laboratory DevTeam of SUT</a>'.format(
         datetime.datetime.now().year
     ),
-    version.get()
+    version.get(),
+    ('<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">'
+     '辽ICP备16010557号</a>')
 ]
